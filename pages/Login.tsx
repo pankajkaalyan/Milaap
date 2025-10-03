@@ -11,6 +11,7 @@ import { useForm } from '../hooks/useForm';
 import { required, email } from '../utils/validators';
 import SEO from '../components/ui/SEO';
 import Spinner from '../components/ui/Spinner';
+import { loginAPI } from '@/services/api';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -26,10 +27,18 @@ const Login: React.FC = () => {
     (data) => {
       const isAdminLogin = data.email === 'admin@example.com' || data.email === 'moderator@example.com';
       const role = isAdminLogin ? UserRole.ADMIN : UserRole.CUSTOMER;
-      login(data.email, role);
-      trackEvent('login_success', { email: data.email, role });
-      addToast('Login successful!', 'success');
-      navigate(role === UserRole.ADMIN ? '/admin/dashboard' : '/dashboard');
+      const credentials = { username: data.email, password: data.password };
+      loginAPI(credentials)
+        .then((res) => {
+          login(credentials.username, role);
+          trackEvent('login_success', { email: data.email, role });
+          addToast('Login successful!', 'success');
+          navigate(role === UserRole.ADMIN ? '/admin/dashboard' : '/dashboard');
+        })
+        .catch((err) => {
+          console.error('Login failed:', err);
+          addToast('Login failed. Please check your credentials and try again.', 'error');
+        });
     }
   );
 
@@ -61,9 +70,9 @@ const Login: React.FC = () => {
 
   return (
     <>
-      <SEO 
-          title={`${t('nav.login')} | Milaap`}
-          description="Login to your Milaap account to connect with potential partners and continue your search for a life partner."
+      <SEO
+        title={`${t('nav.login')} | Milaap`}
+        description="Login to your Milaap account to connect with potential partners and continue your search for a life partner."
       />
       <div className="max-w-md mx-auto">
         <Card className="animate-fade-in-scale">
@@ -91,9 +100,9 @@ const Login: React.FC = () => {
                 placeholder="********"
               />
               <div className="text-right mt-1">
-                  <Link to="/forgot-password" className="text-sm font-medium text-amber-400 hover:text-amber-300 cursor-pointer">
-                      {t('login.forgot_password')}
-                  </Link>
+                <Link to="/forgot-password" className="text-sm font-medium text-amber-400 hover:text-amber-300 cursor-pointer">
+                  {t('login.forgot_password')}
+                </Link>
               </div>
             </div>
             <div className="pt-2">
@@ -101,42 +110,42 @@ const Login: React.FC = () => {
             </div>
           </form>
           <p className="text-xs text-center text-gray-500 mt-4">
-              Admin users: admin@example.com, moderator@example.com
+            Admin users: admin@example.com, moderator@example.com
           </p>
           <div className="my-6 flex items-center">
-              <div className="flex-grow border-t border-gray-600"></div>
-              <span className="flex-shrink mx-4 text-gray-400 text-sm">{t('login.social_intro')}</span>
-              <div className="flex-grow border-t border-gray-600"></div>
+            <div className="flex-grow border-t border-gray-600"></div>
+            <span className="flex-shrink mx-4 text-gray-400 text-sm">{t('login.social_intro')}</span>
+            <div className="flex-grow border-t border-gray-600"></div>
           </div>
           <div className="space-y-3">
-              <Button 
-                variant={ButtonVariant.TERTIARY} 
-                className="flex items-center justify-center"
-                onClick={handleGoogleLogin}
-                disabled={isSocialLoginLoading !== null}
-              >
-                  {isSocialLoginLoading === 'google' ? (
-                    <Spinner size={SpinnerSize.SM} />
-                  ) : (
-                    <>
-                      <GoogleIcon className="w-5 h-5 mr-2" /> Sign in with Google
-                    </>
-                  )}
-              </Button>
-              <Button 
-                variant={ButtonVariant.TERTIARY} 
-                className="flex items-center justify-center"
-                onClick={handleFacebookLogin}
-                disabled={isSocialLoginLoading !== null}
-              >
-                  {isSocialLoginLoading === 'facebook' ? (
-                    <Spinner size={SpinnerSize.SM} />
-                  ) : (
-                    <>
-                      <FacebookIcon className="w-5 h-5 mr-2" /> Sign in with Facebook
-                    </>
-                  )}
-              </Button>
+            <Button
+              variant={ButtonVariant.TERTIARY}
+              className="flex items-center justify-center"
+              onClick={handleGoogleLogin}
+              disabled={isSocialLoginLoading !== null}
+            >
+              {isSocialLoginLoading === 'google' ? (
+                <Spinner size={SpinnerSize.SM} />
+              ) : (
+                <>
+                  <GoogleIcon className="w-5 h-5 mr-2" /> Sign in with Google
+                </>
+              )}
+            </Button>
+            <Button
+              variant={ButtonVariant.TERTIARY}
+              className="flex items-center justify-center"
+              onClick={handleFacebookLogin}
+              disabled={isSocialLoginLoading !== null}
+            >
+              {isSocialLoginLoading === 'facebook' ? (
+                <Spinner size={SpinnerSize.SM} />
+              ) : (
+                <>
+                  <FacebookIcon className="w-5 h-5 mr-2" /> Sign in with Facebook
+                </>
+              )}
+            </Button>
           </div>
           <p className="mt-6 text-center text-sm text-gray-400">
             {t('login.no_account')} <Link to="/register" className="font-medium text-amber-400 hover:text-amber-300 cursor-pointer">{t('nav.register')}</Link>
