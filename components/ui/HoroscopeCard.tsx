@@ -34,7 +34,7 @@ const DetailItem: React.FC<DetailItemProps> = ({ icon, label, value, highlight }
 
 const HoroscopeCard: React.FC<HoroscopeCardProps> = ({ details, title }) => {
     const { t } = useAppContext();
-    const hasMangalDosha = details.mangalDosha === 'Yes' || details.mangalDosha === 'Partial';
+    const hasMangalDosha = details?.mangalDosha === 'Yes' || details?.mangalDosha === 'Partial';
   
     return (
         <Card>

@@ -12,9 +12,9 @@ interface Step1Props {
 const Step1Account: React.FC<Step1Props> = ({ formData, errors, handleInputChange, t }) => {
     return (
         <div className="space-y-6">
-            <Input name="name" label={t('register.name')} type="text" value={formData.name} onChange={handleInputChange} error={errors.name} placeholder="e.g., Radha Sharma" />
-            <Input name="email" label={t('login.email')} type="email" value={formData.email} onChange={handleInputChange} error={errors.email} placeholder="e.g., user@example.com" />
-            <Input name="password" label={t('login.password')} type="password" value={formData.password} onChange={handleInputChange} error={errors.password} placeholder="********" />
+            <Input name="name" label={t('register.name')} type="text" value={formData.name} onChange={handleInputChange} error={errors.name} placeholder="e.g., Radha Sharma" required />
+            <Input name="email" label={t('login.email')} type="email" value={formData.email} onChange={handleInputChange} error={errors.email} placeholder="e.g., user@example.com" required />
+            <Input name="password" label={t('login.password')} type="password" value={formData.password} onChange={handleInputChange} error={errors.password} placeholder="********" required />
         </div>
     );
 };

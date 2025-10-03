@@ -47,14 +47,13 @@ const CompatibilityChecklist: React.FC<CompatibilityChecklistProps> = ({ targetU
         }
 
         // Height Check
-        if (preferences.heightRange?.min && preferences.heightRange?.max && targetUser.height) {
-            const targetHeight = parseInt(targetUser.height);
-            const isMatch = targetHeight >= preferences.heightRange.min && targetHeight <= preferences.heightRange.max;
+        if (preferences.heightRange?.min && preferences.heightRange?.max && targetUser.heightInCm) {
+            const isMatch = targetUser.heightInCm >= preferences.heightRange.min && targetUser.heightInCm <= preferences.heightRange.max;
             if(isMatch) matches++;
             results.push({
                 label: t('compatibility.height'),
                 match: isMatch,
-                value: `${targetUser.height} cm`,
+                value: `${targetUser.heightInCm} cm`,
                 preference: `${preferences.heightRange.min}-${preferences.heightRange.max} cm`
             });
         }

@@ -97,12 +97,12 @@ const Profile: React.FC = () => {
                 </ProfileDetailsSection>
                 
                 <div className="grid md:grid-cols-2 gap-8">
-                    <HoroscopeCard details={profile.horoscope || {}} />
+                    <HoroscopeCard details={profile.horoscope} />
                     <ProfileDetailsSection title={t('profile.family_details')}>
-                        <p><strong>{t('profile.details.father_name')}:</strong> {profile.family?.fatherName || 'N/A'}</p>
-                        <p><strong>{t('profile.details.mother_name')}:</strong> {profile.family?.motherName || 'N/A'}</p>
-                        <p><strong>{t('profile.details.siblings')}:</strong> {profile.family?.siblings || 'N/A'}</p>
-                        <p><strong>{t('profile.details.family_values')}:</strong> {profile.family?.familyValues || 'N/A'}</p>
+                        <p><strong>{t('profile.details.father_name')}:</strong> {profile.familyDetails?.fatherName || 'N/A'}</p>
+                        <p><strong>{t('profile.details.mother_name')}:</strong> {profile.familyDetails?.motherName || 'N/A'}</p>
+                        <p><strong>{t('profile.details.siblings')}:</strong> {profile.familyDetails?.siblings || 'N/A'}</p>
+                        <p><strong>{t('profile.details.family_values')}:</strong> {profile.familyDetails?.familyValues || 'N/A'}</p>
                     </ProfileDetailsSection>
                 </div>
             </div>

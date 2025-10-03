@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react';
+import FormLabel from './FormLabel';
 
 interface FileUploadProps {
   id: string;
@@ -8,9 +9,10 @@ interface FileUploadProps {
   accept: string;
   multiple?: boolean;
   maxFiles?: number;
+  required?: boolean;
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ id, label, description, onFilesChange, accept, multiple = false, maxFiles = 1 }) => {
+const FileUpload: React.FC<FileUploadProps> = ({ id, label, description, onFilesChange, accept, multiple = false, maxFiles = 1, required = false }) => {
   const [previews, setPreviews] = useState<string[]>([]);
   const [files, setFiles] = useState<File[]>([]);
 
@@ -51,7 +53,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ id, label, description, onFiles
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-300">{label}</label>
+      <FormLabel id={id} label={label} required={required} />
       <div className="mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-600 border-dashed rounded-md cursor-pointer hover:border-amber-500 transition-colors">
         <div className="space-y-1 text-center">
           <svg className="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">

@@ -31,7 +31,7 @@ const Register: React.FC = () => {
 
   const { formData, errors, handleInputChange, setFieldValue, validate } = useForm<RegisterFormData>(
     {
-      name: '', email: '', password: '', dateOfBirth: '', timeOfBirth: '', gender: '',
+      name: '', email: '', password: '', dateOfBirth: '', timeOfBirth: '', gender: '', mobileNumber: null,
       height: '', profession: '', education: '', caste: '', subCaste: '', rashi: '', nakshatra: '',
       gotra: '', mangalDosha: 'No', fatherName: '', motherName: '',
       siblings: '', familyValues: 'Moderate', photos: [] as File[], video: [] as File[],
@@ -42,11 +42,13 @@ const Register: React.FC = () => {
       password: [required(t, t('login.password')), minLength(t, 6)],
       dateOfBirth: [required(t, t('register.dob')), dateNotInFuture(t, t('register.dob'))],
       gender:[ required(t, t('profile.gender'))],
+      mobileNumber: [required(t, t('register.height')), isNumber(t, t('register.height'))],
       timeOfBirth: required(t, t('register.tob')),
       height: [required(t, t('register.height')), isNumber(t, t('register.height'))],
       caste: [required(t, t('register.caste')), alphaOnly(t, t('register.caste'))],
       fatherName: alphaOnly(t, t('profile.details.father_name')),
       motherName: alphaOnly(t, t('profile.details.mother_name')),
+      gotra: [required(t, t('profile.details.gotra')), alphaOnly(t, t('profile.details.gotra'))],
     }
   );
 
@@ -62,7 +64,7 @@ const Register: React.FC = () => {
     e.preventDefault();
     const fieldsPerStep: (keyof RegisterFormData)[][] = [
       ['name', 'email', 'password'],
-      ['dateOfBirth', 'timeOfBirth', 'gender', 'height', 'profession', 'education'],
+      ['dateOfBirth', 'timeOfBirth', 'gender', 'height', 'profession', 'education', 'mobileNumber'],
       ['caste', 'subCaste', 'gotra', 'mangalDosha', 'rashi', 'nakshatra'],
       ['fatherName', 'motherName', 'siblings', 'familyValues'],
       ["photos", "video"] // No validation needed for uploads on "Next"
@@ -82,12 +84,17 @@ const Register: React.FC = () => {
     const allFields = Object.keys(formData) as (keyof RegisterFormData)[];
     if (validate(allFields)) {
         const userProfile: UserProfile = {
-            dateOfBirth: formData.dateOfBirth,
+            fullName: formData.name,
+            email: formData.email,
+            password: formData.password,
+            dob: formData.dateOfBirth,
             timeOfBirth: formData.timeOfBirth,
             gender: formData.gender,
-            height: formData.height,
+            contactNumber: formData.mobileNumber ? Number(formData.mobileNumber) : null,
+            heightInCm: formData.height ? Number(formData.height) : 0,
             profession: formData.profession,
-            education: formData.education,
+            highestEducation: formData.education,
+            // Convert File objects to base64 strings or URLs as needed
             caste: formData.caste,
             subCaste: formData.subCaste,
             horoscope: {
@@ -96,12 +103,15 @@ const Register: React.FC = () => {
                 rashi: formData.rashi,
                 nakshatra: formData.nakshatra,
             },
-            family: {
+            familyDetails: {
                 fatherName: formData.fatherName,
                 motherName: formData.motherName,
                 siblings: formData.siblings,
                 familyValues: formData.familyValues,
-            }
+            },
+            photos: formData.photos.length > 0 ? formData.photos.map(file => URL.createObjectURL(file)) : [],
+            video: (formData.video ? formData.video : null) as any,
+            audio: undefined,
         };
 
         login(formData.email, UserRole.CUSTOMER, userProfile);

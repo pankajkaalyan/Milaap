@@ -62,12 +62,12 @@ export const verificationService = {
 
         // 5. Compare results
         const isNameMatch = user.name.toLowerCase() === verificationResult.fullName.toLowerCase();
-        const isDobMatch = user.profile.dateOfBirth === verificationResult.dateOfBirth;
+        const isDobMatch = user.profile.dob === verificationResult.dateOfBirth;
         
         return { 
             success: isNameMatch && isDobMatch && verificationResult.isFaceMatch,
             details: {
-                profile: { name: user.name, dob: user.profile.dateOfBirth },
+                profile: { name: user.name, dob: user.profile.dob },
                 id_data: { name: verificationResult.fullName, dob: verificationResult.dateOfBirth },
                 face_match: verificationResult.isFaceMatch,
                 reasoning: verificationResult.reasoning,

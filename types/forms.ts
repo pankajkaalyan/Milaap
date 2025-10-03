@@ -32,6 +32,7 @@ export interface RegisterFormData {
   dateOfBirth: string;
   timeOfBirth: string;
   gender: 'male' | 'female' | '';
+  mobileNumber: number | null;
   height: string;
   profession: string;
   education: string;

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../../hooks/useAppContext';
 import { UserRole } from '../../../types';
-import { logoutAPI } from '@/services/api';
+import { logoutAPI } from '@/services/api/auth';
 
 const ProfileMenu: React.FC = () => {
   const { user, logout, t } = useAppContext();

@@ -66,9 +66,9 @@ export const useMatchesFilter = (user: User | null) => {
             if (filters.maxAge && u.age > parseInt(filters.maxAge)) return false;
             if (filters.caste && !u.caste.toLowerCase().includes(filters.caste.toLowerCase())) return false;
             if (filters.profession && u.profession && !u.profession.toLowerCase().includes(filters.profession.toLowerCase())) return false;
-            if (filters.education && u.education && !u.education.toLowerCase().includes(filters.education.toLowerCase())) return false;
-            if (filters.minHeight && u.height && parseInt(u.height) < parseInt(filters.minHeight)) return false;
-            if (filters.maxHeight && u.height && parseInt(u.height) > parseInt(filters.maxHeight)) return false;
+            if (filters.education && u.highestEducation && !u.highestEducation.toLowerCase().includes(filters.education.toLowerCase())) return false;
+            if (filters.minHeight && u.heightInCm && u.heightInCm < parseInt(filters.minHeight)) return false;
+            if (filters.maxHeight && u.heightInCm && u.heightInCm > parseInt(filters.maxHeight)) return false;
             if (filters.mangalDosha !== 'Any' && u.horoscope?.mangalDosha !== filters.mangalDosha) return false;
             
             return true;

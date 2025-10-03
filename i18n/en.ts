@@ -83,9 +83,10 @@ export const en = {
     finish: 'Finish Registration',
     dob: 'Date of Birth',
     tob: 'Time of Birth',
+    mobile: "Mobile Number",
     height: 'Height (in cm)',
     caste: 'Caste',
-    subcaste: 'Sub-caste (Optional)',
+    subcaste: 'Sub-caste',
     profession: 'Profession',
     education: 'Highest Education',
     steps: {

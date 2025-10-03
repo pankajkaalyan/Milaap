@@ -1,13 +1,15 @@
 import React from 'react';
 import FileUpload from '../../ui/FileUpload';
-import { RegisterFormData } from '../../../types';
+import { FormErrors, RegisterFormData } from '../../../types';
 
 interface Step5Props {
+    formData: RegisterFormData;
+    errors: FormErrors<RegisterFormData>;
     handleFileChange: (id: keyof RegisterFormData, files: File[]) => void;
     t: (key: string) => string;
 }
 
-const Step5Uploads: React.FC<Step5Props> = ({ handleFileChange, t }) => {
+const Step5Uploads: React.FC<Step5Props> = ({ handleFileChange, t, formData, errors }) => {
     return (
         <div className="space-y-6">
             <FileUpload

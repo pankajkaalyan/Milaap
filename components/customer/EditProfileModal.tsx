@@ -33,7 +33,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
             about: data.about,
             video: data.video,
             photos: data.photos,
-            family: data.family,
+            familyDetails: data.family,
             horoscope: data.horoscope,
             partnerPreferences: {
                 ...user?.profile?.partnerPreferences,

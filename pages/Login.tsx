@@ -11,7 +11,7 @@ import { useForm } from '../hooks/useForm';
 import { required, email } from '../utils/validators';
 import SEO from '../components/ui/SEO';
 import Spinner from '../components/ui/Spinner';
-import { loginAPI } from '@/services/api';
+import { loginAPI } from '@/services/api/auth';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();

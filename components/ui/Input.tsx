@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import EyeIcon from '../icons/EyeIcon';
 import EyeSlashIcon from '../icons/EyeSlashIcon';
+import FormLabel from './FormLabel';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -21,9 +22,7 @@ const Input: React.FC<InputProps> = ({ label, id, error, type, ...props }) => {
 
   return (
     <div>
-      <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-1">
-        {label}
-      </label>
+      <FormLabel id={id || ''} label={label} required={props.required} />
       <div className="relative">
         <input
           id={id}

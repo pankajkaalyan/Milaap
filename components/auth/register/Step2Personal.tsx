@@ -18,8 +18,8 @@ const Step2Personal: React.FC<Step2Props> = ({ formData, errors, handleInputChan
 
     return (
         <div className="space-y-6">
-            <Input name="dateOfBirth" label={t('register.dob')} type="date" value={formData.dateOfBirth} onChange={handleInputChange} error={errors.dateOfBirth} max={new Date().toISOString().split('T')[0]} />
-            <Input name="timeOfBirth" label={t('register.tob')} type="time" value={formData.timeOfBirth} onChange={handleInputChange} error={errors.timeOfBirth} />
+            <Input id='dateOfBirth' name="dateOfBirth" required label={t('register.dob')} type="date" value={formData.dateOfBirth} onChange={handleInputChange} error={errors.dateOfBirth} max={new Date().toISOString().split('T')[0]} />
+            <Input id='timeOfBirth' name="timeOfBirth" required label={t('register.tob')} type="time" value={formData.timeOfBirth} onChange={handleInputChange} error={errors.timeOfBirth} />
             <Dropdown
                 id="gender"
                 label={t('profile.gender')}
@@ -27,10 +27,12 @@ const Step2Personal: React.FC<Step2Props> = ({ formData, errors, handleInputChan
                 error={errors.gender}
                 onChange={(value) => handleDropdownChange('gender', value)}
                 options={[{ value: 'male', label: 'Male' }, { value: 'female', label: 'Female' }]}
+                required={true}
             />
-            <Input name="height" label={t('register.height')} type="number" value={formData.height} onChange={handleInputChange} error={errors.height} placeholder="170" min="50" max="250" />
-            <Input name="profession" label={t('register.profession')} type="text" value={formData.profession} onChange={handleInputChange} placeholder="e.g., Software Engineer" />
-            <Input name="education" label={t('register.education')} type="text" value={formData.education} onChange={handleInputChange} placeholder="e.g., B.Tech in Computer Science" />
+            <Input id='mobileNumber' name="mobileNumber" required label={t('register.mobile')} type="number" value={formData.mobileNumber || ''} onChange={handleInputChange} error={errors.mobileNumber} placeholder="e.g., 9876543210" />
+            <Input id='height' name="height" required label={t('register.height')} type="number" value={formData.height} onChange={handleInputChange} error={errors.height} placeholder="170" min="50" max="250" />
+            <Input id='profession' name="profession" label={t('register.profession')} type="text" value={formData.profession} onChange={handleInputChange} placeholder="e.g., Software Engineer" />
+            <Input id='education' name="education" label={t('register.education')} type="text" value={formData.education} onChange={handleInputChange} placeholder="e.g., B.Tech in Computer Science" />
         </div>
     );
 };

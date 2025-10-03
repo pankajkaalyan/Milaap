@@ -1,17 +1,17 @@
 import { AdminRole, InterestStatus, MembershipPlan, MessageStatus, MessageType, NotificationType, SuccessStoryStatus, UserRole } from './enums';
 
 export interface HoroscopeDetails {
-  nakshatra?: string; // Birth Star
-  rashi?: string; // Moon Sign
-  gotra?: string; // Clan name
-  mangalDosha?: 'Yes' | 'No' | 'Partial';
+  nakshatra: string; // Birth Star
+  rashi: string; // Moon Sign
+  gotra: string; // Clan name
+  mangalDosha: 'Yes' | 'No' | 'Partial';
 }
 
 export interface FamilyDetails {
-  fatherName?: string;
-  motherName?: string;
-  siblings?: string; // e.g., "1 elder brother, 1 younger sister"
-  familyValues?: 'Traditional' | 'Moderate' | 'Liberal';
+  fatherName: string;
+  motherName: string;
+  siblings: string; // e.g., "1 elder brother, 1 younger sister"
+  familyValues: 'Traditional' | 'Moderate' | 'Liberal';
 }
 
 export type VerificationStatus = 'Not Verified' | 'Pending' | 'Verified';
@@ -42,19 +42,23 @@ export interface PartnerPreferences {
 
 
 export interface UserProfile {
+  fullName?: string;
+  email?: string;
+  contactNumber?: number | null;
+  password?: string;
+  dob?: string; // Date of Birth in ISO format
+  timeOfBirth?: string; // Time of Birth in HH:MM format
+  heightInCm?: number;
+  highestEducation?: string;
   gender?: 'male' | 'female' | '';
-  dateOfBirth?: string;
-  timeOfBirth?: string;
-  height?: string;
   caste?: string;
   subCaste?: string;
   profession?: string;
-  education?: string;
+  horoscope?: HoroscopeDetails;
   photos?: string[]; // Array of base64 strings or URLs
   video?: string; // base64 string
   audio?: string; // base64 string
-  horoscope?: HoroscopeDetails;
-  family?: FamilyDetails;
+  familyDetails?: FamilyDetails;
   about?: string;
   verificationStatus?: VerificationStatus;
   blockedUsers?: string[];

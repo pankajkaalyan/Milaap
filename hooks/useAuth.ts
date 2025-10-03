@@ -45,7 +45,7 @@ export const useAuth = () => {
                 createdAt: new Date().toISOString(),
                 profile: {
                     gender: 'female',
-                    dateOfBirth: '1995-05-20',
+                    dob: '1995-05-20',
                     photos: ['https://images.pexels.com/photos/3764119/pexels-photo-3764119.jpeg?auto=compress&cs=tinysrgb&w=600'],
                     horoscope: { nakshatra: "Rohini", rashi: "Vrishabha (Taurus)", gotra: "Kashyap", mangalDosha: "No" },
                     verificationStatus: 'Not Verified',
