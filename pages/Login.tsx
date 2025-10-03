@@ -30,6 +30,8 @@ const Login: React.FC = () => {
       const credentials = { username: data.email, password: data.password };
       loginAPI(credentials)
         .then((res) => {
+          localStorage.setItem("token", res.accessToken);
+          localStorage.setItem("refreshToken", res.refreshToken);
           login(credentials.username, role);
           trackEvent('login_success', { email: data.email, role });
           addToast('Login successful!', 'success');

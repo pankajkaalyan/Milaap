@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../../hooks/useAppContext';
 import { UserRole } from '../../../types';
+import { logoutAPI } from '@/services/api';
 
 const ProfileMenu: React.FC = () => {
   const { user, logout, t } = useAppContext();
@@ -20,9 +21,14 @@ const ProfileMenu: React.FC = () => {
   }, [menuRef]);
 
   const handleLogout = () => {
-    logout();
-    setIsOpen(false);
-    navigate('/');
+    logoutAPI().then(() => {
+      logout();
+      setIsOpen(false);
+      navigate('/');
+    }).catch(err => console.error('Error during logout:', err)).finally(() => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
+    });
   };
 
   const closeMenu = () => setIsOpen(false);
