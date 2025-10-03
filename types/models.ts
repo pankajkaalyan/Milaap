@@ -42,7 +42,7 @@ export interface PartnerPreferences {
 
 
 export interface UserProfile {
-  gender?: 'male' | 'female';
+  gender?: 'male' | 'female' | '';
   dateOfBirth?: string;
   timeOfBirth?: string;
   height?: string;

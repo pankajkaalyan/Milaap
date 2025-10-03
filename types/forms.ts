@@ -31,6 +31,7 @@ export interface RegisterFormData {
   password: string;
   dateOfBirth: string;
   timeOfBirth: string;
+  gender: 'male' | 'female' | '';
   height: string;
   profession: string;
   education: string;
@@ -38,6 +39,8 @@ export interface RegisterFormData {
   subCaste: string;
   gotra: string;
   mangalDosha: 'Yes' | 'No' | 'Partial';
+  rashi: string;
+  nakshatra: string;
   fatherName: string;
   motherName: string;
   siblings: string;

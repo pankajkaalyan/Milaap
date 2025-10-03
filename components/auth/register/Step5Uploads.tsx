@@ -2,12 +2,12 @@ import React from 'react';
 import FileUpload from '../../ui/FileUpload';
 import { RegisterFormData } from '../../../types';
 
-interface Step4Props {
+interface Step5Props {
     handleFileChange: (id: keyof RegisterFormData, files: File[]) => void;
     t: (key: string) => string;
 }
 
-const Step4Uploads: React.FC<Step4Props> = ({ handleFileChange, t }) => {
+const Step5Uploads: React.FC<Step5Props> = ({ handleFileChange, t }) => {
     return (
         <div className="space-y-6">
             <FileUpload
@@ -30,4 +30,4 @@ const Step4Uploads: React.FC<Step4Props> = ({ handleFileChange, t }) => {
     );
 };
 
-export default Step4Uploads;
+export default Step5Uploads;

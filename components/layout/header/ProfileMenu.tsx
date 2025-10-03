@@ -21,14 +21,24 @@ const ProfileMenu: React.FC = () => {
   }, [menuRef]);
 
   const handleLogout = () => {
-    logoutAPI().then(() => {
+    const tockens = {
+      accessToken: localStorage.getItem("token") || '',
+      refreshToken: localStorage.getItem("refreshToken") || ''
+    };
+    if (!tockens.accessToken) {
       logout();
       setIsOpen(false);
       navigate('/');
-    }).catch(err => console.error('Error during logout:', err)).finally(() => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("refreshToken");
-    });
+    } else {
+      logoutAPI().then(() => {
+        logout();
+        setIsOpen(false);
+        navigate('/');
+      }).catch(err => console.error('Error during logout:', err)).finally(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
+      });
+    }
   };
 
   const closeMenu = () => setIsOpen(false);
@@ -53,17 +63,17 @@ const ProfileMenu: React.FC = () => {
               <li><NavLink to="/profile" className="w-full text-left block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700" onClick={closeMenu}>{t('nav.my_profile')}</NavLink></li>
               <li><NavLink to="/settings" className="w-full text-left block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700" onClick={closeMenu}>{t('nav.settings')}</NavLink></li>
               <li><NavLink to="/verification" className="w-full text-left block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700" onClick={closeMenu}>{t('nav.verification')}</NavLink></li>
-              <li><hr className="border-gray-600 my-1"/></li>
+              <li><hr className="border-gray-600 my-1" /></li>
               <li><button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700">{t('nav.logout')}</button></li>
             </ul>
           ) : (
-             <ul className="py-1">
+            <ul className="py-1">
               <li className="px-4 py-2 border-b border-gray-600 w-full text-left">
                 <p className="font-semibold text-white truncate">{user.name}</p>
                 <p className="text-xs text-gray-400 capitalize">{user.adminRole?.replace('_', ' ').toLowerCase()}</p>
               </li>
               <li><NavLink to="/admin/dashboard" className="w-full text-left block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700" onClick={closeMenu}>{t('nav.admin_dashboard')}</NavLink></li>
-              <li><hr className="border-gray-600 my-1"/></li>
+              <li><hr className="border-gray-600 my-1" /></li>
               <li><button onClick={handleLogout} className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700">{t('nav.logout')}</button></li>
             </ul>
           )}

@@ -9,8 +9,9 @@ import { useForm } from '../hooks/useForm';
 import { required, email, minLength, isNumber, dateNotInFuture, alphaOnly } from '../utils/validators';
 import Step1Account from '../components/auth/register/Step1Account';
 import Step2Personal from '../components/auth/register/Step2Personal';
-import Step3Family from '../components/auth/register/Step3Family';
-import Step4Uploads from '../components/auth/register/Step4Uploads';
+import Step3Caste from '../components/auth/register/Step3Cast';
+import Step4Family from '../components/auth/register/Step4Family';
+import Step5Uploads from '../components/auth/register/Step5Uploads';
 import { useMultiStepForm } from '../hooks/useMultiStepForm';
 import SEO from '../components/ui/SEO';
 
@@ -21,6 +22,7 @@ const Register: React.FC = () => {
   const steps = [
     t('register.steps.account'), 
     t('register.steps.personal'), 
+    t('register.steps.cast'), 
     t('register.steps.family'), 
     t('register.steps.uploads')
   ];
@@ -29,8 +31,8 @@ const Register: React.FC = () => {
 
   const { formData, errors, handleInputChange, setFieldValue, validate } = useForm<RegisterFormData>(
     {
-      name: '', email: '', password: '', dateOfBirth: '', timeOfBirth: '',
-      height: '', profession: '', education: '', caste: '', subCaste: '',
+      name: '', email: '', password: '', dateOfBirth: '', timeOfBirth: '', gender: '',
+      height: '', profession: '', education: '', caste: '', subCaste: '', rashi: '', nakshatra: '',
       gotra: '', mangalDosha: 'No', fatherName: '', motherName: '',
       siblings: '', familyValues: 'Moderate', photos: [] as File[], video: [] as File[],
     },
@@ -39,6 +41,7 @@ const Register: React.FC = () => {
       email: [required(t, t('login.email')), email(t)],
       password: [required(t, t('login.password')), minLength(t, 6)],
       dateOfBirth: [required(t, t('register.dob')), dateNotInFuture(t, t('register.dob'))],
+      gender:[ required(t, t('profile.gender'))],
       timeOfBirth: required(t, t('register.tob')),
       height: [required(t, t('register.height')), isNumber(t, t('register.height'))],
       caste: [required(t, t('register.caste')), alphaOnly(t, t('register.caste'))],
@@ -55,14 +58,15 @@ const Register: React.FC = () => {
     setFieldValue(id, files);
   };
 
-  const handleNext = () => {
+  const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
     const fieldsPerStep: (keyof RegisterFormData)[][] = [
       ['name', 'email', 'password'],
-      ['dateOfBirth', 'timeOfBirth', 'height', 'profession', 'education'],
-      ['caste', 'subCaste', 'gotra', 'mangalDosha', 'fatherName', 'motherName', 'siblings', 'familyValues'],
-      [] // No validation needed for uploads on "Next"
+      ['dateOfBirth', 'timeOfBirth', 'gender', 'height', 'profession', 'education'],
+      ['caste', 'subCaste', 'gotra', 'mangalDosha', 'rashi', 'nakshatra'],
+      ['fatherName', 'motherName', 'siblings', 'familyValues'],
+      ["photos", "video"] // No validation needed for uploads on "Next"
     ];
-    
     if (validate(fieldsPerStep[currentStep])) {
       if (!isLastStep) {
         next();
@@ -73,12 +77,14 @@ const Register: React.FC = () => {
   };
   
   const handleSubmit = (e: React.FormEvent) => {
+    if(!isLastStep) return;
     e.preventDefault();
     const allFields = Object.keys(formData) as (keyof RegisterFormData)[];
     if (validate(allFields)) {
         const userProfile: UserProfile = {
             dateOfBirth: formData.dateOfBirth,
             timeOfBirth: formData.timeOfBirth,
+            gender: formData.gender,
             height: formData.height,
             profession: formData.profession,
             education: formData.education,
@@ -87,6 +93,8 @@ const Register: React.FC = () => {
             horoscope: {
                 gotra: formData.gotra,
                 mangalDosha: formData.mangalDosha,
+                rashi: formData.rashi,
+                nakshatra: formData.nakshatra,
             },
             family: {
                 fatherName: formData.fatherName,
@@ -110,11 +118,13 @@ const Register: React.FC = () => {
         case 0:
             return <Step1Account formData={formData} errors={errors} handleInputChange={handleInputChange} t={t} />;
         case 1:
-            return <Step2Personal formData={formData} errors={errors} handleInputChange={handleInputChange} t={t} />;
+            return <Step2Personal formData={formData} errors={errors} handleInputChange={handleInputChange} handleDropdownChange={handleDropdownChange} t={t} />;
         case 2:
-            return <Step3Family formData={formData} errors={errors} handleInputChange={handleInputChange} handleDropdownChange={handleDropdownChange} t={t} />;
+            return <Step3Caste formData={formData} errors={errors} handleInputChange={handleInputChange} handleDropdownChange={handleDropdownChange} t={t} />;
         case 3:
-            return <Step4Uploads handleFileChange={handleFileChange} t={t} />;
+            return <Step4Family formData={formData} errors={errors} handleInputChange={handleInputChange} handleDropdownChange={handleDropdownChange} t={t} />;
+        case 4:
+            return <Step5Uploads formData={formData} errors={errors} handleFileChange={handleFileChange} t={t} />;
         default: return null;
     }
   }
@@ -135,11 +145,11 @@ const Register: React.FC = () => {
             {renderStepContent()}
             <div className="flex justify-between items-center pt-8">
                   {!isFirstStep && (
-                      <Button type="button" onClick={back} variant={ButtonVariant.SECONDARY} className="w-auto">
+                      <Button type="button" onClick={back} variant={ButtonVariant.SECONDARY} className="w-auto mr-8">
                           {t('register.prev')}
                       </Button>
                   )}
-                  <div className="flex-grow" />
+                  {/* <div className="flex-grow" /> */}
                   {!isLastStep ? (
                       <Button type="button" onClick={handleNext} className="w-auto">
                           {t('register.next')}

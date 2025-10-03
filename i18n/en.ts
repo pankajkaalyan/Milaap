@@ -91,7 +91,8 @@ export const en = {
     steps: {
       account: 'Account Details',
       personal: 'Personal Info',
-      family: 'Family & Horoscope',
+      cast: 'Caste & Horoscope',
+      family: 'Family Details',
       uploads: 'Uploads',
     },
     uploads: {
@@ -123,6 +124,7 @@ export const en = {
     block_user: 'Block User',
     unblock_user: 'Unblock User',
     report_user: 'Report User',
+    gender: "Gender",
     details: {
       father_name: "Father's Name",
       mother_name: "Mother's Name",

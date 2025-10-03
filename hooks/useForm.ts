@@ -15,6 +15,7 @@ export const useForm = <T extends object>(
 
     for (const key of keysToValidate) {
       const validators = validationSchema[key as keyof T];
+      console.log('Validating field:', key);
       if (validators) {
         const value = formData[key as keyof T];
         const validatorArray = Array.isArray(validators) ? validators : [validators];
