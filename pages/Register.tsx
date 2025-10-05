@@ -14,6 +14,7 @@ import Step4Family from '../components/auth/register/Step4Family';
 import Step5Uploads from '../components/auth/register/Step5Uploads';
 import { useMultiStepForm } from '../hooks/useMultiStepForm';
 import SEO from '../components/ui/SEO';
+import { registerAPI } from '@/services/api/register';
 
 const Register: React.FC = () => {
   const { login, addToast, t, trackEvent } = useAppContext();
@@ -34,7 +35,7 @@ const Register: React.FC = () => {
       name: '', email: '', password: '', dateOfBirth: '', timeOfBirth: '', gender: '', mobileNumber: null,
       height: '', profession: '', education: '', caste: '', subCaste: '', rashi: '', nakshatra: '',
       gotra: '', mangalDosha: 'No', fatherName: '', motherName: '',
-      siblings: '', familyValues: 'Moderate', photos: [] as File[], video: [] as File[],
+      siblings: '', familyValues: 'Moderate', photos: [] as File[], video: null,
     },
     {
       name: [required(t, t('register.name')), alphaOnly(t, t('register.name'))],
@@ -114,10 +115,18 @@ const Register: React.FC = () => {
             audio: undefined,
         };
 
-        login(formData.email, UserRole.CUSTOMER, userProfile);
-        trackEvent('registration_success', { email: formData.email });
-        addToast('Registration successful! Welcome!', 'success');
-        navigate('/dashboard');
+        registerAPI(userProfile).then(() => {
+            console.log('User registered successfully');
+            login(formData.email, UserRole.CUSTOMER, userProfile);
+            trackEvent('registration_success', { email: formData.email });
+            addToast('Registration successful! Welcome!', 'success');
+            navigate('/dashboard');
+        }).catch((error) => {
+            console.error('Registration failed:', error);
+            addToast('Registration failed. Please try again.', 'error');
+        });
+
+        
     } else {
       addToast(t('toasts.form_errors'), 'error');
     }

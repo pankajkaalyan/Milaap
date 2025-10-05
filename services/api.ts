@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Base instance
 export const API = axios.create({
-    baseURL: "http://localhost:9999", // Example API
+    baseURL: "http://localhost:8080", // Example API
 });
 
 API.interceptors.request.use((config) => {

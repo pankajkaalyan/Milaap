@@ -26,7 +26,7 @@ const Step2Personal: React.FC<Step2Props> = ({ formData, errors, handleInputChan
                 value={formData.gender}
                 error={errors.gender}
                 onChange={(value) => handleDropdownChange('gender', value)}
-                options={[{ value: 'male', label: 'Male' }, { value: 'female', label: 'Female' }]}
+                options={[{ value: 'Male', label: 'Male' }, { value: 'Female', label: 'Female' }]}
                 required={true}
             />
             <Input id='mobileNumber' name="mobileNumber" required label={t('register.mobile')} type="number" value={formData.mobileNumber || ''} onChange={handleInputChange} error={errors.mobileNumber} placeholder="e.g., 9876543210" />

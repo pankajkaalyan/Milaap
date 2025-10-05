@@ -47,7 +47,7 @@ export interface RegisterFormData {
   siblings: string;
   familyValues: 'Traditional' | 'Moderate' | 'Liberal';
   photos: File[];
-  video: File[];
+  video: File;
 }
 
 export interface ContactFormData {
