@@ -31,7 +31,7 @@ export interface RegisterFormData {
   password: string;
   dateOfBirth: string;
   timeOfBirth: string;
-  gender: 'male' | 'female' | '';
+  gender: 'Male' | 'Female' | '';
   mobileNumber: number | null;
   height: string;
   profession: string;

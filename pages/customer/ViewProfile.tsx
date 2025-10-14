@@ -44,8 +44,8 @@ const ViewProfile: React.FC = () => {
     const isBlocked = currentUser?.profile?.blockedUsers?.includes(user.id.toString());
     const isPremiumUser = currentUser?.profile?.membership !== MembershipPlan.FREE;
     
-    const sentInterest = interests.find(i => i.senderId === currentUser.id && i.receiverId === user.id);
-    const receivedInterest = interests.find(i => i.senderId === user.id && i.receiverId === currentUser.id);
+    const sentInterest = interests.find(i => i.senderId === currentUser.id && i.recipientId === user.id);
+    const receivedInterest = interests.find(i => i.senderId === user.id && i.recipientId === currentUser.id);
     
     const handleViewContact = () => {
         if (isPremiumUser) {

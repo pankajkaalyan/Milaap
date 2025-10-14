@@ -17,10 +17,14 @@ const Interests: React.FC = () => {
     const [activeTab, setActiveTab] = useState<InterestTab>(InterestTab.RECEIVED);
 
     const { received, sent } = useMemo(() => {
+        console.log('user:', user);
         if (!user) return { received: [], sent: [] };
-        
+        console.log('interests:', interests);
+        console.log('mockUsers:', mockUsers);
+        interests.map(i => i.senderId = 4); // For testing purposes only, to be removed later
+        console.log('interests: 1', interests);
         const receivedInterests = interests
-            .filter(i => i.receiverId === user.id)
+            .filter(i => i.recipientId === user.id)
             .map(interest => {
                 const sender = mockUsers.find(u => u.id === interest.senderId);
                 return sender ? { interest, user: sender } : null;
@@ -30,7 +34,7 @@ const Interests: React.FC = () => {
         const sentInterests = interests
             .filter(i => i.senderId === user.id)
             .map(interest => {
-                const receiver = mockUsers.find(u => u.id === interest.receiverId);
+                const receiver = mockUsers.find(u => u.id === interest.recipientId);
                 return receiver ? { interest, user: receiver } : null;
             })
             .filter(Boolean);

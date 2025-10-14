@@ -50,7 +50,7 @@ export interface UserProfile {
   timeOfBirth?: string; // Time of Birth in HH:MM format
   heightInCm?: number;
   highestEducation?: string;
-  gender?: 'male' | 'female' | '';
+  gender?: 'Male' | 'Female' | '';
   caste?: string;
   subCaste?: string;
   profession?: string;
@@ -195,9 +195,12 @@ export interface AdminAnalyticsData {
 export interface Interest {
   id: number;
   senderId: number;
-  receiverId: number;
   status: InterestStatus;
   timestamp: string;
+  recipientId: number;
+  message?: string;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface ChatHistory {

@@ -17,7 +17,7 @@ export const useAIFeatures = (user: User | null, t: TFunction, addToast: AddToas
         if (aiSuggestions.length > 0) return;
         setIsFetchingAISuggestions(true);
         try {
-            const oppositeGender = user.profile.gender === 'female' ? 'male' : 'female';
+            const oppositeGender = user.profile.gender === 'Female' ? 'Male' : 'Female';
             const potentialMatches = mockUsers.filter(u =>
                 u.id !== user.id &&
                 !user.profile?.blockedUsers?.includes(u.id.toString()) &&

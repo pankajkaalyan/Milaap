@@ -10,6 +10,7 @@ export const useMatchesFilter = (user: User | null) => {
     const [filters, setInternalFilters] = useState<Record<string, string>>({
         minAge: '', maxAge: '', minHeight: '', maxHeight: '',
         location: '', caste: '', profession: '', education: '', mangalDosha: 'Any',
+        gender: '',
     });
     const [isNearMe, setIsNearMe] = useState(false);
     const [radius, setRadius] = useState(200);
@@ -70,7 +71,7 @@ export const useMatchesFilter = (user: User | null) => {
             if (filters.minHeight && u.heightInCm && u.heightInCm < parseInt(filters.minHeight)) return false;
             if (filters.maxHeight && u.heightInCm && u.heightInCm > parseInt(filters.maxHeight)) return false;
             if (filters.mangalDosha !== 'Any' && u.horoscope?.mangalDosha !== filters.mangalDosha) return false;
-            
+            if (filters.gender && u.gender.toLocaleLowerCase() !== filters.gender.toLocaleLowerCase()) return false;
             return true;
         });
     }, [filters, user, isNearMe, locationData, radius, hasSearched]);

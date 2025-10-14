@@ -12,7 +12,8 @@ import { required, email } from '../utils/validators';
 import SEO from '../components/ui/SEO';
 import Spinner from '../components/ui/Spinner';
 import { loginAPI } from '@/services/api/auth';
-
+import { fetchCurrentUserAPI } from '@/services/api/profile';
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const { login, addToast, t, trackEvent } = useAppContext();
@@ -35,7 +36,23 @@ const Login: React.FC = () => {
           login(credentials.username, role);
           trackEvent('login_success', { email: data.email, role });
           addToast('Login successful!', 'success');
-          navigate(role === UserRole.ADMIN ? '/admin/dashboard' : '/dashboard');
+          fetchCurrentUserAPI().then(async data => {
+            console.log('Fetched current user:', data);
+            let mockUser = {
+              id: data.id,
+              email: data.email,
+              name: data.name,
+              role: data.role,
+              createdAt: data.createdAt,
+              profile: data.profile,
+            };
+            localStorage.setItem('user', JSON.stringify(mockUser));
+            await delay(1000); // Wait 2 seconds
+            navigate(role === UserRole.ADMIN ? '/admin/dashboard' : '/dashboard');
+          }).catch(err => {
+            console.error('Error fetching current user:', err);
+          });
+          
         })
         .catch((err) => {
           console.error('Login failed:', err);

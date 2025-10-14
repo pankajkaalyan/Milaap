@@ -43,8 +43,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ match, isFavourite, onToggleF
     const { t, user: currentUser, interests, expressInterest, acceptInterest, declineInterest } = useAppContext();
     const navigate = useNavigate();
 
-    const sentInterest = interests.find(i => i.senderId === currentUser?.id && i.receiverId === match.id);
-    const receivedInterest = interests.find(i => i.senderId === match.id && i.receiverId === currentUser?.id);
+    const sentInterest = interests.find(i => i.senderId === currentUser?.id && i.recipientId === match.id);
+    const receivedInterest = interests.find(i => i.senderId === match.id && i.recipientId === currentUser?.id);
     
     const handleActionClick = (e: React.MouseEvent, action: () => void) => {
         e.preventDefault(); 

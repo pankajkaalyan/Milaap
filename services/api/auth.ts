@@ -14,10 +14,11 @@ export const logoutAPI = async () => {
     const token = localStorage.getItem("token");
     console.log("Logging out with token:", token);
     try {
-        const response = await API.post("/api/auth/logout" )
+        const response = await API.post("/api/auth/logout")
         return response.data;
     } catch (error) {
         console.error("Error logging out:", error);
         throw error;
     }
 };
+

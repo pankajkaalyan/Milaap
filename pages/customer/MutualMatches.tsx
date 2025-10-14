@@ -16,9 +16,9 @@ const MutualMatches: React.FC = () => {
         interests.forEach(interest => {
             if (interest.status === InterestStatus.ACCEPTED) {
                 if (interest.senderId === user.id) {
-                    mutualMatchUserIds.add(interest.receiverId);
+                    mutualMatchUserIds.add(interest.recipientId);
                 }
-                if (interest.receiverId === user.id) {
+                if (interest.recipientId === user.id) {
                     mutualMatchUserIds.add(interest.senderId);
                 }
             }

@@ -9,8 +9,8 @@ const CustomerDashboard: React.FC = () => {
   
   const recommendedMatches = useMemo(() => {
     if (!user) return [];
-    console.log('User Profile:', user.profile);
-    console.log(' mok user', mockUsers);
+    // console.log('User Profile:', user.profile);
+    // console.log('Mock Users:', mockUsers);
     const blockedUserIds = user.profile?.blockedUsers || [];
     return mockUsers
       .filter(u => 

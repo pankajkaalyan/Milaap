@@ -8,7 +8,7 @@ const familyValues: ('Traditional' | 'Moderate' | 'Liberal')[] = ['Traditional',
 
 export const mockUsers: Match[] = [
   { 
-    id: 1, name: 'Ananya Sharma', age: 28, profession: 'Software Engineer', location: 'Bangalore', caste: 'Brahmin', compatibilityScore: 88, highestEducation: 'B.Tech CS', gender: 'female',
+    id: 1, name: 'Ananya Sharma', age: 28, profession: 'Software Engineer', location: 'Bangalore', caste: 'Brahmin', compatibilityScore: 88, highestEducation: 'B.Tech CS', gender: 'Female',
     about: "A blend of modern thinking and traditional values. I enjoy coding, hiking, and exploring new cuisines. Looking for a partner who is ambitious, caring, and has a good sense of humor.",
     horoscope: { nakshatra: hinduNakshatras[3], rashi: hinduRashis[1], gotra: gotras[2], mangalDosha: mangalDoshaOptions[1] },
     familyDetails: { fatherName: "Rajesh Sharma", motherName: "Sunita Sharma", siblings: "1 younger brother", familyValues: familyValues[1] },
@@ -26,7 +26,7 @@ export const mockUsers: Match[] = [
     }
   },
   { 
-    id: 2, name: 'Rohan Verma', age: 31, profession: 'Doctor', location: 'Mumbai', caste: 'Kshatriya', compatibilityScore: 75, highestEducation: 'MBBS', gender: 'male',
+    id: 2, name: 'Rohan Verma', age: 31, profession: 'Doctor', location: 'Mumbai', caste: 'Kshatriya', compatibilityScore: 75, highestEducation: 'MBBS', gender: 'Male',
     about: "Dedicated to my profession, but I believe in work-life balance. I'm an avid reader and enjoy long drives. Seeking a compassionate and understanding partner to share life's journey with.",
     horoscope: { nakshatra: hinduNakshatras[14], rashi: hinduRashis[6], gotra: gotras[1], mangalDosha: mangalDoshaOptions[2] },
     familyDetails: { fatherName: "Suresh Verma", motherName: "Poonam Verma", siblings: "1 elder sister", familyValues: familyValues[0] },
@@ -37,7 +37,7 @@ export const mockUsers: Match[] = [
     status: 'active',
   },
   { 
-    id: 3, name: 'Priya Patel', age: 29, profession: 'Architect', location: 'Delhi', caste: 'Vaishya', compatibilityScore: 92, highestEducation: 'B.Arch', gender: 'female',
+    id: 3, name: 'Priya Patel', age: 29, profession: 'Architect', location: 'Delhi', caste: 'Vaishya', compatibilityScore: 92, highestEducation: 'B.Arch', gender: 'Female',
     about: "Creative soul with a passion for designing beautiful spaces. I love art, music, and traveling. Looking for a well-settled, open-minded, and supportive partner.",
     horoscope: { nakshatra: hinduNakshatras[11], rashi: hinduRashis[4], gotra: gotras[3], mangalDosha: mangalDoshaOptions[1] },
     familyDetails: { fatherName: "Dinesh Patel", motherName: "Hansa Patel", siblings: "No siblings", familyValues: familyValues[2] },
@@ -49,7 +49,7 @@ export const mockUsers: Match[] = [
     status: 'active',
   },
   { 
-    id: 4, name: 'Vikram Singh', age: 32, profession: 'Business Analyst', location: 'Pune', caste: 'Kshatriya', compatibilityScore: 81, highestEducation: 'MBA', gender: 'male',
+    id: 4, name: 'Vikram Singh', age: 32, profession: 'Business Analyst', location: 'Pune', caste: 'Kshatriya', compatibilityScore: 81, highestEducation: 'MBA', gender: 'Male',
     about: "Analytical and goal-oriented. I enjoy staying fit, watching movies, and spending time with family. Seeking an intelligent and family-oriented partner.",
     horoscope: { nakshatra: hinduNakshatras[21], rashi: hinduRashis[9], gotra: gotras[5], mangalDosha: mangalDoshaOptions[0] },
     familyDetails: { fatherName: "Alok Singh", motherName: "Meena Singh", siblings: "1 younger sister", familyValues: familyValues[1] },
@@ -59,7 +59,7 @@ export const mockUsers: Match[] = [
     status: 'active',
   },
   { 
-    id: 5, name: 'Sneha Reddy', age: 27, profession: 'Graphic Designer', location: 'Hyderabad', caste: 'Reddy', compatibilityScore: 85, highestEducation: 'B.Des', gender: 'female',
+    id: 5, name: 'Sneha Reddy', age: 27, profession: 'Graphic Designer', location: 'Hyderabad', caste: 'Reddy', compatibilityScore: 85, highestEducation: 'B.Des', gender: 'Female',
     about: "I see beauty in everything. Passionate about design, photography, and my culture. Looking for a partner who is both a friend and a guide.",
     horoscope: { nakshatra: hinduNakshatras[13], rashi: hinduRashis[6], gotra: gotras[0], mangalDosha: mangalDoshaOptions[1] },
     familyDetails: { fatherName: "Murali Reddy", motherName: "Padma Reddy", siblings: "2 elder brothers", familyValues: familyValues[0] },
@@ -69,7 +69,7 @@ export const mockUsers: Match[] = [
     status: 'active',
   },
   { 
-    id: 6, name: 'Aditya Rao', age: 30, profession: 'Marketing Manager', location: 'Chennai', caste: 'Brahmin', compatibilityScore: 79, highestEducation: 'MBA', gender: 'male',
+    id: 6, name: 'Aditya Rao', age: 30, profession: 'Marketing Manager', location: 'Chennai', caste: 'Brahmin', compatibilityScore: 79, highestEducation: 'MBA', gender: 'Male',
     about: "Ambitious and outgoing. I love networking, exploring new marketing strategies, and playing cricket on weekends. Seeking a cheerful and independent partner.",
     horoscope: { nakshatra: hinduNakshatras[6], rashi: hinduRashis[2], gotra: gotras[2], mangalDosha: mangalDoshaOptions[2] },
     familyDetails: { fatherName: "Krishna Rao", motherName: "Lakshmi Rao", siblings: "1 younger brother", familyValues: familyValues[1] },
@@ -79,7 +79,7 @@ export const mockUsers: Match[] = [
     status: 'active',
   },
   { 
-    id: 7, name: 'Kavya Nair', age: 26, profession: 'Journalist', location: 'Kochi', caste: 'Nair', compatibilityScore: 90, highestEducation: 'MA Journalism', gender: 'female',
+    id: 7, name: 'Kavya Nair', age: 26, profession: 'Journalist', location: 'Kochi', caste: 'Nair', compatibilityScore: 90, highestEducation: 'MA Journalism', gender: 'Female',
     about: "Curious and articulate. I love telling stories and meeting new people. In my free time, I practice classical dance. Looking for an honest and intellectually stimulating partner.",
     horoscope: { nakshatra: hinduNakshatras[5], rashi: hinduRashis[2], gotra: gotras[4], mangalDosha: mangalDoshaOptions[1] },
     familyDetails: { fatherName: "Gopalakrishnan Nair", motherName: "Shobana Nair", siblings: "1 elder sister", familyValues: familyValues[2] },
@@ -89,7 +89,7 @@ export const mockUsers: Match[] = [
     status: 'active',
   },
   { 
-    id: 8, name: 'Arjun Menon', age: 33, profession: 'Civil Engineer', location: 'Bangalore', caste: 'Menon', compatibilityScore: 72, highestEducation: 'M.Tech', gender: 'male',
+    id: 8, name: 'Arjun Menon', age: 33, profession: 'Civil Engineer', location: 'Bangalore', caste: 'Menon', compatibilityScore: 72, highestEducation: 'M.Tech', gender: 'Male',
     about: "Down-to-earth and reliable. I enjoy trekking and DIY projects. Seeking a simple, loving, and family-oriented partner.",
     horoscope: { nakshatra: hinduNakshatras[16], rashi: hinduRashis[7], gotra: gotras[1], mangalDosha: mangalDoshaOptions[0] },
     familyDetails: { fatherName: "Prakash Menon", motherName: "Geetha Menon", siblings: "No siblings", familyValues: familyValues[0] },
@@ -99,7 +99,7 @@ export const mockUsers: Match[] = [
     status: 'active',
   },
   { 
-    id: 9, name: 'Meera Iyer', age: 28, profession: 'Chartered Accountant', location: 'Mumbai', caste: 'Iyer', compatibilityScore: 95, highestEducation: 'CA', gender: 'female',
+    id: 9, name: 'Meera Iyer', age: 28, profession: 'Chartered Accountant', location: 'Mumbai', caste: 'Iyer', compatibilityScore: 95, highestEducation: 'CA', gender: 'Female',
     about: "Detail-oriented and disciplined, but with a fun-loving side. I enjoy Carnatic music and reading fiction. Looking for a mature and well-educated partner.",
     horoscope: { nakshatra: hinduNakshatras[12], rashi: hinduRashis[5], gotra: gotras[6], mangalDosha: mangalDoshaOptions[1] },
     familyDetails: { fatherName: "Venkatesh Iyer", motherName: "Janaki Iyer", siblings: "1 elder brother", familyValues: familyValues[0] },
@@ -109,7 +109,7 @@ export const mockUsers: Match[] = [
     status: 'active',
   },
   { 
-    id: 10, name: 'Nikhil Gupta', age: 29, profession: 'Entrepreneur', location: 'Delhi', caste: 'Vaishya', compatibilityScore: 83, highestEducation: 'B.Com', gender: 'male',
+    id: 10, name: 'Nikhil Gupta', age: 29, profession: 'Entrepreneur', location: 'Delhi', caste: 'Vaishya', compatibilityScore: 83, highestEducation: 'B.Com', gender: 'Male',
     about: "Driven and passionate about my startup. I'm a foodie and love exploring street food. Seeking an ambitious and supportive partner who isn't afraid of taking risks.",
     horoscope: { nakshatra: hinduNakshatras[24], rashi: hinduRashis[10], gotra: gotras[3], mangalDosha: mangalDoshaOptions[2] },
     familyDetails: { fatherName: "Anil Gupta", motherName: "Renu Gupta", siblings: "2 younger sisters", familyValues: familyValues[1] },
@@ -119,7 +119,7 @@ export const mockUsers: Match[] = [
     status: 'active',
   },
   { 
-    id: 11, name: 'Divya Joshi', age: 25, profession: 'Teacher', location: 'Jaipur', caste: 'Brahmin', compatibilityScore: 88, highestEducation: 'B.Ed', gender: 'female',
+    id: 11, name: 'Divya Joshi', age: 25, profession: 'Teacher', location: 'Jaipur', caste: 'Brahmin', compatibilityScore: 88, highestEducation: 'B.Ed', gender: 'Female',
     about: "Patient and nurturing. I love working with children. I enjoy painting and visiting historical places. Looking for a kind-hearted and respectful partner.",
     horoscope: { nakshatra: hinduNakshatras[7], rashi: hinduRashis[3], gotra: gotras[2], mangalDosha: mangalDoshaOptions[1] },
     familyDetails: { fatherName: "Mahesh Joshi", motherName: "Kamla Joshi", siblings: "1 elder brother", familyValues: familyValues[0] },
@@ -129,7 +129,7 @@ export const mockUsers: Match[] = [
     status: 'active',
   },
   { 
-    id: 12, name: 'Sameer Khan', age: 31, profession: 'Chef', location: 'Lucknow', caste: 'Muslim', compatibilityScore: 76, highestEducation: 'Hotel Management', gender: 'male',
+    id: 12, name: 'Sameer Khan', age: 31, profession: 'Chef', location: 'Lucknow', caste: 'Muslim', compatibilityScore: 76, highestEducation: 'Hotel Management', gender: 'Male',
     about: "Passionate about creating culinary masterpieces. I find joy in feeding people. Seeking a partner who appreciates good food and has a zest for life.",
     horoscope: { nakshatra: hinduNakshatras[18], rashi: hinduRashis[8], gotra: gotras[7], mangalDosha: mangalDoshaOptions[0] },
     familyDetails: { fatherName: "Yusuf Khan", motherName: "Ayesha Khan", siblings: "1 younger sister", familyValues: familyValues[1] },
@@ -139,7 +139,7 @@ export const mockUsers: Match[] = [
     status: 'active',
   },
   { 
-    id: 13, name: 'Ishita Shah', age: 30, profession: 'Lawyer', location: 'Ahmedabad', caste: 'Jain', compatibilityScore: 89, highestEducation: 'LLB', gender: 'female',
+    id: 13, name: 'Ishita Shah', age: 30, profession: 'Lawyer', location: 'Ahmedabad', caste: 'Jain', compatibilityScore: 89, highestEducation: 'LLB', gender: 'Female',
     about: "Strong-willed and principled. I fight for what is right. I unwind by practicing yoga and meditation. Looking for an intelligent partner with strong moral values.",
     horoscope: { nakshatra: hinduNakshatras[15], rashi: hinduRashis[6], gotra: gotras[3], mangalDosha: mangalDoshaOptions[1] },
     familyDetails: { fatherName: "Jignesh Shah", motherName: "Mina Shah", siblings: "1 younger brother", familyValues: familyValues[2] },
@@ -149,7 +149,7 @@ export const mockUsers: Match[] = [
     status: 'active',
   },
   { 
-    id: 14, name: 'Rajesh Kumar', age: 34, profession: 'Government Officer', location: 'Patna', caste: 'Yadav', compatibilityScore: 70, highestEducation: 'MA Public Admin', gender: 'male',
+    id: 14, name: 'Rajesh Kumar', age: 34, profession: 'Government Officer', location: 'Patna', caste: 'Yadav', compatibilityScore: 70, highestEducation: 'MA Public Admin', gender: 'Male',
     about: "Serving the nation is my pride. I'm a disciplined and simple person. I enjoy reading newspapers and listening to old songs. Seeking a homely and understanding partner.",
     horoscope: { nakshatra: hinduNakshatras[26], rashi: hinduRashis[11], gotra: gotras[1], mangalDosha: mangalDoshaOptions[0] },
     familyDetails: { fatherName: "Ram Kumar", motherName: "Sita Devi", siblings: "2 elder sisters", familyValues: familyValues[0] },
@@ -159,7 +159,7 @@ export const mockUsers: Match[] = [
     status: 'active',
   },
   { 
-    id: 15, name: 'Pooja Desai', age: 27, profession: 'UX Designer', location: 'Pune', caste: 'Maratha', compatibilityScore: 91, highestEducation: 'M.Des', gender: 'female',
+    id: 15, name: 'Pooja Desai', age: 27, profession: 'UX Designer', location: 'Pune', caste: 'Maratha', compatibilityScore: 91, highestEducation: 'M.Des', gender: 'Female',
     about: "I love solving problems and creating user-friendly experiences. I'm a tech enthusiast and a cat lover. Looking for a creative and easy-going partner.",
     horoscope: { nakshatra: hinduNakshatras[0], rashi: hinduRashis[0], gotra: gotras[5], mangalDosha: mangalDoshaOptions[1] },
     familyDetails: { fatherName: "Sanjay Desai", motherName: "Vaishali Desai", siblings: "No siblings", familyValues: familyValues[2] },
@@ -169,7 +169,7 @@ export const mockUsers: Match[] = [
     status: 'active',
   },
   { 
-    id: 16, name: 'Amit Biswas', age: 32, profession: 'Scientist', location: 'Kolkata', caste: 'Kayastha', compatibilityScore: 84, highestEducation: 'PhD Physics', gender: 'male',
+    id: 16, name: 'Amit Biswas', age: 32, profession: 'Scientist', location: 'Kolkata', caste: 'Kayastha', compatibilityScore: 84, highestEducation: 'PhD Physics', gender: 'Male',
     about: "Forever curious about the universe. My work is my passion. I relax by playing the sitar. Seeking an intellectual and independent partner who values knowledge.",
     horoscope: { nakshatra: hinduNakshatras[23], rashi: hinduRashis[10], gotra: gotras[4], mangalDosha: mangalDoshaOptions[2] },
     familyDetails: { fatherName: "Ashok Biswas", motherName: "Shipra Biswas", siblings: "1 elder sister", familyValues: familyValues[1] },

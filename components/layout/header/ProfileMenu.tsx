@@ -52,7 +52,7 @@ const ProfileMenu: React.FC = () => {
           <img src={user.profile?.photos?.[0] || `https://i.pravatar.cc/150?u=${user.id}`} alt="My Profile" className="w-9 h-9 rounded-full object-cover border-2 border-amber-500/50" />
         ) : (
           <div className="w-9 h-9 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold border-2 border-purple-500/50">
-            {user.name.charAt(0)}
+            {user.name?.charAt(0)}
           </div>
         )}
       </button>

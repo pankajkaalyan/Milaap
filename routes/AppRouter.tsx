@@ -94,7 +94,7 @@ const AppRouter: React.FC = () => {
               <PrivateRoute roles={[UserRole.CUSTOMER]}>
                 <CustomerDashboard />
               </PrivateRoute>
-            } 
+            }
           />
           <Route 
             path="matches" 

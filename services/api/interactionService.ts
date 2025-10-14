@@ -22,18 +22,18 @@ export const interactionService = {
 
   getInterests: async (userId: number): Promise<Interest[]> => {
     const db = getDb();
-    return simulateRequest(db.interests.filter(i => i.senderId === userId || i.receiverId === userId));
+    return simulateRequest(db.interests.filter(i => i.senderId === userId || i.recipientId === userId));
   },
 
-  expressInterest: async (senderId: number, receiverId: number): Promise<Interest> => {
+  expressInterest: async (senderId: number, recipientId: number): Promise<Interest> => {
     const db = getDb();
-    const existing = db.interests.find(i => i.senderId === senderId && i.receiverId === receiverId);
+    const existing = db.interests.find(i => i.senderId === senderId && i.recipientId === recipientId);
     if (existing) return simulateError("Interest already expressed", 409) as Promise<Interest>;
     
     const newInterest: Interest = {
       id: Date.now(),
       senderId,
-      receiverId,
+      recipientId,
       status: InterestStatus.PENDING,
       timestamp: new Date().toISOString(),
     };
