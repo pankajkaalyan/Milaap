@@ -7,6 +7,7 @@ import Card from '../components/ui/Card';
 import { useForm } from '../hooks/useForm';
 import { required, email } from '../utils/validators';
 import { ForgotPasswordFormData } from '../types';
+import { forgotPasswordAPI } from '@/services/api/auth';
 
 const ForgotPassword = () => {
   const { t, addToast } = useAppContext();
@@ -15,19 +16,24 @@ const ForgotPassword = () => {
   const { formData, errors, handleInputChange, handleSubmit } = useForm<ForgotPasswordFormData>(
     { email: '' },
     { email: [required(t, t('login.email')), email(t)] },
-    (data) => {
+    async (data) => {
       // In a real app, you would make an API call here.
       console.log('Password reset requested for:', data.email);
-      addToast(t('forgot_password.success'), 'success');
-      navigate('/login');
+      await forgotPasswordAPI(data.email).then(() => {
+        addToast(t('forgotPassword.success'), 'success');
+        navigate('/login');
+      }).catch(err => {
+        console.error('Forgot password failed:', err);
+        addToast(t('forgotPassword.failure'), 'error');
+      });
     }
   );
 
   return (
     <div className="max-w-md mx-auto">
       <Card>
-        <h2 className="text-3xl font-bold text-center text-white mb-2">{t('forgot_password.title')}</h2>
-        <p className="text-gray-400 text-center mb-6">{t('forgot_password.subtitle')}</p>
+        <h2 className="text-3xl font-bold text-center text-white mb-2">{t('forgotPassword.title')}</h2>
+        <p className="text-gray-400 text-center mb-6">{t('forgotPassword.subtitle')}</p>
         <form onSubmit={handleSubmit} className="space-y-6">
           <Input
             id="email"
@@ -39,7 +45,7 @@ const ForgotPassword = () => {
             error={errors.email}
             placeholder="e.g., user@example.com"
           />
-          <Button type="submit">{t('forgot_password.cta')}</Button>
+          <Button type="submit">{t('forgotPassword.cta')}</Button>
         </form>
          <p className="mt-6 text-center text-sm text-gray-400">
             Remember your password? <Link to="/login" className="font-medium text-amber-400 hover:text-amber-300 cursor-pointer">{t('nav.login')}</Link>

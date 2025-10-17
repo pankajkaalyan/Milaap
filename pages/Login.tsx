@@ -33,6 +33,7 @@ const Login: React.FC = () => {
         .then((res) => {
           localStorage.setItem("token", res.accessToken);
           localStorage.setItem("refreshToken", res.refreshToken);
+          localStorage.setItem("loginTime", Date.now().toString());
           login(credentials.username, role);
           trackEvent('login_success', { email: data.email, role });
           addToast('Login successful!', 'success');

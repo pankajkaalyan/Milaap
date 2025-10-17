@@ -5,8 +5,12 @@ import AnimatedBackground from './components/AnimatedBackground';
 import { UIContextProvider } from './context/UIContext';
 import { AuthContextProvider } from './context/AuthContext';
 import { AppDataContextProvider } from './context/AppDataContext';
+import useSessionTimeout from './pages/SessionTimeout';
+import useInactivityTimeout from './pages/InactivityTimeout';
 
 function App() {
+  useSessionTimeout();
+  useInactivityTimeout();
   return (
     <UIContextProvider>
       <AuthContextProvider>

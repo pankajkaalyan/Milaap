@@ -1,0 +1,22 @@
+import { useEffect } from "react";
+
+const SESSION_TIMEOUT = 5 * 60 * 1000; // 5 minutes
+
+const useSessionTimeout = () => {
+  
+  useEffect(() => {
+    const checkSession = () => {
+      const loginTime = localStorage.getItem("loginTime");
+      if (loginTime && Date.now() - Number(loginTime) > SESSION_TIMEOUT) {
+        alert("Session expired! Please log in again.");
+        localStorage.clear();
+         window.location.href = "/login"; // ✅ direct redirect
+      }
+    };
+
+    const interval = setInterval(checkSession, 60000); // check every 1 min
+    return () => clearInterval(interval);
+  }, []);
+};
+
+export default useSessionTimeout;

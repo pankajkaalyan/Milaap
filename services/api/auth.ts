@@ -22,3 +22,12 @@ export const logoutAPI = async () => {
     }
 };
 
+export const forgotPasswordAPI = async (email) => {
+    try {
+        const response = await API.post("/api/auth/forgot-password", { email });
+        return response.data;
+    } catch (error) {
+        console.error("Error sending forgot password email:", error);
+        throw error;
+    }
+};
