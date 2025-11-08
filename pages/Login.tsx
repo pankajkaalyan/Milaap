@@ -38,7 +38,7 @@ const Login: React.FC = () => {
           localStorage.setItem("token", res.accessToken);
           localStorage.setItem("refreshToken", res.refreshToken);
           localStorage.setItem("loginTime", Date.now().toString());
-          login(credentials.username, role);
+          login(credentials.username, role, undefined, res.accessToken);
           trackEvent('login_success', { email: data.email, role });
           addToast('Login successful!', 'success');
           fetchCurrentUserAPI().then(async data => {

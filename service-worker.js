@@ -34,6 +34,11 @@ self.addEventListener('activate', (event) => {
       );
     }).then(() => self.clients.claim()) // Take control of all open clients.
   );
+  localStorage?.clear();
+  event.waitUntil(
+    caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key))))
+  );
+  window.location.reload();
 });
 
 // Fetch event: Implement a cache-first, then network strategy with caching.

@@ -21,8 +21,8 @@ const Interests: React.FC = () => {
         if (!user) return { received: [], sent: [] };
         // console.log('mockUsers:', mockUsers);
         console.log('interests interests: 2', interests);
-        const receivedInterestsByUser = interests.received
-        const sentInterestsByUser = interests.sent
+        const receivedInterestsByUser = interests?.received || [];
+        const sentInterestsByUser = interests?.sent || [];
         // console.log('receivedInterestsByUser:', receivedInterestsByUser);
         // console.log('sentInterestsByUser:', sentInterestsByUser);
         return { received: receivedInterestsByUser, sent: sentInterestsByUser };

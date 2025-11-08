@@ -66,7 +66,7 @@ export const useNotifications = (user: User | null, t: TFunction, setInterests: 
                         link = '/interests';
                         // Mock receiving an interest
                         setInterests(prev => {
-                            if (prev.some(i => i.senderId === randomUser.id && i.recipientId === user.id)) return prev;
+                            if (prev && prev.some(i => i.senderId === randomUser.id && i.recipientId === user.id)) return prev;
                             const newInterest: Interest = {
                                 id: Date.now(),
                                 senderId: randomUser.id as number,

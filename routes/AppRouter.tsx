@@ -50,6 +50,7 @@ interface PrivateRouteProps {
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, roles }) => {
   const { user } = useAuthContext();
+  console.log('PrivateRoute - user:', user);
   if (!user || !roles.includes(user.role)) {
     return <Navigate to="/login" replace />;
   }

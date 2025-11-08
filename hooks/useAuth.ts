@@ -10,16 +10,20 @@ const defaultNotificationSettings: NotificationSettings = {
 
 export const useAuth = () => {
     const [user, setUser] = useState<User | null>(null);
-
+    const [token, setToken] = useState<string | null>(null);
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         // console.log('Stored user in useAuth:', storedUser);
         if (storedUser) {
             setUser(JSON.parse(storedUser));
         }
+        const storedToken = localStorage.getItem("token");
+        if (storedToken) {
+            setToken(storedToken);
+        }
     }, []);
 
-    const login = (email: string, role: UserRole, profile?: UserProfile) => {
+    const login = (email: string, role: UserRole, profile?: UserProfile, token?: string) => {
         let mockUser: User;
         if (role === UserRole.ADMIN) {
             const isAdminSuper = email === 'admin@example.com';
@@ -56,14 +60,18 @@ export const useAuth = () => {
             });
         }
         localStorage.setItem('user', JSON.stringify(mockUser));
+        if (token) {
+            setToken(token);
+        }
         setUser(mockUser);
     };
 
     const logout = () => {
+        setToken(null);
         localStorage.removeItem('user');
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
-        
+
         if ('caches' in window) {
             caches.keys().then(names => {
                 names.forEach(name => caches.delete(name));
@@ -71,10 +79,8 @@ export const useAuth = () => {
         }
 
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(registrations => {
-                for (let reg of registrations) {
-                    reg.unregister();
-                }
+            navigator.serviceWorker.getRegistrations().then(regs => {
+                regs.forEach(reg => reg.unregister());
             });
         }
         localStorage.clear();
@@ -87,6 +93,7 @@ export const useAuth = () => {
     };
 
     return {
+        token,
         user,
         login,
         logout,
