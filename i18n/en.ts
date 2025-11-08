@@ -265,6 +265,7 @@ export const en = {
       pending: 'Pending',
       accepted: 'Accepted',
       declined: 'Declined',
+      none: 'none',
     },
     accept: 'Accept',
     decline: 'Decline',

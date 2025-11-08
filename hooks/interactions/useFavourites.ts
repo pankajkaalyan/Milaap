@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { User, Match } from '../../types';
 import { interactionService } from '../../services/api/interactionService';
 import { mockUsers } from '../../data/mockUsers';
+import { addToFavouritesAPI, removeFromFavouritesAPI } from '@/services/api/dashboard';
 
 type TFunction = (key: string, options?: Record<string, string | number>) => string;
 type AddToastFunction = (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -28,15 +29,31 @@ export const useFavourites = (user: User | null, t: TFunction, addToast: AddToas
 
     const toggleFavourite = async (match: Match) => {
         if (!user) return;
-        const newFavouriteIds = await interactionService.toggleFavourite(user.id as number, match.id as number);
-        const newFavourites = mockUsers.filter(u => newFavouriteIds.includes(u.id as number));
-        setFavourites(newFavourites);
+        // const newFavouriteIds = await interactionService.toggleFavourite(user.id as number, match.id as number);
+        // const newFavourites = mockUsers.filter(u => newFavouriteIds.includes(u.id as number));
+        // setFavourites(newFavourites);
 
-        const isNowFavourite = newFavouriteIds.includes(match.id as number);
-        addToast(
-            isNowFavourite ? t('toasts.favourite.added', { name: match.name }) : t('toasts.favourite.removed', { name: match.name }),
-            isNowFavourite ? 'success' : 'info'
-        );
+        // const isNowFavourite = newFavouriteIds.includes(match.id as number);
+        // addToast(
+        //     isNowFavourite ? t('toasts.favourite.added', { name: match.name }) : t('toasts.favourite.removed', { name: match.name }),
+        //     isNowFavourite ? 'success' : 'info'
+        // );
+        if (!match.isFavourite) {
+            addToFavouritesAPI(match.id).then(() => {
+                console.log('Added to favourites successfully');
+                setFavourites(prev => [...prev, match]);
+                addToast(t('toasts.favourite.added', { name: match.name }), 'success');
+            });
+        }
+        else {
+            removeFromFavouritesAPI(match.id).then(() => {
+                console.log('Removed from favourites successfully');
+                setFavourites(prev => prev.filter(fav => fav.id !== match.id));
+                addToast(t('toasts.favourite.removed', { name: match.name }), 'info');
+            });
+
+        }
+
     };
 
     return { favourites, toggleFavourite };

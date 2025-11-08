@@ -72,6 +72,11 @@ export interface UserProfile {
   profileVisibility?: 'all' | 'premium';
   contactVisibility?: 'accepted' | 'premium';
   status?: 'active' | 'deactivated';
+  location?: string;
+  interestShown?: InterestShown;
+  isFavourite?: boolean;
+  isBlocked?: boolean;
+  isVerified?: boolean;
 }
 
 export interface User {
@@ -203,7 +208,43 @@ export interface Interest {
   updatedAt?: string;
 }
 
+export interface UserInterest {
+  id: number;
+  createdAt: string;
+  direction: string;
+  message: string;
+  recipientId: number;
+  senderId: number;
+  status: string;
+  updatedAt: string;
+  profile: InterestUserProfile;
+  interestRequestId?: number;
+}
+
+export interface InterestUserProfile {
+  id: number;
+  fullName: string;
+  age: number;
+  caste: string;
+  profession: string;
+  city: string;
+  heigherEducation: string;
+  photos: string;
+}
+
+export interface Interests {
+  sent: UserInterest[];
+  received: UserInterest[];
+}
+
+export interface InterestShown {
+  interestRequestId: number;
+  isMutual: boolean;
+  isSent: boolean;
+  status: string;
+}
+
 export interface ChatHistory {
-    sender: string;
-    text: string;
+  sender: string;
+  text: string;
 }

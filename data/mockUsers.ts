@@ -6,7 +6,7 @@ const gotras = ["Atri", "Bhardwaj", "Kashyap", "Gautam", "Jamadagni", "Vashisth"
 const mangalDoshaOptions: ('Yes' | 'No' | 'Partial')[] = ['Yes', 'No', 'Partial'];
 const familyValues: ('Traditional' | 'Moderate' | 'Liberal')[] = ['Traditional', 'Moderate', 'Liberal'];
 
-export const mockUsers: Match[] = [
+export let mockUsers: Match[] = [
   { 
     id: 1, name: 'Ananya Sharma', age: 28, profession: 'Software Engineer', location: 'Bangalore', caste: 'Brahmin', compatibilityScore: 88, highestEducation: 'B.Tech CS', gender: 'Female',
     about: "A blend of modern thinking and traditional values. I enjoy coding, hiking, and exploring new cuisines. Looking for a partner who is ambitious, caring, and has a good sense of humor.",

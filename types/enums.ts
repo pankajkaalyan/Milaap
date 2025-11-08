@@ -129,4 +129,5 @@ export enum InterestStatus {
   PENDING = 'PENDING',
   ACCEPTED = 'ACCEPTED',
   DECLINED = 'DECLINED',
+  NONE = 'NONE',
 }

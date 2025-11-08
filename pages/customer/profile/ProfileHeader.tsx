@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Match, InterestStatus, ButtonVariant } from '../../../types';
+import { Match, InterestStatus, ButtonVariant, User } from '../../../types';
 import { useAppContext } from '../../../hooks/useAppContext';
 import Card from '../../../components/ui/Card';
 import Button from '../../../components/ui/Button';
@@ -26,7 +26,7 @@ const MoreOptionsIcon = () => (
 );
 
 interface ProfileHeaderProps {
-    user: Match;
+    user: User;
     isFavourite: boolean;
     isBlocked: boolean;
     sentInterestStatus?: InterestStatus;
@@ -46,9 +46,9 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 }) => {
     const { t } = useAppContext();
     const [isOptionsOpen, setIsOptionsOpen] = useState(false);
-    const targetUserIsPremium = user.membership !== 'FREE';
-    
-    const userPhotos = user.photos && user.photos.length > 0 ? user.photos : [`https://picsum.photos/800/600?random=${user.id}`];
+    // const targetUserIsPremium = user.membership !== 'FREE';
+
+    const userPhotos = user.profile.photos && user.profile.photos.length > 0 ? user.profile.photos : [`https://picsum.photos/800/600?random=${user.id}`];
 
     return (
         <Card>
@@ -57,10 +57,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 <div className="text-center sm:text-left mt-4 sm:mt-0 flex-grow">
                     <h1 className="text-4xl font-bold text-white flex items-center justify-center sm:justify-start flex-wrap">
                         {user.name}, {user.age}
-                        {user.verificationStatus === 'Verified' && <VerifiedBadge />}
-                        {targetUserIsPremium && <PremiumBadge text={t('profile.premium_member')} />}
+                        {user.profile.verificationStatus.toLocaleLowerCase() === 'verified' && <VerifiedBadge />}
+                        {/* {targetUserIsPremium && <PremiumBadge text={t('profile.premium_member')} />} */}
                     </h1>
-                    <p className="text-gray-300">{user.profession} in {user.location}</p>
+                    <p className="text-gray-300">{user.profile.profession} in {user.profile.location}</p>
                     
                     <div className="flex flex-wrap justify-center sm:justify-start gap-2 mt-4">
                         {receivedInterestStatus === InterestStatus.PENDING ? (

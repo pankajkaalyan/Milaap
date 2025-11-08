@@ -10,6 +10,7 @@ export const fetchInterestsAPI = async () => {
     }
 };
 
+
 export const sendInterestAPI = async (recipientId: number, message: string) => {
     try {
         const response = await API.post("/api/interests", { recipientId, message });
@@ -18,4 +19,24 @@ export const sendInterestAPI = async (recipientId: number, message: string) => {
         console.error("Error sending interest:", error);
         throw error;
     }
+};
+
+export const acceptInterestAPI = async (interestId: number | string, message: string) => {
+    try {
+        const response = await API.post(`/api/interests/accept`, { interestId, message });
+        return response.data;
+    } catch (error) {
+        console.error("Error accepting interest:", error);
+        throw error;
+    }   
+};
+
+export const declineInterestAPI = async (interestId: number | string, message: string) => {
+    try {
+        const response = await API.post(`/api/interests/decline`, { interestId, message });
+        return response.data;
+    } catch (error) {
+        console.error("Error declining interest:", error);
+        throw error;
+    }   
 };

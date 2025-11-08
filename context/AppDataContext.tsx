@@ -2,7 +2,8 @@ import React, { createContext, ReactNode } from 'react';
 import { 
     AdminRole, MembershipPlan, Notification, UserRole, User, UserProfile,
     Match, SuccessStory, Report, AIKundliReport, 
-    AIMatchSuggestion, VerificationLog, AdminUser, Interest 
+    AIMatchSuggestion, VerificationLog, AdminUser, Interest, 
+    Interests
 } from '../types';
 
 import { useAuthContext } from '../hooks/useAuthContext';
@@ -27,12 +28,12 @@ export interface AppDataContextType {
   toggleFavourite: (match: Match) => void;
   
   // from useInterests
-  interests: Interest[];
-  setInterests: React.Dispatch<React.SetStateAction<Interest[]>>;
-  expressInterest: (targetUserId: number) => void;
-  acceptInterest: (senderId: number) => void;
-  declineInterest: (senderId: number) => void;
-  
+  interests: Interests;
+  setInterests: React.Dispatch<React.SetStateAction<Interests>>;
+  expressInterest: (targetUserId: number, targetName: string, message?: string) => void;
+  acceptInterest: (interestId: number, senderName: string) => void;
+  declineInterest: (interestId: number, senderName: string) => void;
+
   // from useSuccessStories
   allSuccessStories: SuccessStory[];
   setAllSuccessStories: React.Dispatch<React.SetStateAction<SuccessStory[]>>;

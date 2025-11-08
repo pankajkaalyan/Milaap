@@ -59,7 +59,7 @@ export const UIContextProvider: React.FC<{ children: ReactNode }> = ({ children 
   };
 
   const trackEvent = (eventName: string, eventProperties?: Record<string, string | number | boolean | null>) => {
-    console.log('Analytics Event:', eventName, eventProperties);
+    // console.log('Analytics Event:', eventName, eventProperties);
     // window.gtag('event', eventName, eventProperties);
   };
   

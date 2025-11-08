@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAppContext } from '../hooks/useAppContext';
 import { UserRole, LoginFormData, ButtonVariant, SpinnerSize } from '../types';
@@ -26,6 +26,10 @@ const Login: React.FC = () => {
       password: required(t, t('login.password')),
     },
     (data) => {
+      localStorage.removeItem("token");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("loginTime");
+      localStorage.removeItem("user");
       const isAdminLogin = data.email === 'admin@example.com' || data.email === 'moderator@example.com';
       const role = isAdminLogin ? UserRole.ADMIN : UserRole.CUSTOMER;
       const credentials = { username: data.email, password: data.password };
@@ -38,7 +42,7 @@ const Login: React.FC = () => {
           trackEvent('login_success', { email: data.email, role });
           addToast('Login successful!', 'success');
           fetchCurrentUserAPI().then(async data => {
-            console.log('Fetched current user:', data);
+            // console.log('Fetched current user:', data);
             let mockUser = {
               id: data.id,
               email: data.email,
@@ -53,7 +57,7 @@ const Login: React.FC = () => {
           }).catch(err => {
             console.error('Error fetching current user:', err);
           });
-          
+
         })
         .catch((err) => {
           console.error('Login failed:', err);
@@ -62,6 +66,10 @@ const Login: React.FC = () => {
     }
   );
 
+  useEffect(() => {
+    localStorage.removeItem("token");
+  
+  }, []);
   const handleGoogleLogin = () => {
     setIsSocialLoginLoading('google');
     addToast('Redirecting to Google...', 'info');

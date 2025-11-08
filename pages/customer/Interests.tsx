@@ -19,27 +19,13 @@ const Interests: React.FC = () => {
     const { received, sent } = useMemo(() => {
         console.log('user:', user);
         if (!user) return { received: [], sent: [] };
-        console.log('interests:', interests);
-        console.log('mockUsers:', mockUsers);
-        interests.map(i => i.senderId = 4); // For testing purposes only, to be removed later
-        console.log('interests: 1', interests);
-        const receivedInterests = interests
-            .filter(i => i.recipientId === user.id)
-            .map(interest => {
-                const sender = mockUsers.find(u => u.id === interest.senderId);
-                return sender ? { interest, user: sender } : null;
-            })
-            .filter(Boolean);
-            
-        const sentInterests = interests
-            .filter(i => i.senderId === user.id)
-            .map(interest => {
-                const receiver = mockUsers.find(u => u.id === interest.recipientId);
-                return receiver ? { interest, user: receiver } : null;
-            })
-            .filter(Boolean);
-
-        return { received: receivedInterests, sent: sentInterests };
+        // console.log('mockUsers:', mockUsers);
+        console.log('interests interests: 2', interests);
+        const receivedInterestsByUser = interests.received
+        const sentInterestsByUser = interests.sent
+        // console.log('receivedInterestsByUser:', receivedInterestsByUser);
+        // console.log('sentInterestsByUser:', sentInterestsByUser);
+        return { received: receivedInterestsByUser, sent: sentInterestsByUser };
 
     }, [interests, user]);
 
@@ -59,7 +45,7 @@ const Interests: React.FC = () => {
 
     const listToDisplay = activeTab === InterestTab.RECEIVED ? received : sent;
     const noResultsMessage = activeTab === InterestTab.RECEIVED ? t('interests.no_received') : t('interests.no_sent');
-
+    console.log('List to display:', listToDisplay);
     return (
         <div className="max-w-5xl mx-auto">
             <PageHeader title={t('interests.title')} />
@@ -73,13 +59,12 @@ const Interests: React.FC = () => {
                 <div className="space-y-4">
                     {listToDisplay.map((item, index) => (
                         item && (
-                            <div key={item.interest.id} className="animate-fade-in-up" style={{ animationDelay: `${index * 75}ms`}}>
+                            <div key={item.profile.id} className="animate-fade-in-up" style={{ animationDelay: `${index * 75}ms`}}>
                                 <InterestCard
-                                    user={item.user}
-                                    interest={item.interest}
+                                    interest={item}
                                     type={activeTab}
-                                    onAccept={() => acceptInterest(item.interest.senderId)}
-                                    onDecline={() => declineInterest(item.interest.senderId)}
+                                    onAccept={() => acceptInterest(item.interestRequestId, item.profile.fullName)}
+                                    onDecline={() => declineInterest(item.interestRequestId, item.profile.fullName)}
                                 />
                             </div>
                         )

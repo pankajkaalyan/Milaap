@@ -13,6 +13,7 @@ export const useAuth = () => {
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
+        // console.log('Stored user in useAuth:', storedUser);
         if (storedUser) {
             setUser(JSON.parse(storedUser));
         }
@@ -39,7 +40,7 @@ export const useAuth = () => {
             }
 
             fetchCurrentUserAPI().then(data => {
-                console.log('Fetched current user:', data);
+                // console.log('Fetched current user:', data);
                 let mockUser = {
                     id: data.id,
                     email: data.email,
@@ -53,33 +54,6 @@ export const useAuth = () => {
             }).catch(err => {
                 console.error('Error fetching current user:', err);
             });
-            // mockUser = {
-            //     id: 1,
-            //     email,
-            //     name,
-            //     role: UserRole.CUSTOMER,
-            //     createdAt: new Date().toISOString(),
-            //     profile: {
-            //         gender: 'female',
-            //         dob: '1995-05-20',
-            //         photos: ['https://images.pexels.com/photos/3764119/pexels-photo-3764119.jpeg?auto=compress&cs=tinysrgb&w=600'],
-            //         horoscope: { nakshatra: "Rohini", rashi: "Vrishabha (Taurus)", gotra: "Kashyap", mangalDosha: "No" },
-            //         verificationStatus: 'Not Verified',
-            //         blockedUsers: [],
-            //         notificationSettings: defaultNotificationSettings,
-            //         membership: MembershipPlan.FREE,
-            //         partnerPreferences: {
-            //             ageRange: { min: 28, max: 35 },
-            //             heightRange: { min: 175, max: 190 },
-            //             castes: ['Brahmin', 'Kshatriya'],
-            //             professions: ['Doctor', 'Engineer', 'Business Analyst'],
-            //             mangalDosha: 'Any',
-            //         },
-            //         profileVisibility: 'all',
-            //         contactVisibility: 'accepted',
-            //         ...profile
-            //     },
-            // };
         }
         localStorage.setItem('user', JSON.stringify(mockUser));
         setUser(mockUser);
@@ -89,6 +63,21 @@ export const useAuth = () => {
         localStorage.removeItem('user');
         localStorage.removeItem('token');
         localStorage.removeItem('refreshToken');
+        
+        if ('caches' in window) {
+            caches.keys().then(names => {
+                names.forEach(name => caches.delete(name));
+            });
+        }
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                for (let reg of registrations) {
+                    reg.unregister();
+                }
+            });
+        }
+        localStorage.clear();
         setUser(null);
     };
 

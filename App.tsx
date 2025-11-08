@@ -9,8 +9,8 @@ import useSessionTimeout from './pages/SessionTimeout';
 import useInactivityTimeout from './pages/InactivityTimeout';
 
 function App() {
-  useSessionTimeout();
-  useInactivityTimeout();
+  // useSessionTimeout();
+  // useInactivityTimeout();
   return (
     <UIContextProvider>
       <AuthContextProvider>

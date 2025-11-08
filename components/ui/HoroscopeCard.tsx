@@ -43,22 +43,22 @@ const HoroscopeCard: React.FC<HoroscopeCardProps> = ({ details, title }) => {
                 <DetailItem
                     icon={<MoonIcon className="w-5 h-5" />}
                     label={t('profile.details.rashi')}
-                    value={details.rashi || 'N/A'}
+                    value={details?.rashi || 'N/A'}
                 />
                  <DetailItem
                     icon={<StarIcon className="w-5 h-5" />}
                     label={t('profile.details.nakshatra')}
-                    value={details.nakshatra || 'N/A'}
+                    value={details?.nakshatra || 'N/A'}
                 />
                  <DetailItem
                     icon={<UsersIcon className="w-5 h-5" />}
                     label={t('profile.details.gotra')}
-                    value={details.gotra || 'N/A'}
+                    value={details?.gotra || 'N/A'}
                 />
                  <DetailItem
                     icon={<ShieldExclamationIcon className="w-5 h-5" />}
                     label={t('profile.details.mangal_dosha')}
-                    value={details.mangalDosha || 'N/A'}
+                    value={details?.mangalDosha || 'N/A'}
                     highlight={hasMangalDosha}
                 />
             </div>

@@ -45,16 +45,16 @@ const Profile: React.FC = () => {
     }
     const { profile } = user;
     
-    const verificationStatus = profile.verificationStatus || 'Not Verified';
+    const verificationStatus = profile.verificationStatus || 'UNVERIFIED';
     const verificationStatusText = {
-        'Not Verified': t('verification.status.not_verified'),
-        'Pending': t('verification.status.pending'),
-        'Verified': t('verification.status.verified'),
+        'UNVERIFIED': t('verification.status.not_verified'),
+        'PENDING': t('verification.status.pending'),
+        'VERIFIED': t('verification.status.verified'),
     };
     const verificationStatusColor = {
-        'Not Verified': 'text-yellow-400',
-        'Pending': 'text-orange-400',
-        'Verified': 'text-green-400',
+        'UNVERIFIED': 'text-yellow-400',
+        'PENDING': 'text-orange-400',
+        'VERIFIED': 'text-green-400',
     };
 
     return (

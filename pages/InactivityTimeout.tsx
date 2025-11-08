@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const useInactivityTimeout = (timeout = 10 * 60 * 1000) => {
+const useInactivityTimeout = (timeout = 30 * 60 * 1000) => {
   let timer: ReturnType<typeof setTimeout>;
 
   const resetTimer = () => {
@@ -8,7 +8,7 @@ const useInactivityTimeout = (timeout = 10 * 60 * 1000) => {
     timer = setTimeout(() => {
       alert("You were inactive for too long. Logging out...");
       localStorage.clear();
-       window.location.href = "/login"; // ✅ direct redirect
+      window.location.href = "/login"; // ✅ direct redirect
     }, timeout);
   };
 
