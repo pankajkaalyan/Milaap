@@ -10,7 +10,7 @@ export const getDashboardDataAPI = async () => {
     }
 };
 
-export const addToFavouritesAPI = async (targetUserId: number) => {
+export const addToFavouritesAPI = async (targetUserId: string | number) => {
     try {
         const response = await API.post(`/api/user-interactions/favourite/${targetUserId}`);
         return response.data;
@@ -20,7 +20,7 @@ export const addToFavouritesAPI = async (targetUserId: number) => {
     }
 };
 
-export const removeFromFavouritesAPI = async (targetUserId: number) => {
+export const removeFromFavouritesAPI = async (targetUserId: string | number) => {
     try {
         const response = await API.delete(`/api/user-interactions/favourite/${targetUserId}`);
         return response.data;

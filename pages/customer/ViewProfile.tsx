@@ -89,8 +89,8 @@ const ViewProfile: React.FC = () => {
                     user={targetUserProfile}
                     isFavourite={isFavourite}
                     isBlocked={!!isBlocked}
-                    sentInterestStatus={sentInterest?.status}
-                    receivedInterestStatus={receivedInterest?.status}
+                    sentInterestStatus={sentInterest[0]?.status}
+                    receivedInterestStatus={receivedInterest[0]?.status}
                     onToggleFavourite={() => toggleFavourite(user)}
                     onToggleBlock={() => toggleBlockUser(user.id)}
                     onReport={openReportModal}

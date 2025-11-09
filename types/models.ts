@@ -87,6 +87,7 @@ export interface User {
   createdAt: string;
   profile?: UserProfile;
   adminRole?: AdminRole;
+  age?: number;
 }
 
 export interface ToastMessage {
@@ -96,16 +97,16 @@ export interface ToastMessage {
 }
 
 export interface Match extends UserProfile {
-  id: number;
+  id: string | number;
   name: string;
-  age: number;
-  location: string;
-  compatibilityScore: number;
+  age?: number;
+  location?: string;
+  compatibilityScore?: number;
   photos?: string[];
 }
 
 export interface Message {
-  id: string;
+  id: string | number;
   senderId: number | 'me' | string;
   content: string;
   type: MessageType;
@@ -114,7 +115,7 @@ export interface Message {
 }
 
 export interface Conversation {
-  userId: number;
+  userId: string | number;
   userName: string;
   messages: Message[];
 }
@@ -215,7 +216,7 @@ export interface UserInterest {
   message: string;
   recipientId: number;
   senderId: number;
-  status: string;
+  status: InterestStatus;
   updatedAt: string;
   profile: InterestUserProfile;
   interestRequestId?: number;

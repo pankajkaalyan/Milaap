@@ -14,16 +14,16 @@ const MutualMatches: React.FC = () => {
 
         const mutualMatchUserIds = new Set<number>();
 
-        interests.forEach(interest => {
-            if (interest.status === InterestStatus.ACCEPTED) {
-                if (interest.senderId === user.id) {
-                    mutualMatchUserIds.add(interest.recipientId);
-                }
-                if (interest.recipientId === user.id) {
-                    mutualMatchUserIds.add(interest.senderId);
-                }
-            }
-        });
+        // interests.forEach(interest => {
+        //     if (interest.status === InterestStatus.ACCEPTED) {
+        //         if (interest.senderId === user.id) {
+        //             mutualMatchUserIds.add(interest.recipientId);
+        //         }
+        //         if (interest.recipientId === user.id) {
+        //             mutualMatchUserIds.add(interest.senderId);
+        //         }
+        //     }
+        // });
 
         return mockUsers.filter(u => mutualMatchUserIds.has(u.id as number));
 

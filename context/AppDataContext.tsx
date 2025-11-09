@@ -30,9 +30,9 @@ export interface AppDataContextType {
   // from useInterests
   interests: Interests;
   setInterests: React.Dispatch<React.SetStateAction<Interests>>;
-  expressInterest: (targetUserId: number, targetName: string, message?: string) => void;
-  acceptInterest: (interestId: number, senderName: string) => void;
-  declineInterest: (interestId: number, senderName: string) => void;
+  expressInterest: (targetUserId: string | number, targetName: string, message?: string) => void;
+  acceptInterest: (interestId: string | number, senderName: string) => void;
+  declineInterest: (interestId: string | number, senderName: string) => void;
 
   // from useSuccessStories
   allSuccessStories: SuccessStory[];
@@ -44,8 +44,8 @@ export interface AppDataContextType {
   submitVerification: () => Promise<void>;
   verifyProfileWithAI: (idDocument: File) => Promise<void>;
   upgradePlan: (plan: MembershipPlan) => Promise<void>;
-  toggleBlockUser: (userId: number) => Promise<void>;
-  reportUser: (userId: number, reason: string, details: string) => void;
+  toggleBlockUser: (userId: string | number) => Promise<void>;
+  reportUser: (userId: string | number, reason: string, details: string) => void;
   deactivateAccount: () => Promise<void>;
   deleteAccount: () => Promise<void>;
   
@@ -54,7 +54,7 @@ export interface AppDataContextType {
   isFetchingAISuggestions: boolean;
   fetchAISuggestions: () => Promise<void>;
   kundliReports: Record<string, AIKundliReport | 'loading' | 'error'>;
-  fetchAIKundliReport: (targetUserId: number) => Promise<void>;
+  fetchAIKundliReport: (targetUserId: string | number) => Promise<void>;
   
   // from useAdminActions
   allUsers: User[];

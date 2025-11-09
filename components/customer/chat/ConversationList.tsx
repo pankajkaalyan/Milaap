@@ -5,12 +5,12 @@ import { mockUsers } from '../../../data/mockUsers';
 interface ConversationListProps {
   conversations: Conversation[];
   selectedConversationId: number | null;
-  onSelectConversation: (userId: number) => void;
+  onSelectConversation: (userId: string | number) => void;
 }
 
 const ConversationList: React.FC<ConversationListProps> = ({ conversations, selectedConversationId, onSelectConversation }) => {
 
-  const getAvatarUrl = (userId: number) => {
+  const getAvatarUrl = (userId: string | number) => {
     const user = mockUsers.find(u => u.id === userId);
     return user?.photos?.[0] || `https://picsum.photos/100/100?random=${userId}`;
   };
