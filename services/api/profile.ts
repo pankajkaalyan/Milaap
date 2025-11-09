@@ -24,11 +24,10 @@ export const updateProfileAPI = async (profileData, photos: File[]) => {
     console.log('Updating profile with data:', profileData, 'and photos:', photos);
     try {
         const formData = new FormData();
-
         const profileBlob = new Blob([JSON.stringify(profileData)], {
             type: "application/json",
         });
-        formData.append("profileData", profileBlob);
+        formData.append("profile", profileBlob);
         
         photos?.forEach(photo => {
             formData.append("photos", photo);

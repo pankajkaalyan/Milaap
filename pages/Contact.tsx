@@ -6,6 +6,7 @@ import Card from '../components/ui/Card';
 import { useForm } from '../hooks/useForm';
 import { required, email, alphaOnly } from '../utils/validators';
 import { ContactFormData } from '../types';
+import { contactAPI } from '@/services/api/contact';
 
 const Contact: React.FC = () => {
   const { t, addToast } = useAppContext();
@@ -19,8 +20,15 @@ const Contact: React.FC = () => {
     },
     (data) => {
       console.log('Contact form submitted:', data);
-      addToast(t('contact.success'), 'success');
-      setFormData({ name: '', email: '', message: '' }); // Reset form
+      const requestBody = { fullName: data.name, email: data.email, message: data.message };
+      contactAPI(requestBody).then(() => {
+        // Optionally handle success response
+        console.log('Contact form successfully submitted');
+        addToast(t('contact.success'), 'success');
+        setFormData({ name: '', email: '', message: '' }); // Reset form
+      }).catch((error) => {
+        addToast(t('contact.error'), 'error');
+      });
     }
   );
 

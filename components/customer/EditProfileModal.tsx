@@ -145,7 +145,6 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
                 // const newPhotoUrl = `https://picsum.photos/seed/${Date.now()}/400/400`;
                 const currentPhotos = formData.photos || [];
                 console.log('Updated photos list:', currentPhotos);
-                debugger
                 if (currentPhotos.length < 5) {
                     setFieldValue('photos', [...currentPhotos, previewUrl]);
                 } else {
