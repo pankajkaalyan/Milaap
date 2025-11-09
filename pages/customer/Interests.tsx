@@ -63,8 +63,8 @@ const Interests: React.FC = () => {
                                 <InterestCard
                                     interest={item}
                                     type={activeTab}
-                                    onAccept={() => acceptInterest(item.interestRequestId, item.profile.fullName)}
-                                    onDecline={() => declineInterest(item.interestRequestId, item.profile.fullName)}
+                                    onAccept={() => acceptInterest(item.interestRequestId, item.profile.id, item.profile.fullName)}
+                                    onDecline={() => declineInterest(item.interestRequestId, item.profile.id, item.profile.fullName)}
                                 />
                             </div>
                         )

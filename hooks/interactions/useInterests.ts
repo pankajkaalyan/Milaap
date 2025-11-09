@@ -1,7 +1,8 @@
 
 import { useState, useEffect } from 'react';
-import { User, InterestStatus, Interests } from '../../types';
+import { User, InterestStatus, Interests, AppEventStatus } from '../../types';
 import { acceptInterestAPI, declineInterestAPI, fetchInterestsAPI, sendInterestAPI } from '@/services/api/interests';
+import { eventBus } from '@/utils/eventBus';
 
 type TFunction = (key: string, options?: Record<string, string | number>) => string;
 type AddToastFunction = (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -35,6 +36,7 @@ export const useInterests = (user: User | null, t: TFunction, addToast: AddToast
         // setInterests(prev => [newInterest, ...prev]);
         sendInterestAPI(targetUserId, 'Hi').then(() => {
             console.log('Interest expressed successfully');
+            eventBus.emit(AppEventStatus.EXPRESS_INTEREST, { targetUserId, newStatus: InterestStatus.PENDING });
             fetchInterests();
         }).catch((error) => {
             console.error('Error expressing interest:', error);
@@ -44,7 +46,7 @@ export const useInterests = (user: User | null, t: TFunction, addToast: AddToast
     };
 
 
-    const updateInterestStatus = async (interestId: number, targetName:string, status: InterestStatus) => {
+    const updateInterestStatus = async (interestId: number, targetUserId: string | number, targetName: string, status: InterestStatus) => {
         if (!user) return;
 
         // const interestToUpdate = interests.find(i => i.senderId === senderId && i.recipientId === user.id);
@@ -57,10 +59,12 @@ export const useInterests = (user: User | null, t: TFunction, addToast: AddToast
         if (status === InterestStatus.ACCEPTED) {
             acceptInterestAPI(interestId, '').then(() => {
                 addToast(t('toasts.interest.accepted', { name: targetName || '' }), 'success');
+                eventBus.emit(AppEventStatus.ACCEPTED, { targetUserId, newStatus: InterestStatus.ACCEPTED });
             });
         } else {
             declineInterestAPI(interestId, '').then(() => {
                 addToast(t('toasts.interest.declined', { name: targetName || '' }), 'info');
+                eventBus.emit(AppEventStatus.DECLINED, { targetUserId, newStatus: InterestStatus.DECLINED });
             });
         }
     };
@@ -70,7 +74,7 @@ export const useInterests = (user: User | null, t: TFunction, addToast: AddToast
         interests,
         setInterests,
         expressInterest,
-        acceptInterest: (interestId: number, senderName: string) => updateInterestStatus(interestId, senderName, InterestStatus.ACCEPTED),
-        declineInterest: (interestId: number, senderName: string) => updateInterestStatus(interestId, senderName, InterestStatus.DECLINED),
+        acceptInterest: (interestId: number, targetUserId: string | number, senderName: string) => updateInterestStatus(interestId, targetUserId, senderName, InterestStatus.ACCEPTED),
+        declineInterest: (interestId: number, targetUserId: string | number, senderName: string) => updateInterestStatus(interestId, targetUserId, senderName, InterestStatus.DECLINED),
     };
 };

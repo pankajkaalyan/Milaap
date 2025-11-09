@@ -31,8 +31,8 @@ export interface AppDataContextType {
   interests: Interests;
   setInterests: React.Dispatch<React.SetStateAction<Interests>>;
   expressInterest: (targetUserId: string | number, targetName: string, message?: string) => void;
-  acceptInterest: (interestId: string | number, senderName: string) => void;
-  declineInterest: (interestId: string | number, senderName: string) => void;
+  acceptInterest: (interestId: string | number, targetUserId: string | number, senderName: string) => void;
+  declineInterest: (interestId: string | number, targetUserId: string | number, senderName: string) => void;
 
   // from useSuccessStories
   allSuccessStories: SuccessStory[];

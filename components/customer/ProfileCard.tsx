@@ -1,7 +1,9 @@
-import React from 'react';
-import { Match, InterestStatus, InterestShown } from '../../types';
+import React, { useEffect } from 'react';
+import { Match, InterestStatus, InterestShown, AppEventStatus } from '../../types';
 import { useAppContext } from '../../hooks/useAppContext';
 import { useNavigate, Link } from 'react-router-dom';
+import { eventBus } from "../../utils/eventBus";
+import { use } from 'framer-motion/client';
 
 interface ProfileCardProps {
     match: Match;
@@ -54,7 +56,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ match, isFavourite, onToggleF
         action();
         if(action === onToggleFavourite) {
             console.log('Toggled favourite for match:', match.id);
-            match.isFavourite = !match.isFavourite;
+            // match.isFavourite = !match.isFavourite;
         }
     }
 
@@ -67,13 +69,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ match, isFavourite, onToggleF
     }
 
     const handleAcceptInterest = () => {
-        acceptInterest(interestShown.interestRequestId, match.name);
-        interestShown.status = InterestStatus.ACCEPTED;
+        acceptInterest(interestShown.interestRequestId, match.id, match.name);
     }
 
     const handleDeclineInterest = () => {
-        declineInterest(interestShown.interestRequestId, match.name);
-        interestShown.status = InterestStatus.DECLINED;
+        declineInterest(interestShown.interestRequestId, match.id, match.name);
     }
 
 
@@ -82,6 +82,41 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ match, isFavourite, onToggleF
         if (score > 70) return 'bg-yellow-500/80 text-yellow-100';
         return 'bg-orange-500/80 text-orange-100';
     }
+
+    const updateStatusHandler = (data: { targetUserId: number; newStatus: InterestStatus }) => {
+        console.log('updateStatusHandler called with data:', data);
+        if (data.targetUserId === match.id) {
+            if (interestShown) {
+                interestShown.status = data.newStatus;
+                console.log(`Updated interest status for match ${match.id} to ${data.newStatus} via eventBus ${interestShown}`);
+                if (data.newStatus === InterestStatus.PENDING) {
+                    interestShown.isSent = true;
+                }
+            }
+        }
+    }
+
+    const updateFavouriteStatus = (data: { currentMatch: Match }) => {
+        console.log('updateFavouriteStatus called with data:', data);
+        if (data.currentMatch.id === match.id) {
+            match.isFavourite = !match.isFavourite;
+            console.log(`Updated favourite status for match ${match.id} to ${match.isFavourite} via eventBus`);
+        }
+    }
+
+    useEffect(() => {
+        // console.log('ProfileCard mounted for match:', match.id);
+        eventBus.on(AppEventStatus.ACCEPTED, updateStatusHandler);
+        eventBus.on(AppEventStatus.DECLINED, updateStatusHandler);
+        eventBus.on(AppEventStatus.EXPRESS_INTEREST, updateStatusHandler);
+        eventBus.on(AppEventStatus.FAVOURITE, updateFavouriteStatus);
+        return () => {
+            eventBus.off(AppEventStatus.ACCEPTED, updateStatusHandler);
+            eventBus.off(AppEventStatus.DECLINED, updateStatusHandler);
+            eventBus.off(AppEventStatus.EXPRESS_INTEREST, updateStatusHandler);
+            eventBus.off(AppEventStatus.FAVOURITE, updateFavouriteStatus);
+        }
+    }, [match.id]);
 
     return (
         <Link to={`/profile/${match.id}`} className="block bg-white/10 rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 flex flex-col group cursor-pointer">

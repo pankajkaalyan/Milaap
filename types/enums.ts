@@ -131,3 +131,12 @@ export enum InterestStatus {
   DECLINED = 'DECLINED',
   NONE = 'NONE',
 }
+
+
+export enum AppEventStatus {
+  ACCEPTED = 'ACCEPTED',
+  DECLINED = 'DECLINED',
+  EXPRESS_INTEREST = 'EXPRESS_INTEREST',
+  NONE = 'NONE',
+  FAVOURITE = 'FAVOURITE',
+}

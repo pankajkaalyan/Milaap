@@ -95,8 +95,8 @@ const ViewProfile: React.FC = () => {
                     onToggleBlock={() => toggleBlockUser(user.id)}
                     onReport={openReportModal}
                     onExpressInterest={() => expressInterest(user.id, user.name)}
-                    onAcceptInterest={() => acceptInterest(user.id, user.name)}
-                    onDeclineInterest={() => declineInterest(user.id, user.name)}
+                    onAcceptInterest={() => acceptInterest(1,user.id, user.name)}
+                    onDeclineInterest={() => declineInterest(1,user.id, user.name)}
                     onMessage={() => navigate(`/messages/${user.id}`)}
                 />
 
