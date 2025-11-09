@@ -53,6 +53,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ match, isFavourite, onToggleF
     const handleActionClick = (e: React.MouseEvent, action: () => void) => {
         e.preventDefault();
         e.stopPropagation();
+        (e.currentTarget as HTMLElement).blur();
         action();
         if(action === onToggleFavourite) {
             console.log('Toggled favourite for match:', match.id);

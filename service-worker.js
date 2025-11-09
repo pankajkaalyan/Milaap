@@ -73,7 +73,7 @@ self.addEventListener('fetch', (event) => {
             return networkResponse;
           }
         ).catch(error => {
-          console.error('Service Worker: Fetch failed.', error);
+          // console.error('Service Worker: Fetch failed.', error);
           // Optional: You could return a fallback offline page from the cache here.
           // For example: return caches.match('/offline.html');
           throw error;
