@@ -77,6 +77,7 @@ export interface UserProfile {
   isFavourite?: boolean;
   isBlocked?: boolean;
   isVerified?: boolean;
+  age?: number;
 }
 
 export interface User {

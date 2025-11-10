@@ -39,10 +39,10 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
                     nakshatra: data.horoscope?.nakshatra,
                 },
                 familyDetails: {
-                    fatherName: data.family?.fatherName,
-                    motherName: data.family?.motherName,
-                    siblings: data.family?.siblings,
-                    familyValues: data.family?.familyValues,
+                    fatherName: data.familyDetails?.fatherName,
+                    motherName: data.familyDetails?.motherName,
+                    siblings: data.familyDetails?.siblings,
+                    familyValues: data.familyDetails?.familyValues,
                 },
                 partnerPreferences: {
                     ageRange: data.partnerPreferences?.ageRange,
@@ -54,7 +54,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
             };
             console.log('Submitting profile update with data:', finalProfileData);
             // updateUserProfile(finalProfileData);
-            updateProfileAPI(finalProfileData, photos).then(updatedProfile => {
+            updateProfileAPI(finalProfileData, photos, videoFile).then(updatedProfile => {
                 console.log('Profile updated successfully:', updatedProfile);
                 addToast(t('profile.update_success'), 'success');
                 onClose();
@@ -72,6 +72,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
 
     useEffect(() => {
         if (user?.profile) {
+            console.log('Initializing edit profile form with user data:', user);
             const { partnerPreferences, ...restOfProfile } = user.profile;
             const initialFormState: EditProfileFormData = {
                 ...restOfProfile,
@@ -88,8 +89,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
 
     const handleFamilyChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFieldValue('family', {
-            ...formData.family,
+        setFieldValue('familyDetails', {
+            ...formData.familyDetails,
             [name]: value,
         } as FamilyDetails);
     };
@@ -272,15 +273,15 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
 
                     <h3 className="text-xl font-semibold text-white border-b border-gray-700 pb-2">{t('profile.family_details')}</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <Input label={t('profile.details.father_name')} name="fatherName" value={formData.family?.fatherName || ''} onChange={handleFamilyChange} />
-                        <Input label={t('profile.details.mother_name')} name="motherName" value={formData.family?.motherName || ''} onChange={handleFamilyChange} />
-                        <Input label={t('profile.details.siblings')} name="siblings" value={formData.family?.siblings || ''} onChange={handleFamilyChange} />
+                        <Input label={t('profile.details.father_name')} name="fatherName" value={formData.familyDetails?.fatherName || ''} onChange={handleFamilyChange} />
+                        <Input label={t('profile.details.mother_name')} name="motherName" value={formData.familyDetails?.motherName || ''} onChange={handleFamilyChange} />
+                        <Input label={t('profile.details.siblings')} name="siblings" value={formData.familyDetails?.siblings || ''} onChange={handleFamilyChange} />
                         <div>
                             <Dropdown
                                 id="familyValues"
                                 label={t('profile.details.family_values')}
-                                value={formData.family?.familyValues || 'Moderate'}
-                                onChange={(value) => setFieldValue('family', { ...formData.family, familyValues: value as FamilyDetails['familyValues'] })}
+                                value={formData.familyDetails?.familyValues || 'Moderate'}
+                                onChange={(value) => setFieldValue('familyDetails', { ...formData.familyDetails, familyValues: value as FamilyDetails['familyValues'] })}
                                 options={[{ value: 'Moderate', label: 'Moderate' }, { value: 'Traditional', label: 'Traditional' }, { value: 'Liberal', label: 'Liberal' }]}
                             />
                         </div>

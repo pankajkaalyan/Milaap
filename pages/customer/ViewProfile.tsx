@@ -25,6 +25,7 @@ const ViewProfile: React.FC = () => {
     const { userId } = useParams<{ userId: string }>();
     const navigate = useNavigate();
     const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') as User : null;
+    console.log('Current User:', user);
 
     const {
         activeModal,
@@ -40,6 +41,7 @@ const ViewProfile: React.FC = () => {
 
     const fetchedUserRef = useRef<string | null>(null);
 
+    
     useEffect(() => {
         const fetchUserProfile = async () => {
             if (fetchedUserRef.current === userId) return; // ✅ already fetched
@@ -61,9 +63,10 @@ const ViewProfile: React.FC = () => {
         }
     }, [userId]);
 
-    const sentInterest = interests.sent;
-    const receivedInterest = interests.received;
-
+    const sentInterest = interests?.sent;
+    const receivedInterest = interests?.received;
+    console.log('Sent Interests:', sentInterest);
+    console.log('Received Interests:', receivedInterest);
     if (loading) {
         return <div>Loading...</div>; // You can replace this with a proper loader component
     }
@@ -72,7 +75,7 @@ const ViewProfile: React.FC = () => {
         return <NotFound />;
     }
     const isBlocked = targetUserProfile?.profile?.blockedUsers?.includes(user.id.toString());
-    const isFavourite = favourites.some(fav => fav.id === user.id);
+    // const isFavourite = favourites.some(fav => fav.id === user.id);
     const isPremiumUser = targetUserProfile?.profile?.membership !== MembershipPlan.FREE;
     const handleViewContact = () => {
         if (isPremiumUser) {
@@ -87,10 +90,10 @@ const ViewProfile: React.FC = () => {
             <div className="max-w-4xl mx-auto space-y-8">
                 <ProfileHeader
                     user={targetUserProfile}
-                    isFavourite={isFavourite}
+                    isFavourite={targetUserProfile.profile.isFavourite}
                     isBlocked={!!isBlocked}
-                    sentInterestStatus={sentInterest[0]?.status}
-                    receivedInterestStatus={receivedInterest[0]?.status}
+                    sentInterestStatus={sentInterest?.length ? sentInterest[0]?.status : undefined}
+                    receivedInterestStatus={receivedInterest?.length ? receivedInterest[0]?.status : undefined}
                     onToggleFavourite={() => toggleFavourite(user)}
                     onToggleBlock={() => toggleBlockUser(user.id)}
                     onReport={openReportModal}
@@ -101,7 +104,7 @@ const ViewProfile: React.FC = () => {
                 />
 
                 <ProfileTabs
-                    user={user}
+                    user={targetUserProfile}
                     showContact={showContact}
                     onViewContact={handleViewContact}
                     onViewPhoto={openGalleryModal}

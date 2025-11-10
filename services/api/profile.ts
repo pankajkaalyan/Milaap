@@ -20,7 +20,7 @@ export const getProfileByIdAPI = async (profileId) => {
     }
 };
 
-export const updateProfileAPI = async (profileData, photos: File[]) => {
+export const updateProfileAPI = async (profileData, photos: File[], video: File[]) => {
     console.log('Updating profile with data:', profileData, 'and photos:', photos);
     try {
         const formData = new FormData();
@@ -31,6 +31,10 @@ export const updateProfileAPI = async (profileData, photos: File[]) => {
         
         photos?.forEach(photo => {
             formData.append("photos", photo);
+        });
+
+        video?.forEach(vid => {
+            formData.append("video", vid);
         });
 
         const response = await API.post(`/api/profile/update`, formData);
