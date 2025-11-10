@@ -1,5 +1,5 @@
 import React from 'react';
-import { Match, MediaPlayerType } from '../../../types';
+import { Match, MediaPlayerType, UserProfile } from '../../../types';
 import Card from '../../ui/Card';
 import MediaPlayer from '../../ui/MediaPlayer';
 import MicIcon from '../../icons/MicIcon';
@@ -14,7 +14,8 @@ interface GalleryTabProps {
 
 const GalleryTab: React.FC<GalleryTabProps> = ({ user, onViewPhoto, onWatchVideo }) => {
     const { t } = useAppContext();
-    const userPhotos = user.photos && user.photos.length > 0 ? user.photos : [`https://picsum.photos/800/600?random=${user.id}`];
+    const targetUserProfile = (user['profile'] ? user['profile'] : null) as UserProfile;
+    const userPhotos = targetUserProfile.photos && targetUserProfile.photos.length > 0 ? targetUserProfile.photos : [];
 
     return (
         <div className="space-y-8">
