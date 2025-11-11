@@ -22,12 +22,12 @@ const CallingModal: React.FC<CallingModalProps> = ({ user, onClose }) => {
             />
             <h2 className="text-3xl font-bold text-white">{user.name}</h2>
             <p className="text-lg text-gray-300 mt-2">
-                {t('chat.calling').replace('{name}', user.name.split(' ')[0])}
+                {t('messages.chat.calling').replace('{name}', user.name.split(' ')[0])}
             </p>
 
             <div className="mt-8">
                 <Button onClick={onClose} className="bg-red-600 hover:bg-red-700 focus:ring-red-500 !bg-gradient-to-r !from-red-500 !to-red-700">
-                    {t('chat.end_call')}
+                    {t('messages.chat.end_call')}
                 </Button>
             </div>
         </div>

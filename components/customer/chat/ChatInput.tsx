@@ -118,7 +118,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
         value={text}
         onChange={(e) => setText(e.target.value)}
         onKeyPress={handleKeyPress}
-        placeholder={isRecording ? t('chat.recording') : t('chat.type_message')}
+        placeholder={isRecording ? t('message.chat.recording') : t('messages.chat.type_message')}
         className="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 text-white disabled:opacity-50"
         aria-label="Chat input"
         disabled={isRecording}

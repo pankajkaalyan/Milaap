@@ -24,9 +24,9 @@ const SubmitStoryModal: React.FC<SubmitStoryModalProps> = ({ isOpen, onClose }) 
       couplePhoto: [] as File[],
     },
     {
-      partnerName: [required(t, t('submit_story.partner_name')), alphaOnly(t, t('submit_story.partner_name'))],
-      weddingDate: [required(t, t('submit_story.wedding_date')), dateNotInFuture(t, t('submit_story.wedding_date'))],
-      story: required(t, t('submit_story.story_label')),
+      partnerName: [required(t, t('successStories.submit.partner_name')), alphaOnly(t, t('successStories.submit.partner_name'))],
+      weddingDate: [required(t, t('successStories.submit.wedding_date')), dateNotInFuture(t, t('successStories.submit.wedding_date'))],
+      story: required(t, t('successStories.submit.story_label')),
       couplePhoto: fileRequired(t),
     },
     (data) => {
@@ -45,18 +45,18 @@ const SubmitStoryModal: React.FC<SubmitStoryModalProps> = ({ isOpen, onClose }) 
   const footer = (
      <>
         <Button onClick={onClose} variant={ButtonVariant.SECONDARY} className="w-auto">Cancel</Button>
-        <Button onClick={handleSubmit} type="submit" className="w-auto">{t('submit_story.cta')}</Button>
+        <Button onClick={handleSubmit} type="submit" className="w-auto">{t('successStories.submit.cta')}</Button>
      </>
   );
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={t('submit_story.title')} footer={footer} size={ModalSize.XXL}>
+    <Modal isOpen={isOpen} onClose={onClose} title={t('successStories.submit.title')} footer={footer} size={ModalSize.XXL}>
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
              <Input 
                 id="yourName"
                 name="yourName"
-                label={t('submit_story.your_name')}
+                label={t('successStories.submit.your_name')}
                 type="text"
                 value={user?.name || ''}
                 disabled
@@ -64,7 +64,7 @@ const SubmitStoryModal: React.FC<SubmitStoryModalProps> = ({ isOpen, onClose }) 
               <Input
                 id="partnerName"
                 name="partnerName"
-                label={t('submit_story.partner_name')}
+                label={t('successStories.submit.partner_name')}
                 type="text"
                 value={formData.partnerName}
                 onChange={handleInputChange}
@@ -74,7 +74,7 @@ const SubmitStoryModal: React.FC<SubmitStoryModalProps> = ({ isOpen, onClose }) 
           <Input
             id="weddingDate"
             name="weddingDate"
-            label={t('submit_story.wedding_date')}
+            label={t('successStories.submit.wedding_date')}
             type="date"
             value={formData.weddingDate}
             onChange={handleInputChange}
@@ -84,8 +84,8 @@ const SubmitStoryModal: React.FC<SubmitStoryModalProps> = ({ isOpen, onClose }) 
           <div>
             <FileUpload
               id="couple-photo"
-              label={t('submit_story.couple_photo')}
-              description={t('submit_story.photo_desc')}
+              label={t('successStories.submit.couple_photo')}
+              description={t('successStories.submit.photo_desc')}
               onFilesChange={(files) => setFieldValue('couplePhoto', files)}
               accept="image/*"
             />
@@ -93,7 +93,7 @@ const SubmitStoryModal: React.FC<SubmitStoryModalProps> = ({ isOpen, onClose }) 
           </div>
           <div>
             <label htmlFor="story" className="block text-sm font-medium text-gray-300 mb-1">
-                {t('submit_story.story_label')}
+                {t('successStories.submit.story_label')}
             </label>
             <textarea
                 id="story"

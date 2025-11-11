@@ -28,16 +28,16 @@ const SuccessStories: React.FC = () => {
     <>
       <SEO 
         title={`${t('nav.success_stories')} | Milaap`}
-        description={t('success_stories.subtitle')}
+        description={t('successStories.subtitle')}
       />
       <div className="text-center">
         <PageHeader 
-            title={t('success_stories.title')}
-            subtitle={t('success_stories.subtitle')}
+            title={t('successStories.title')}
+            subtitle={t('successStories.subtitle')}
         />
         <div className="animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
           <Button onClick={handleShareStoryClick} className="max-w-xs mx-auto">
-            {t('success_stories.cta')}
+            {t('successStories.cta')}
           </Button>
         </div>
       </div>

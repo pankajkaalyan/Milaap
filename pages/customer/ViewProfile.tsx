@@ -94,13 +94,13 @@ const ViewProfile: React.FC = () => {
                     isBlocked={!!isBlocked}
                     sentInterestStatus={sentInterest?.length ? sentInterest[0]?.status : undefined}
                     receivedInterestStatus={receivedInterest?.length ? receivedInterest[0]?.status : undefined}
-                    onToggleFavourite={() => toggleFavourite(user)}
-                    onToggleBlock={() => toggleBlockUser(user.id)}
+                    onToggleFavourite={() => toggleFavourite(targetUserProfile)}
+                    onToggleBlock={() => toggleBlockUser(targetUserProfile.id)}
                     onReport={openReportModal}
-                    onExpressInterest={() => expressInterest(user.id, user.name)}
-                    onAcceptInterest={() => acceptInterest(1,user.id, user.name)}
-                    onDeclineInterest={() => declineInterest(1,user.id, user.name)}
-                    onMessage={() => navigate(`/messages/${user.id}`)}
+                    onExpressInterest={() => expressInterest(targetUserProfile.id, targetUserProfile.name)}
+                    onAcceptInterest={() => acceptInterest(1, targetUserProfile.id, targetUserProfile.name)}
+                    onDeclineInterest={() => declineInterest(1, targetUserProfile.id, targetUserProfile.name)}
+                    onMessage={() => navigate(`/messages/${targetUserProfile.id}`)}
                 />
 
                 <ProfileTabs
