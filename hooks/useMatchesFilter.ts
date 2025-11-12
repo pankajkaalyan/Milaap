@@ -15,6 +15,7 @@ export const useMatchesFilter = (user: User | null) => {
     const [isNearMe, setIsNearMe] = useState(false);
     const [radius, setRadius] = useState(200);
     const [hasSearched, setHasSearched] = useState(false);
+    const [initialDataLoaded, setInitialDataLoaded] = useState<Match[]>([]);
 
 
     useEffect(() => {
@@ -25,7 +26,11 @@ export const useMatchesFilter = (user: User | null) => {
         }
     }, [locationData]);
 
-    const setFilters = (id: string, value: string) => {
+    const setFilters = (id: string, value: string, data: Match[]) => {
+        // console.log('setFilters called with: ', id ,', ', value ,', ', data);
+        if(initialDataLoaded.length === 0) {
+            setInitialDataLoaded(data);
+        }
         setIsNearMe(false);
         setInternalFilters(prev => ({ ...prev, [id]: value }));
         setHasSearched(true);
@@ -44,8 +49,12 @@ export const useMatchesFilter = (user: User | null) => {
         if (!hasSearched) return null;
         
         const blockedUserIds = user?.profile?.blockedUsers || [];
-        
-        return mockUsers.filter(u => {
+        if (initialDataLoaded.length === 0) {   
+            return [];
+        }
+        // console.log('Filtering matches from initial data of length: ', initialDataLoaded.length);
+        // console.log('Current filters: ', filters);
+        return initialDataLoaded.filter(u => {
             if (
                 u.id === user?.id || 
                 blockedUserIds.includes(u.id.toString()) ||

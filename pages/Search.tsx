@@ -18,11 +18,11 @@ const Search: React.FC = () => {
     const [errors] = useState<Partial<typeof filters>>({});
 
     const handleParamChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFilters(e.target.id, e.target.value);
+        setFilters(e.target.id, e.target.value, [searchResults || []].flat());
     };
 
     const handleDropdownChange = (id: string, value: string) => {
-        setFilters(id, value);
+        setFilters(id, value, [searchResults || []].flat());
     }
 
     const searchResults = filteredMatches;

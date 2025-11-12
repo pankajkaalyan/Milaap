@@ -8,7 +8,7 @@ const useSessionTimeout = () => {
     const checkSession = () => {
       const loginTime = localStorage.getItem("loginTime");
       if (loginTime && Date.now() - Number(loginTime) > SESSION_TIMEOUT) {
-        alert("Session expired! Please log in again.");
+        // alert("Session expired! Please log in again.");
         localStorage.clear();
         window.location.href = "/login"; // ✅ direct redirect
       }
