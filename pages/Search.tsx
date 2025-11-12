@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppContext } from '../hooks/useAppContext';
 import ProfileCard from '../components/customer/ProfileCard';
 import Input from '../components/ui/Input';
@@ -7,10 +7,12 @@ import Slider from '../components/ui/Slider';
 import ToggleSwitch from '../components/ui/ToggleSwitch';
 import Dropdown from '../components/ui/Dropdown';
 import { useMatchesFilter } from '../hooks/useMatchesFilter';
+import { Match } from '@/types/models';
+import { getDashboardDataAPI } from '@/services/api/dashboard';
 
 const Search: React.FC = () => {
-    const { t, favourites, toggleFavourite, user } = useAppContext();
-
+    const { t, favourites, toggleFavourite, user, trackEvent } = useAppContext();
+    const [recommendedMatches, setRecommendedMatches] = useState<Match[]>([]);
     const {
         filters, setFilters, isNearMe, radius, setRadius, handleNearMeToggle, filteredMatches
     } = useMatchesFilter(user);
@@ -25,8 +27,23 @@ const Search: React.FC = () => {
         setFilters(id, value, [searchResults || []].flat());
     }
 
-    const searchResults = filteredMatches;
+    const searchResults = filteredMatches === null ? recommendedMatches : filteredMatches;
     const isSearchActive = filteredMatches !== null;
+
+    useEffect(() => {
+        if (recommendedMatches.length === 0) {
+            getDashboardDataAPI()
+                .then(data => {
+                    // console.log('Dashboard data fetched:', data);
+                    setRecommendedMatches(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching dashboard data:', error);
+                });
+        }
+        // console.log('CustomerDashboard mounted for user:', user);
+        trackEvent('view_search', { userId: user?.id });
+    }, [trackEvent, user?.id]);
 
     return (
         <div className="space-y-8">

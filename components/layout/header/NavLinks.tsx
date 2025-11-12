@@ -23,7 +23,7 @@ const NavLinks: React.FC<NavLinksProps> = ({ onLinkClick, className, linkClassNa
       <NavLink to="/" className={getNavLinkClasses} onClick={onLinkClick}>{t('nav.home')}</NavLink>
       <NavLink to="/about" className={getNavLinkClasses} onClick={onLinkClick}>{t('nav.about')}</NavLink>
       <NavLink to="/contact" className={getNavLinkClasses} onClick={onLinkClick}>{t('nav.contact')}</NavLink>
-      {user?.role === UserRole.CUSTOMER && (
+      {(user?.role === UserRole.CUSTOMER || user?.role === UserRole.ROLE_USER) && (
         <>
           <NavLink to="/dashboard" className={getNavLinkClasses} onClick={onLinkClick}>{t('nav.dashboard')}</NavLink>
           <NavLink to="/matches" className={getNavLinkClasses} onClick={onLinkClick}>{t('nav.matches')}</NavLink>

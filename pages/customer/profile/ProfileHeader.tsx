@@ -4,7 +4,6 @@ import { useAppContext } from '../../../hooks/useAppContext';
 import Card from '../../../components/ui/Card';
 import Button from '../../../components/ui/Button';
 import { eventBus } from '@/utils/eventBus';
-import { match } from 'assert/strict';
 
 // Icons
 const VerifiedBadge: React.FC = () => (
@@ -60,6 +59,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         }
     }
 
+    
     useEffect(() => {
         // console.log('ProfileCard mounted for match:', match.id);
         eventBus.on(AppEventStatus.FAVOURITE, updateFavouriteStatus);
@@ -87,6 +87,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                             </>
                         ) : sentInterestStatus ? (
                             <Button disabled variant={ButtonVariant.SECONDARY} className="w-auto px-4 py-2 !text-sm cursor-not-allowed">{t(`interests.status.${sentInterestStatus.toLowerCase()}` as any)}</Button>
+                        ) : receivedInterestStatus ? (
+                            <Button disabled variant={ButtonVariant.SECONDARY} className="w-auto px-4 py-2 !text-sm cursor-not-allowed">{t(`interests.status.${receivedInterestStatus.toLowerCase()}` as any)}</Button>
                         ) : (
                             <Button onClick={onExpressInterest} className="w-auto px-4 py-2 !text-sm">{t('interests.express_interest')}</Button>
                         )}

@@ -2,13 +2,14 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../hooks/useAppContext';
 import { mockUsers } from '../../data/mockUsers';
-import { MembershipPlan, User } from '../../types';
+import { AppEventStatus, InterestStatus, MembershipPlan, User } from '../../types';
 import NotFound from '../NotFound';
 import ProfileHeader from './profile/ProfileHeader';
 import ProfileTabs from '../../components/customer/profile/ProfileTabs';
 import { useProfileModals } from '../../hooks/useProfileModals';
 import ProfileModals from '../../components/customer/profile/ProfileModals';
 import { getProfileByIdAPI } from '@/services/api/profile';
+import { eventBus } from '@/utils/eventBus';
 
 const ViewProfile: React.FC = () => {
     const [targetUserProfile, setTargetUserProfile] = useState<User | null>(null);
@@ -41,8 +42,9 @@ const ViewProfile: React.FC = () => {
 
     const fetchedUserRef = useRef<string | null>(null);
 
-    
     useEffect(() => {
+        eventBus.on(AppEventStatus.ACCEPTED, updateStatusHandler);
+        eventBus.on(AppEventStatus.DECLINED, updateStatusHandler);
         const fetchUserProfile = async () => {
             if (fetchedUserRef.current === userId) return; // ✅ already fetched
             fetchedUserRef.current = userId;
@@ -61,12 +63,42 @@ const ViewProfile: React.FC = () => {
         if (userId) {
             fetchUserProfile();
         }
+        return () => {
+            eventBus.off(AppEventStatus.ACCEPTED, updateStatusHandler);
+            eventBus.off(AppEventStatus.DECLINED, updateStatusHandler);
+        }
     }, [userId]);
 
     const sentInterest = interests?.sent;
     const receivedInterest = interests?.received;
-    console.log('Sent Interests:', sentInterest);
-    console.log('Received Interests:', receivedInterest);
+    // console.log('Sent Interests:', sentInterest);
+    // console.log('Received Interests:', receivedInterest);
+    // console.log('Target User Profile:', targetUserProfile);
+    const currentInterest = sentInterest?.find(interest => interest.profile.id.toString() === userId) ||
+        receivedInterest?.find(interest => interest.profile.id.toString() === userId);
+    console.log('Current Interest with target user:', currentInterest);
+
+    let sentInterestStatus = currentInterest && sentInterest?.some(interest => interest.profile.id.toString() === userId) ? currentInterest.status : undefined;
+    let receivedInterestStatus = currentInterest && receivedInterest?.some(interest => interest.profile.id.toString() === userId)
+        ? currentInterest.status : undefined;
+
+    console.log('Sent Interest Status:', sentInterestStatus);
+    console.log('Received Interest Status:', receivedInterestStatus);
+
+    const updateStatusHandler = (data: { targetUserId: number; newStatus: InterestStatus }) => {
+        console.log('updateStatusHandler called with data:', data);
+        if (data.targetUserId === user.id) {
+            if (sentInterestStatus) {
+                sentInterestStatus = data.newStatus;
+                console.log(`Updated interest status for user ${user.id} to ${sentInterestStatus} via sentInterestStatus`);
+            } else if (receivedInterestStatus) {
+                receivedInterestStatus = data.newStatus;
+                console.log(`Updated interest status for user ${user.id} to ${receivedInterestStatus} via receivedInterestStatus`);
+            }
+            
+        }
+    }
+
     if (loading) {
         return <div>Loading...</div>; // You can replace this with a proper loader component
     }
@@ -92,14 +124,14 @@ const ViewProfile: React.FC = () => {
                     user={targetUserProfile}
                     isFavourite={targetUserProfile.profile.isFavourite}
                     isBlocked={!!isBlocked}
-                    sentInterestStatus={sentInterest?.length ? sentInterest[0]?.status : undefined}
-                    receivedInterestStatus={receivedInterest?.length ? receivedInterest[0]?.status : undefined}
+                    sentInterestStatus={sentInterestStatus ? sentInterestStatus : undefined}
+                    receivedInterestStatus={receivedInterestStatus ? receivedInterestStatus : undefined}
                     onToggleFavourite={() => toggleFavourite(targetUserProfile)}
                     onToggleBlock={() => toggleBlockUser(targetUserProfile.id)}
                     onReport={openReportModal}
                     onExpressInterest={() => expressInterest(targetUserProfile.id, targetUserProfile.name)}
-                    onAcceptInterest={() => acceptInterest(1, targetUserProfile.id, targetUserProfile.name)}
-                    onDeclineInterest={() => declineInterest(1, targetUserProfile.id, targetUserProfile.name)}
+                    onAcceptInterest={() => acceptInterest(currentInterest.interestRequestId, targetUserProfile.id, targetUserProfile.name)}
+                    onDeclineInterest={() => declineInterest(currentInterest.interestRequestId, targetUserProfile.id, targetUserProfile.name)}
                     onMessage={() => navigate(`/messages/${targetUserProfile.id}`)}
                 />
 

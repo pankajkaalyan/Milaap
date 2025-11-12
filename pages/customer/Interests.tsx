@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
 import Card from '../../components/ui/Card';
 import { Interest, User, InterestTab } from '../../types';
 import { mockUsers } from '../../data/mockUsers';
 import InterestCard from '../../components/customer/InterestCard';
 import PageHeader from '../../components/ui/PageHeader';
+import { fetchInterestsAPI } from '@/services/api/interests';
 
 interface TabButtonProps {
   tab: InterestTab;
@@ -13,7 +14,7 @@ interface TabButtonProps {
 }
 
 const Interests: React.FC = () => {
-    const { t, user, interests, acceptInterest, declineInterest } = useAppContext();
+    const { t, user, interests, acceptInterest, declineInterest, setInterests } = useAppContext();
     const [activeTab, setActiveTab] = useState<InterestTab>(InterestTab.RECEIVED);
 
     const { received, sent } = useMemo(() => {
@@ -42,6 +43,14 @@ const Interests: React.FC = () => {
             <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${activeTab === tab ? 'bg-pink-600 text-white' : 'bg-gray-600 text-gray-200'}`}>{count}</span>
         </button>
     );
+
+    useEffect(() => {
+        // console.log('Active Tab changed to:', setInterests);
+        fetchInterestsAPI().then(data => {
+            console.log('Fetched interests data:', data);
+            setInterests(data);
+        });
+    }, [setInterests]);
 
     const listToDisplay = activeTab === InterestTab.RECEIVED ? received : sent;
     const noResultsMessage = activeTab === InterestTab.RECEIVED ? t('interests.no_received') : t('interests.no_sent');

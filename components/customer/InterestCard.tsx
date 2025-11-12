@@ -28,7 +28,6 @@ const InterestCard: React.FC<InterestCardProps> = ({ interest, type, onAccept, o
     }
 
     useEffect(() => {
-        // console.log('ProfileCard mounted for match:', match.id);
         eventBus.on(AppEventStatus.ACCEPTED, updateStatusHandler);
         eventBus.on(AppEventStatus.DECLINED, updateStatusHandler);
         return () => {
