@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
 import Card from '../../components/ui/Card';
 import ProfileCard from '../../components/customer/ProfileCard';
@@ -11,35 +11,7 @@ import { Match } from '@/types';
 const MutualMatches: React.FC = () => {
     const { t, user, interests, favourites, toggleFavourite } = useAppContext();
     const [mutualMatchesData, setMutualMatchesData] = useState<ReturnType<typeof transformUserResponse>[]>([]);
-    // const mutualMatches = useMemo(() => {
-    //     if (!user) return [];
-
-    //     const mutualMatchUserIds = new Set<number>();
-
-    //     interests?.received?.forEach(interest => {
-    //         if (interest.status === InterestStatus.ACCEPTED) {
-    //             if (interest.senderId === user.id) {
-    //                 mutualMatchUserIds.add(interest.recipientId);
-    //             }
-    //             if (interest.recipientId === user.id) {
-    //                 mutualMatchUserIds.add(interest.senderId);
-    //             }
-    //         }
-    //     });
-    //     interests?.sent?.forEach(interest => {
-    //         if (interest.status === InterestStatus.ACCEPTED) {
-    //             if (interest.senderId === user.id) {
-    //                 mutualMatchUserIds.add(interest.recipientId);
-    //             }
-    //             if (interest.recipientId === user.id) {
-    //                 mutualMatchUserIds.add(interest.senderId);
-    //             }
-    //         }
-    //     });
-
-    //     return mockUsers.filter(u => mutualMatchUserIds.has(u.id as number));
-
-    // }, [interests, user]);
+    
     const updateFavouriteStatus = (data: { currentMatch: Match }) => {
         console.log('updateFavouriteStatus Mutual Matches called with data:', data);
         const targetUser = mutualMatchesData.find(match => match.id === data.currentMatch.id);
