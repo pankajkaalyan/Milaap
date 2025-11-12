@@ -66,24 +66,28 @@ export const useAuth = () => {
         setUser(mockUser);
     };
 
-    const logout = () => {
+    const logout = async () => {
         setToken(null);
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        localStorage.removeItem('refreshToken');
-
-        if ('caches' in window) {
-            caches.keys().then(names => {
-                names.forEach(name => caches.delete(name));
-            });
-        }
-
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(regs => {
-                regs.forEach(reg => reg.unregister());
-            });
-        }
         localStorage.clear();
+        sessionStorage.clear();
+
+        // 2️⃣ Delete all service worker caches
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            await Promise.all(cacheNames.map((name) => caches.delete(name)));
+            console.log("✅ All PWA caches cleared");
+        }
+
+        // 3️⃣ Unregister service workers
+        if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (const registration of registrations) {
+                await registration.unregister();
+            }
+            console.log("✅ Service workers unregistered");
+        }
+        // 4️⃣ Finally, reload from the network
+        window.location.reload();
         setUser(null);
     };
 

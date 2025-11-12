@@ -1,4 +1,5 @@
 import { AdminRole, InterestStatus, MembershipPlan, MessageStatus, MessageType, NotificationType, SuccessStoryStatus, UserRole } from './enums';
+import { IRange } from './mutualMatchModel';
 
 export interface HoroscopeDetails {
   nakshatra: string; // Birth Star
@@ -33,8 +34,8 @@ export interface NotificationSettings {
 }
 
 export interface PartnerPreferences {
-  ageRange?: { min?: number; max?: number };
-  heightRange?: { min?: number; max?: number };
+  ageRange?: IRange;
+  heightRange?: IRange;
   castes?: string[];
   professions?: string[];
   mangalDosha?: 'Yes' | 'No' | 'Any';

@@ -8,7 +8,9 @@ const useInactivityTimeout = (timeout = 10 * 60 * 1000) => {
     timer = setTimeout(() => {
       // alert("You were inactive for too long. Logging out...");
       localStorage.clear();
+      sessionStorage.clear();
       window.location.href = "/login"; // ✅ direct redirect
+      window.location.reload();
     }, timeout);
   };
 

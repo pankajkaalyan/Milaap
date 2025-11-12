@@ -1,44 +1,72 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
 import Card from '../../components/ui/Card';
-import { mockUsers } from '../../data/mockUsers';
 import ProfileCard from '../../components/customer/ProfileCard';
-import { InterestStatus } from '../../types';
 import { getMutualMatchesAPI } from '@/services/api/mutualMatches';
+import { transformUserResponse } from '../../transform/transformMutualUser';
+import { eventBus } from '@/utils/eventBus';
+import { AppEventStatus } from '@/types/enums';
+import { Match } from '@/types';
 
 const MutualMatches: React.FC = () => {
     const { t, user, interests, favourites, toggleFavourite } = useAppContext();
+    const [mutualMatchesData, setMutualMatchesData] = useState<ReturnType<typeof transformUserResponse>[]>([]);
+    // const mutualMatches = useMemo(() => {
+    //     if (!user) return [];
 
-    const mutualMatches = useMemo(() => {
-        if (!user) return [];
+    //     const mutualMatchUserIds = new Set<number>();
 
-        const mutualMatchUserIds = new Set<number>();
+    //     interests?.received?.forEach(interest => {
+    //         if (interest.status === InterestStatus.ACCEPTED) {
+    //             if (interest.senderId === user.id) {
+    //                 mutualMatchUserIds.add(interest.recipientId);
+    //             }
+    //             if (interest.recipientId === user.id) {
+    //                 mutualMatchUserIds.add(interest.senderId);
+    //             }
+    //         }
+    //     });
+    //     interests?.sent?.forEach(interest => {
+    //         if (interest.status === InterestStatus.ACCEPTED) {
+    //             if (interest.senderId === user.id) {
+    //                 mutualMatchUserIds.add(interest.recipientId);
+    //             }
+    //             if (interest.recipientId === user.id) {
+    //                 mutualMatchUserIds.add(interest.senderId);
+    //             }
+    //         }
+    //     });
 
-        // interests.forEach(interest => {
-        //     if (interest.status === InterestStatus.ACCEPTED) {
-        //         if (interest.senderId === user.id) {
-        //             mutualMatchUserIds.add(interest.recipientId);
-        //         }
-        //         if (interest.recipientId === user.id) {
-        //             mutualMatchUserIds.add(interest.senderId);
-        //         }
-        //     }
-        // });
+    //     return mockUsers.filter(u => mutualMatchUserIds.has(u.id as number));
 
-        return mockUsers.filter(u => mutualMatchUserIds.has(u.id as number));
-
-    }, [interests, user]);
+    // }, [interests, user]);
+    const updateFavouriteStatus = (data: { currentMatch: Match }) => {
+        console.log('updateFavouriteStatus Mutual Matches called with data:', data);
+        const targetUser = mutualMatchesData.find(match => match.id === data.currentMatch.id);
+        if (targetUser) {
+            targetUser.isFavourite = !targetUser.isFavourite;
+            setMutualMatchesData([...mutualMatchesData]);
+            console.log(`Updated favourite status for match ${targetUser.id} to ${targetUser.isFavourite}`);
+        }
+        console.log('Current mutual matches data:', mutualMatchesData);
+    };
 
     useEffect(() => {
+        eventBus.on(AppEventStatus.FAVOURITE, updateFavouriteStatus);
         getMutualMatchesAPI()
             .then(data => {
-                console.log('Mutual matches data fetched successfully:', data);
+                const transformedData = data.map(conn => {
+                    const simplifiedUser = transformUserResponse(conn, interests);
+                    return simplifiedUser;
+                });
+                setMutualMatchesData(transformedData);
+                // console.log('Mutual matches data trnsaform successfully:', transformedData);
             })
             .catch(error => {
                 console.error('Error fetching mutual matches data:', error);
             });
-        console.log('MutualMatches mounted for user:', user);
-    }, [user]);
+        // console.log('MutualMatches mounted for user:', user);
+    }, [user, interests]);
 
     return (
         <div className="max-w-6xl mx-auto">
@@ -47,13 +75,13 @@ const MutualMatches: React.FC = () => {
                 <p className="text-gray-300 mt-2 max-w-2xl mx-auto">{t('mutualMatches.subtitle')}</p>
             </div>
 
-            {mutualMatches.length > 0 ? (
+            {mutualMatchesData.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {mutualMatches.map(match => (
+                    {mutualMatchesData.map(match => (
                         <ProfileCard
                             key={match.id}
                             match={match}
-                            isFavourite={favourites.some(fav => fav.id === match.id)}
+                            isFavourite={match.isFavourite}
                             onToggleFavourite={() => toggleFavourite(match)}
                         />
                     ))}

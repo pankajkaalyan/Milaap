@@ -3,7 +3,6 @@ import { Match, InterestStatus, InterestShown, AppEventStatus } from '../../type
 import { useAppContext } from '../../hooks/useAppContext';
 import { useNavigate, Link } from 'react-router-dom';
 import { eventBus } from "../../utils/eventBus";
-import { use } from 'framer-motion/client';
 
 interface ProfileCardProps {
     match: Match;
