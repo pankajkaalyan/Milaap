@@ -115,6 +115,7 @@ export interface Message {
   type: MessageType;
   timestamp: string;
   status: MessageStatus;
+  receiverId?: number | string;
 }
 
 export interface Conversation {

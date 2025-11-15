@@ -10,7 +10,7 @@ import Card from '../../components/ui/Card';
 import PremiumFeatureModal from '../../components/customer/PremiumFeatureModal';
 import SockJS from 'sockjs-client';
 import { over } from 'stompjs';
-import { s } from 'framer-motion/client';
+import { getChatConversationsAPI } from '@/services/api/chatService';
 
 const MESSAGING_LIMIT_FREE_TIER = 3;
 
@@ -115,7 +115,8 @@ const Messages: React.FC = () => {
 
         console.log("Message received:", msg);
 
-        setChat(prev => [...prev, msg]);  // safe append
+        // setChat(prev => [...prev, msg]);  // safe append
+        updateConversation(msg);
 
     }, []);   // <-- VERY IMPORTANT (no duplicates)
 
@@ -191,13 +192,13 @@ const Messages: React.FC = () => {
     // ---------------- SEND MESSAGE ----------------
     const sendMessageToFriend = useCallback(
         (content, type) => {
-            if (!receiverId) return alert("Receiver required");
+            if (!userId) return alert("Receiver required");
             if (!stompClient.current?.connected)
                 return alert("Not connected");
 
             const chatMessage = {
-                senderId: user?.profile?.id,
-                receiverId: parseInt(receiverId, 10),
+                senderId: user.id || user?.profile?.id,
+                receiverId: parseInt(userId, 10),
                 content,
                 type,
                 timestamp: new Date().toISOString(),
@@ -205,8 +206,47 @@ const Messages: React.FC = () => {
 
             stompClient.current.send("/app/chat.send", {}, JSON.stringify(chatMessage));
         },
-        [receiverId, user]
+        [userId, user, selectedConversationId, conversations]
     );
+
+    const updateConversation = (newMessage: Message) => {
+        console.log('Updating conversation with new message:', newMessage);
+        if(!newMessage.receiverId || !newMessage.senderId) {    
+            console.warn('Message missing receiverId or senderId:', newMessage);
+            return;
+        }
+        const chatMessage: Message = transformMessage(newMessage, user?.id || user?.profile?.id);
+        const updatedConversations = conversations.map(convo => {
+            console.log('Checking conversation userId:', convo.userId, 'against selectedConversationId:', userId);
+            console.log('Current convo New message to add:', chatMessage);
+            if (convo.userId == userId) {
+                return { ...convo, messages: [...convo.messages, chatMessage] };
+            }
+            return convo;
+        });
+        setConversations(updatedConversations);
+        console.log('Conversations after update:', conversations);
+        console.log('updatedConversations after update:', updatedConversations);
+    };
+
+    function transformMessage(apiMsg, loggedInUserId) {
+        return {
+            id: `${apiMsg.senderId}-${apiMsg.receiverId}`,
+            senderId: apiMsg.senderId === loggedInUserId ? "me" : String(apiMsg.senderId),
+            content: apiMsg.content,
+            type: MessageType.TEXT,
+            timestamp: convertTimestampToUTC(apiMsg.createdAt),
+            status: apiMsg.senderId === loggedInUserId ? MessageStatus.SENT : MessageStatus.READ,
+            receiverId: apiMsg.receiverId,
+        };
+    }
+
+    function convertTimestampToUTC(localTimestamp) {
+        const date = new Date(localTimestamp);
+        return date.toISOString(); // auto-converts to UTC with Z
+    }
+
+
 
     //Chat Integration Code End here
 
@@ -215,6 +255,12 @@ const Messages: React.FC = () => {
         // Try connection ONLY when userId + token available
         const token = localStorage.getItem("token");
         if (userId && token) {
+            getChatConversationsAPI().then((data) => {
+                // setConversations(data);
+                console.log("Fetched conversations from API:", data);
+            }).catch((error) => {
+                console.error("Error fetching conversations:", error);
+            });
             connectStomp();
             const numericUserId = parseInt(userId, 10);
             const conversationExists = conversations.some(c => c.userId === numericUserId);
@@ -298,6 +344,10 @@ const Messages: React.FC = () => {
     const selectedConversation = conversations.find(c => c.userId === selectedConversationId);
     const selectedUser = mockUsers.find(u => u.id === selectedConversationId);
 
+    // console.log('Rendering Messages component with conversations:', conversations);
+    // console.log('Selected conversation:', selectedConversation);
+    // console.log('Selected user:', selectedUser);
+
     return (
         <>
             <div className="flex flex-col md:flex-row h-[calc(100vh-200px)] gap-4">
@@ -314,11 +364,11 @@ const Messages: React.FC = () => {
                 <div className="w-full md:w-2/3 lg:w-3/4 h-full">
                     {selectedConversation && selectedUser ? (
                         <>
-                            <input
+                            {/* <input
                                 value={receiverId}
                                 onChange={(e) => setReceiverId(e.target.value)}
                                 placeholder="Enter your user id"
-                            />
+                            /> */}
                             <ChatWindow
                                 conversation={selectedConversation}
                                 user={selectedUser as Match}
