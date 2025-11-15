@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAppContext } from '../hooks/useAppContext';
-import { UserRole, LoginFormData, ButtonVariant, SpinnerSize } from '../types';
+import { UserRole, LoginFormData, ButtonVariant, SpinnerSize, AppEventStatus } from '../types';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import Card from '../components/ui/Card';
@@ -13,6 +13,7 @@ import SEO from '../components/ui/SEO';
 import Spinner from '../components/ui/Spinner';
 import { loginAPI } from '@/services/api/auth';
 import { fetchCurrentUserAPI } from '@/services/api/profile';
+import { eventBus } from '@/utils/eventBus';
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -41,22 +42,22 @@ const Login: React.FC = () => {
           login(credentials.username, role, undefined, res.accessToken);
           trackEvent('login_success', { email: data.email, role });
           addToast('Login successful!', 'success');
-          fetchCurrentUserAPI().then(async data => {
-            // console.log('Fetched current user:', data);
-            let mockUser = {
-              id: data.id,
-              email: data.email,
-              name: data.name,
-              role: data.role,
-              createdAt: data.createdAt,
-              profile: data.profile,
-            };
-            localStorage.setItem('user', JSON.stringify(mockUser));
-            await delay(1000); // Wait 2 seconds
-            navigate(role === UserRole.ADMIN ? '/admin/dashboard' : '/dashboard');
-          }).catch(err => {
-            console.error('Error fetching current user:', err);
-          });
+          // fetchCurrentUserAPI().then(async data => {
+          //   // console.log('Fetched current user:', data);
+          //   let mockUser = {
+          //     id: data.id,
+          //     email: data.email,
+          //     name: data.name,
+          //     role: data.role,
+          //     createdAt: data.createdAt,
+          //     profile: data.profile,
+          //   };
+          //   localStorage.setItem('user', JSON.stringify(mockUser));
+          //   await delay(1000); // Wait 2 seconds
+          //   navigate(role === UserRole.ADMIN ? '/admin/dashboard' : '/dashboard');
+          // }).catch(err => {
+          //   console.error('Error fetching current user:', err);
+          // });
 
         })
         .catch((err) => {
@@ -66,8 +67,15 @@ const Login: React.FC = () => {
     }
   );
 
+  const loggedInHandler = () => {
+    navigate('/dashboard');
+  }
   useEffect(() => {
-    localStorage.removeItem("token");
+    // localStorage.removeItem("token");
+    eventBus.on(AppEventStatus.LOGIN_SUCCESS, loggedInHandler);
+    return () => {
+      eventBus.off(AppEventStatus.LOGIN_SUCCESS, loggedInHandler);
+    };  
   
   }, []);
   const handleGoogleLogin = () => {

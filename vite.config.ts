@@ -10,28 +10,30 @@ export default defineConfig(({ mode }) => {
     define: {
       'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
       'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+      global: "window", // 👈 FIX
     },
     resolve: {
       alias: {
-        '@': path.resolve(__dirname, '.'),
+        '@': path.resolve(__dirname, './'),
       }
     },
     server: {
       port: 5173,
       host: "localhost",
-      strictPort: true,
-      hmr: {
-        protocol: "ws",
-        host: "localhost",
-        port: 5173,
-      },
+
       proxy: {
-        '/api': {
-          target: 'http://localhost:8080',
+        "/api": {
+          target: "http://localhost:8080",
           changeOrigin: true,
           secure: false,
+        },
+        "/ws": {
+          target: env.VITE_API_URL,
+          ws: true,
+          changeOrigin: true
         }
       }
+
     }
   };
 });

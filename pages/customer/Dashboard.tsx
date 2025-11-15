@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
-import { mockUsers } from '../../data/mockUsers';
 import ProfileCard from '../../components/customer/ProfileCard';
 import AIMatchSuggestions from '../../components/customer/AIMatchSuggestions';
 import { getDashboardDataAPI } from '@/services/api/dashboard';
@@ -9,22 +8,26 @@ import { Match } from '@/types/models';
 const CustomerDashboard: React.FC = () => {
   const { user, t, trackEvent, favourites, toggleFavourite } = useAppContext();
   const [recommendedMatches, setRecommendedMatches] = useState<Match[]>([]);
-  
+
+  const hasFetchedRef = useRef(false);
+
   useEffect(() => {
-    if (recommendedMatches.length === 0) {
-      getDashboardDataAPI()
-        .then(data => {
-          // console.log('Dashboard data fetched:', data);
-          setRecommendedMatches(data);
-        })
-        .catch(error => {
-          console.error('Error fetching dashboard data:', error);
-        });
-    }
-    // console.log('CustomerDashboard mounted for user:', user);
-    trackEvent('view_dashboard', { userId: user?.id });
-  }, [trackEvent, user?.id]);
-  
+    if (!user?.id) return;               // wait for user
+    if (hasFetchedRef.current) return;   // block repeat calls
+
+    hasFetchedRef.current = true;        // lock
+
+    getDashboardDataAPI()
+      .then(data => {
+        setRecommendedMatches(data);
+      })
+      .catch(err => console.error("Dashboard error:", err));
+
+    // tracking event (safe)
+    trackEvent("view_dashboard", { userId: user.id });
+
+  }, [user?.id]);
+
 
   return (
     <div className="space-y-12">

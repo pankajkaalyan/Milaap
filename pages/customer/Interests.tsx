@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
 import Card from '../../components/ui/Card';
 import { Interest, User, InterestTab } from '../../types';
@@ -8,14 +8,15 @@ import PageHeader from '../../components/ui/PageHeader';
 import { fetchInterestsAPI } from '@/services/api/interests';
 
 interface TabButtonProps {
-  tab: InterestTab;
-  label: string;
-  count: number;
+    tab: InterestTab;
+    label: string;
+    count: number;
 }
 
 const Interests: React.FC = () => {
     const { t, user, interests, acceptInterest, declineInterest, setInterests } = useAppContext();
     const [activeTab, setActiveTab] = useState<InterestTab>(InterestTab.RECEIVED);
+    const loadedRef = useRef(false);
 
     const { received, sent } = useMemo(() => {
         console.log('user:', user);
@@ -33,11 +34,10 @@ const Interests: React.FC = () => {
     const TabButton: React.FC<TabButtonProps> = ({ tab, label, count }) => (
         <button
             onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 text-sm font-semibold rounded-t-md transition-colors relative ${
-                activeTab === tab
+            className={`px-4 py-2 text-sm font-semibold rounded-t-md transition-colors relative ${activeTab === tab
                 ? 'bg-white/10 text-white'
                 : 'text-gray-400 hover:text-white'
-            }`}
+                }`}
         >
             {label}
             <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${activeTab === tab ? 'bg-pink-600 text-white' : 'bg-gray-600 text-gray-200'}`}>{count}</span>
@@ -45,12 +45,14 @@ const Interests: React.FC = () => {
     );
 
     useEffect(() => {
-        // console.log('Active Tab changed to:', setInterests);
+        if (loadedRef.current) return;
+        loadedRef.current = true;
+
         fetchInterestsAPI().then(data => {
-            console.log('Fetched interests data:', data);
             setInterests(data);
         });
-    }, [setInterests]);
+    }, []);
+
 
     const listToDisplay = activeTab === InterestTab.RECEIVED ? received : sent;
     const noResultsMessage = activeTab === InterestTab.RECEIVED ? t('interests.no_received') : t('interests.no_sent');
@@ -58,8 +60,8 @@ const Interests: React.FC = () => {
     return (
         <div className="max-w-5xl mx-auto">
             <PageHeader title={t('interests.title')} />
-            
-            <div className="flex border-b border-white/10 mb-6 animate-fade-in-up" style={{ animationDelay: '200ms'}}>
+
+            <div className="flex border-b border-white/10 mb-6 animate-fade-in-up" style={{ animationDelay: '200ms' }}>
                 <TabButton tab={InterestTab.RECEIVED} label={t('interests.received')} count={received.length} />
                 <TabButton tab={InterestTab.SENT} label={t('interests.sent')} count={sent.length} />
             </div>
@@ -68,7 +70,7 @@ const Interests: React.FC = () => {
                 <div className="space-y-4">
                     {listToDisplay.map((item, index) => (
                         item && (
-                            <div key={item.profile.id} className="animate-fade-in-up" style={{ animationDelay: `${index * 75}ms`}}>
+                            <div key={item.profile.id} className="animate-fade-in-up" style={{ animationDelay: `${index * 75}ms` }}>
                                 <InterestCard
                                     interest={item}
                                     type={activeTab}
@@ -80,7 +82,7 @@ const Interests: React.FC = () => {
                     ))}
                 </div>
             ) : (
-                 <Card className="text-center py-16 animate-fade-in">
+                <Card className="text-center py-16 animate-fade-in">
                     <p className="text-gray-300">{noResultsMessage}</p>
                 </Card>
             )}

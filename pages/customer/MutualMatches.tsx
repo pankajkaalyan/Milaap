@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
 import Card from '../../components/ui/Card';
 import ProfileCard from '../../components/customer/ProfileCard';
@@ -11,7 +11,9 @@ import { Match } from '@/types';
 const MutualMatches: React.FC = () => {
     const { t, user, interests, favourites, toggleFavourite } = useAppContext();
     const [mutualMatchesData, setMutualMatchesData] = useState<ReturnType<typeof transformUserResponse>[]>([]);
-    
+    const hasFetchedMutualMatches = useRef(false);
+
+
     const updateFavouriteStatus = (data: { currentMatch: Match }) => {
         console.log('updateFavouriteStatus Mutual Matches called with data:', data);
         const targetUser = mutualMatchesData.find(match => match.id === data.currentMatch.id);
@@ -25,20 +27,25 @@ const MutualMatches: React.FC = () => {
 
     useEffect(() => {
         eventBus.on(AppEventStatus.FAVOURITE, updateFavouriteStatus);
-        getMutualMatchesAPI()
-            .then(data => {
-                const transformedData = data.map(conn => {
-                    const simplifiedUser = transformUserResponse(conn, interests);
-                    return simplifiedUser;
-                });
-                setMutualMatchesData(transformedData);
-                // console.log('Mutual matches data trnsaform successfully:', transformedData);
-            })
-            .catch(error => {
-                console.error('Error fetching mutual matches data:', error);
-            });
-        // console.log('MutualMatches mounted for user:', user);
-    }, [user, interests]);
+
+        if (!hasFetchedMutualMatches.current) {
+            hasFetchedMutualMatches.current = true;
+
+            getMutualMatchesAPI()
+                .then(data => {
+                    const transformedData = data.map(conn =>
+                        transformUserResponse(conn, interests)
+                    );
+                    setMutualMatchesData(transformedData);
+                })
+                .catch(error => console.error(error));
+        }
+
+        return () => {
+            eventBus.off(AppEventStatus.FAVOURITE, updateFavouriteStatus);
+        };
+
+    }, []);
 
     return (
         <div className="max-w-6xl mx-auto">

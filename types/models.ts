@@ -43,6 +43,7 @@ export interface PartnerPreferences {
 
 
 export interface UserProfile {
+  id?: string | number;
   fullName?: string;
   email?: string;
   contactNumber?: number | null;

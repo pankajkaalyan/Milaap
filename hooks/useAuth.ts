@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { User, UserRole, UserProfile, MembershipPlan, AdminRole, NotificationSettings } from '../types';
+import { User, UserRole, UserProfile, MembershipPlan, AdminRole, NotificationSettings, AppEventStatus } from '../types';
 import { fetchCurrentUserAPI } from '@/services/api/profile';
+import { eventBus } from '@/utils/eventBus';
 
 const defaultNotificationSettings: NotificationSettings = {
     push: { newMatch: true, newMessage: true, profileView: false },
@@ -44,7 +45,6 @@ export const useAuth = () => {
             }
 
             fetchCurrentUserAPI().then(data => {
-                // console.log('Fetched current user:', data);
                 let mockUser = {
                     id: data.id,
                     email: data.email,
@@ -55,6 +55,7 @@ export const useAuth = () => {
                 };
                 localStorage.setItem('user', JSON.stringify(mockUser));
                 setUser(mockUser);
+                eventBus.emit(AppEventStatus.LOGIN_SUCCESS);
             }).catch(err => {
                 console.error('Error fetching current user:', err);
             });

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAppContext } from '../hooks/useAppContext';
 import ProfileCard from '../components/customer/ProfileCard';
 import Input from '../components/ui/Input';
@@ -17,6 +17,9 @@ const Search: React.FC = () => {
         filters, setFilters, isNearMe, radius, setRadius, handleNearMeToggle, filteredMatches
     } = useMatchesFilter(user);
 
+    const hasFetchedDashboardRef = useRef({});
+    const hasTrackedRef = useRef({});
+
     const [errors] = useState<Partial<typeof filters>>({});
 
     const handleParamChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,19 +34,26 @@ const Search: React.FC = () => {
     const isSearchActive = filteredMatches !== null;
 
     useEffect(() => {
-        if (recommendedMatches.length === 0) {
+        if (!user?.id) return;
+
+        // ----- API CALL: once per user -----
+        if (!hasFetchedDashboardRef.current[user.id]) {
+            hasFetchedDashboardRef.current[user.id] = true;
+
             getDashboardDataAPI()
                 .then(data => {
-                    // console.log('Dashboard data fetched:', data);
                     setRecommendedMatches(data);
                 })
-                .catch(error => {
-                    console.error('Error fetching dashboard data:', error);
-                });
+                .catch(err => console.error("Dashboard fetch error:", err));
         }
-        // console.log('CustomerDashboard mounted for user:', user);
-        trackEvent('view_search', { userId: user?.id });
-    }, [trackEvent, user?.id]);
+
+        // ----- TRACK EVENT: once per user -----
+        if (!hasTrackedRef.current[user.id]) {
+            hasTrackedRef.current[user.id] = true;
+            trackEvent("view_search", { userId: user.id });
+        }
+
+    }, [user?.id]);
 
     return (
         <div className="space-y-8">

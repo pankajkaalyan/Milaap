@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
 import ProfileCard from '../../components/customer/ProfileCard';
 import Input from '../../components/ui/Input';
@@ -12,10 +12,13 @@ import { getDashboardDataAPI } from '@/services/api/dashboard';
 const Matches: React.FC = () => {
     const { t, favourites, toggleFavourite, user, trackEvent } = useAppContext();
     const [recommendedMatches, setRecommendedMatches] = useState<Match[]>([]);
-    
+
     const {
         filters, setFilters, isNearMe, radius, setRadius, handleNearMeToggle, filteredMatches
     } = useMatchesFilter(user);
+
+    const hasFetchedDashboardRef = useRef({});
+    const hasTrackedRef = useRef({});
 
     const [errors, setErrors] = useState<Partial<typeof filters>>({});
 
@@ -25,20 +28,28 @@ const Matches: React.FC = () => {
         const { id, value } = e.target;
         setFilters(id, value, matchesToShow || []);
     };
+
     useEffect(() => {
-        if (recommendedMatches.length === 0) {
+        if (!user?.id) return;
+
+        // ----- API CALL: once per user -----
+        if (!hasFetchedDashboardRef.current[user.id]) {
+            hasFetchedDashboardRef.current[user.id] = true;
+
             getDashboardDataAPI()
                 .then(data => {
-                    // console.log('Dashboard data fetched:', data);
                     setRecommendedMatches(data);
                 })
-                .catch(error => {
-                    console.error('Error fetching dashboard data:', error);
-                });
+                .catch(err => console.error("Dashboard fetch error:", err));
         }
-        // console.log('CustomerDashboard mounted for user:', user);
-        trackEvent('view_matches', { userId: user?.id });
-    }, [trackEvent, user?.id]);
+
+        // ----- TRACK EVENT: once per user -----
+        if (!hasTrackedRef.current[user.id]) {
+            hasTrackedRef.current[user.id] = true;
+            trackEvent("view_matches", { userId: user.id });
+        }
+
+    }, [user?.id]);
 
     // console.log('matchesToShow data fetched: 1', matchesToShow);
 

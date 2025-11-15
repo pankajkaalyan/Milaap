@@ -2,7 +2,10 @@ import axios from "axios";
 
 // Base instance
 export const API = axios.create({
-    baseURL: "http://localhost:8080", // Example API
+    baseURL:
+    import.meta.env.MODE === "development"
+      ? ""
+      : import.meta.env.VITE_API_URL, // Example API
 });
 
 API.interceptors.request.use((config) => {
