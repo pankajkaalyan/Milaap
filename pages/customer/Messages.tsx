@@ -10,7 +10,7 @@ import Card from '../../components/ui/Card';
 import PremiumFeatureModal from '../../components/customer/PremiumFeatureModal';
 import SockJS from 'sockjs-client';
 import { over } from 'stompjs';
-import { getChatConversationsAPI } from '@/services/api/chatService';
+import { getChatConversationsAPI, getConversationMessagesAPI } from '@/services/api/chatService';
 
 const MESSAGING_LIMIT_FREE_TIER = 3;
 
@@ -192,6 +192,7 @@ const Messages: React.FC = () => {
     // ---------------- SEND MESSAGE ----------------
     const sendMessageToFriend = useCallback(
         (content, type) => {
+            console.log("Sending message:", { content, type });
             if (!userId) return alert("Receiver required");
             if (!stompClient.current?.connected)
                 return alert("Not connected");
@@ -231,6 +232,7 @@ const Messages: React.FC = () => {
 
     function transformMessage(apiMsg, loggedInUserId) {
         return {
+            messageId: apiMsg.id,
             id: `${apiMsg.senderId}-${apiMsg.receiverId}-${apiMsg.id}`,
             senderId: apiMsg.senderId === loggedInUserId ? "me" : String(apiMsg.senderId),
             content: apiMsg.content,
@@ -267,7 +269,11 @@ const Messages: React.FC = () => {
             convo.lastMessageAt = convo.lastMessageAt;
             convo.lastMessage = convo.lastMessage;
             convo.roomId = convo.roomId;
-            convo.messages = convo.messages ? convo.messages.map((msg) => transformMessage(msg, user?.id || user?.profile?.id)) : [];
+            convo.messages = convo.messages
+                ? convo.messages
+                    .sort((a, b) => a.messageId - b.messageId)   // <-- SORT HERE
+                    .map((msg) => transformMessage(msg, user?.id || user?.profile?.id))
+                : [];
         });
         setConversations(data);
     }
@@ -289,7 +295,10 @@ const Messages: React.FC = () => {
         if (userId && token) {
             connectStomp();
             const numericUserId = parseInt(userId, 10);
-            const conversationExists = conversations.some(c => c.userId === numericUserId);
+            const conversationExists = conversations.some(
+                (c: Conversation) => c.userId === numericUserId
+            );
+
 
             if (!conversationExists) {
                 // Check if user can start a new conversation
@@ -308,6 +317,23 @@ const Messages: React.FC = () => {
                     };
                     //setConversations(prev => [newConversation, ...prev]);
                 }
+            }
+            if (selectedConversation?.messages.length === 0) {
+                getConversationMessagesAPI(selectedConversation.roomId).then((data) => {
+                    const transformedMessages = data
+                        .map((msg) => transformMessage(msg, user?.id || user?.profile?.id))
+                        .sort((a, b) => a.messageId - b.messageId);
+
+                    setConversations((prevConversations) =>
+                        prevConversations.map((convo) =>
+                            convo.userId === numericUserId
+                                ? { ...convo, messages: transformedMessages }
+                                : convo
+                        )
+                    );
+                }).catch((error) => {
+                    console.error("Error fetching conversation messages:", error);
+                });
             }
             setSelectedConversationId(numericUserId);
         }

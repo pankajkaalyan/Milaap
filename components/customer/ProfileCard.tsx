@@ -54,7 +54,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ match, isFavourite, onToggleF
         e.stopPropagation();
         (e.currentTarget as HTMLElement).blur();
         action();
-        if(action === onToggleFavourite) {
+        if (action === onToggleFavourite) {
             console.log('Toggled favourite for match:', match.id);
             // match.isFavourite = !match.isFavourite;
         }
@@ -122,10 +122,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ match, isFavourite, onToggleF
         <Link to={`/profile/${match.id}`} className="block bg-white/10 rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 flex flex-col group cursor-pointer">
             <div className="relative">
                 <img src={match.photos && match.photos.length > 0 ? match.photos[0] : `https://picsum.photos/400/300?random=${match.id}`} alt={match.name} className="w-full h-48 object-cover" />
-                <div className={`absolute top-2 right-2 px-2 py-1 text-xs font-bold rounded-full ${getScoreColor(match.compatibilityScore)} backdrop-blur-sm`}>
+                {/* <div className={`absolute top-0 right-0 px-2 py-1 text-xs font-bold rounded-full ${getScoreColor(match.compatibilityScore)} backdrop-blur-sm`}>
                     {match.compatibilityScore}% {t('dashboard.compatibility_score')}
-                </div>
-                <div className="absolute top-2 left-2 flex space-x-2">
+                </div> */}
+                <div className="absolute top-0 left-0 flex space-x-2">
                     <button
                         onClick={(e) => handleActionClick(e, onToggleFavourite)}
                         className="p-2 bg-black/30 rounded-full backdrop-blur-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -143,10 +143,39 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ match, isFavourite, onToggleF
                 </div>
             </div>
             <div className="p-4 flex flex-col flex-grow">
-                <h3 className="text-xl font-bold text-white flex items-center">
-                    {match.name}, {match.age}
-                    {match.verificationStatus.toLocaleLowerCase() === 'verified' && <VerifiedBadge />}
+                {/* <div className={`px-2 py-1 text-xs font-bold rounded-full ${getScoreColor(match.compatibilityScore)} backdrop-blur-sm`}>
+                    {match.compatibilityScore}% {t('dashboard.compatibility_score')}
+                </div> */}
+                <h3 className="text-xl font-bold text-white flex flex-col sm:flex-row  sm:justify-between gap-2">
+
+                    {/* Name + Age */}
+                    <span className="text-white text-lg sm:text-xl">
+                        {match.name}, {match.age}
+                    </span>
+
+                    {/* Score + Verification */}
+                    <div className="flex flex-col items-start sm:items-end gap-2">
+
+                        {/* Compatibility Score */}
+                        <div
+                            className={`px-3 py-1 text-xs font-semibold rounded-full ${getScoreColor(
+                                match.compatibilityScore
+                            )} backdrop-blur-sm whitespace-nowrap`}
+                        >
+                            {match.compatibilityScore}% {t('dashboard.compatibility_score')}
+                        </div>
+
+                        {/* Verified Badge (BELOW SCORE) */}
+                        {match.verificationStatus.toLowerCase() === 'verified' && (
+                            <div className="flex items-center gap-1">
+                                <VerifiedBadge />
+                            </div>
+                        )}
+
+                    </div>
                 </h3>
+
+
                 <p className="text-gray-300">{match.profession}</p>
                 <p className="text-gray-400 text-sm mb-2">{match.location} &bull; {match.caste}</p>
                 <div className="mt-auto w-full">

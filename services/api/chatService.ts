@@ -9,3 +9,13 @@ export const getChatConversationsAPI = async () => {
         throw error;
     }
 };
+
+export const getConversationMessagesAPI = async (roomId: string | number) => {
+    try {
+        const response = await API.get(`/api/chat/rooms/${roomId}/messages`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching conversation messages:", error);
+        throw error;
+    }
+};
