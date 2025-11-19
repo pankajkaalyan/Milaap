@@ -376,10 +376,21 @@ const Messages: React.FC = () => {
 
     return (
         <>
-            <div className="flex flex-col md:flex-row h-[calc(100vh-200px)] gap-4">
-                <div className="w-full md:w-1/3 lg:w-1/4 h-full">
+            <div className="flex h-[calc(100vh-140px)] gap-4">
+
+                {/* LEFT PANEL - Conversation List */}
+                <div
+                    className={`
+            h-full border-r border-white/10 
+            w-full md:w-1/3 lg:w-1/4 
+            ${selectedConversationId ? "hidden md:block" : "block"} 
+        `}
+                >
                     <Card className="h-full !p-0 overflow-hidden flex flex-col">
-                        <h1 className="text-xl font-bold text-white p-4 border-b border-white/10 shrink-0">{t('messages.title')}</h1>
+                        <h1 className="text-xl font-bold text-white p-4 border-b border-white/10 shrink-0">
+                            {t("messages.title")}
+                        </h1>
+
                         <ConversationList
                             conversations={conversations}
                             selectedConversationId={selectedConversationId}
@@ -387,29 +398,45 @@ const Messages: React.FC = () => {
                         />
                     </Card>
                 </div>
-                <div className="w-full md:w-2/3 lg:w-3/4 h-full">
+
+                {/* RIGHT PANEL - Chat Window */}
+                <div
+                    className={`
+            h-full w-full 
+            md:w-2/3 lg:w-3/4 
+            ${!selectedConversationId ? "hidden md:flex" : "flex"} 
+        `}
+                >
                     {selectedConversation && selectedUser ? (
-                        <>
-                            {/* <input
-                                value={receiverId}
-                                onChange={(e) => setReceiverId(e.target.value)}
-                                placeholder="Enter your user id"
-                            /> */}
+                        <div className="w-full h-full relative pt-12 md:pt-0">
+
+                            {/* MOBILE BACK BUTTON */}
+                            <button
+                                className="md:hidden absolute top-4 left-0 z-20 bg-white/20 px-4 py-1.5 rounded-full text-sm"
+                                onClick={() => navigate("/messages")}
+                            >
+                                ← Back
+                            </button>
+
                             <ChatWindow
                                 conversation={selectedConversation}
                                 user={selectedUser as Conversation}
                                 onSendMessage={sendMessageToFriend}
                                 isTyping={isTyping}
                             />
-                        </>
+                        </div>
 
                     ) : (
-                        <Card className="h-full flex items-center justify-center">
-                            <p className="text-gray-400">{t('messages.select_chat')}</p>
+                        <Card className="h-full w-full flex items-center justify-center">
+                            <p className="text-gray-400">
+                                {t("messages.select_chat")}
+                            </p>
                         </Card>
                     )}
                 </div>
             </div>
+
+
             {isPremiumModalOpen && (
                 <PremiumFeatureModal
                     isOpen={isPremiumModalOpen}
@@ -420,6 +447,7 @@ const Messages: React.FC = () => {
             )}
         </>
     );
+
 };
 
 export default Messages;
