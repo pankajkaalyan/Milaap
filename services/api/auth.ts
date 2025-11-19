@@ -31,3 +31,16 @@ export const forgotPasswordAPI = async (email) => {
         throw error;
     }
 };
+
+
+export const refreshTokenAPI = async () => {
+    try {
+        const response = await API.post("/api/auth/refresh-token", {
+            refreshToken: localStorage.getItem("refreshToken"),
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Error refreshing token:", error);
+        throw error;
+    }
+};

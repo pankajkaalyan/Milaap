@@ -122,6 +122,11 @@ export interface Conversation {
   userId: string | number;
   userName: string;
   messages: Message[];
+  profilePic?: string;
+  lastMessageAt?: string;
+  lastMessage?: string;
+  unreadCount?: number;
+  roomId?: string;
 }
 
 export interface AdminConversation {

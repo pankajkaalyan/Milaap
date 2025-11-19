@@ -35,7 +35,7 @@ const Messages: React.FC = () => {
 
     const navigate = useNavigate();
 
-    const [conversations, setConversations] = useState<Conversation[]>(mockConversationsData);
+    const [conversations, setConversations] = useState<Conversation[]>([]);
     const [selectedConversationId, setSelectedConversationId] = useState<number | null>(null);
     const [isTyping, setIsTyping] = useState(false);
     const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
@@ -210,28 +210,28 @@ const Messages: React.FC = () => {
     );
 
     const updateConversation = (newMessage: Message) => {
-        console.log('Updating conversation with new message:', newMessage);
-        if(!newMessage.receiverId || !newMessage.senderId) {    
-            console.warn('Message missing receiverId or senderId:', newMessage);
+        if (!newMessage.receiverId || !newMessage.senderId) {
+            console.warn("Missing IDs", newMessage);
             return;
         }
-        const chatMessage: Message = transformMessage(newMessage, user?.id || user?.profile?.id);
-        const updatedConversations = conversations.map(convo => {
-            console.log('Checking conversation userId:', convo.userId, 'against selectedConversationId:', userId);
-            console.log('Current convo New message to add:', chatMessage);
-            if (convo.userId == userId) {
-                return { ...convo, messages: [...convo.messages, chatMessage] };
-            }
-            return convo;
+
+        const chatMessage = transformMessage(newMessage, user?.id || user?.profile?.id);
+
+        setConversations(prevConversations => {
+            console.log("prevConversations:", prevConversations);
+            return prevConversations.map(convo => {
+                if (convo.userId == userId) {
+                    return { ...convo, messages: [...convo.messages, chatMessage] };
+                }
+                return convo;
+            });
         });
-        setConversations(updatedConversations);
-        console.log('Conversations after update:', conversations);
-        console.log('updatedConversations after update:', updatedConversations);
     };
+
 
     function transformMessage(apiMsg, loggedInUserId) {
         return {
-            id: `${apiMsg.senderId}-${apiMsg.receiverId}`,
+            id: `${apiMsg.senderId}-${apiMsg.receiverId}-${apiMsg.id}`,
             senderId: apiMsg.senderId === loggedInUserId ? "me" : String(apiMsg.senderId),
             content: apiMsg.content,
             type: MessageType.TEXT,
@@ -246,7 +246,31 @@ const Messages: React.FC = () => {
         return date.toISOString(); // auto-converts to UTC with Z
     }
 
+    function addUserToConversation(data) {
+        //setConversations(prev => [...prev, data]);
+    }
 
+    function removeUserFromConversation(userId) {
+        //setConversations(prev => prev.filter(convo => convo.userId !== userId));
+    }
+    function updateUserInConversation(userId, newData) {
+        //setConversations(prev => prev.map(convo => convo.userId === userId ? { ...convo, ...newData } : convo));
+    }
+    function clearConversations() {
+        //setConversations([]);
+    }
+    function setAllConversations(data) {
+        data.forEach((convo) => {
+            convo.userName = convo.name;
+            convo.userId = convo.userId;
+            convo.profilePic = convo.profilePic;
+            convo.lastMessageAt = convo.lastMessageAt;
+            convo.lastMessage = convo.lastMessage;
+            convo.roomId = convo.roomId;
+            convo.messages = convo.messages ? convo.messages.map((msg) => transformMessage(msg, user?.id || user?.profile?.id)) : [];
+        });
+        setConversations(data);
+    }
 
     //Chat Integration Code End here
 
@@ -254,13 +278,15 @@ const Messages: React.FC = () => {
     useEffect(() => {
         // Try connection ONLY when userId + token available
         const token = localStorage.getItem("token");
-        if (userId && token) {
+        if (token && conversations?.length === 0) {
             getChatConversationsAPI().then((data) => {
-                // setConversations(data);
-                console.log("Fetched conversations from API:", data);
+                setAllConversations(data);
+                // console.log("Fetched conversations from API:", data);
             }).catch((error) => {
                 console.error("Error fetching conversations:", error);
             });
+        }
+        if (userId && token) {
             connectStomp();
             const numericUserId = parseInt(userId, 10);
             const conversationExists = conversations.some(c => c.userId === numericUserId);
@@ -280,7 +306,7 @@ const Messages: React.FC = () => {
                         userName: targetUser.name,
                         messages: [],
                     };
-                    setConversations(prev => [newConversation, ...prev]);
+                    //setConversations(prev => [newConversation, ...prev]);
                 }
             }
             setSelectedConversationId(numericUserId);
@@ -296,53 +322,53 @@ const Messages: React.FC = () => {
         navigate(`/messages/${id}`);
     };
 
-    const sendMessage = useCallback((content: string, type: MessageType) => {
-        if (!selectedConversationId) return;
+    // const sendMessage = useCallback((content: string, type: MessageType) => {
+    //     if (!selectedConversationId) return;
 
-        const newMessage: Message = {
-            id: new Date().toISOString(),
-            senderId: 'me',
-            content,
-            type,
-            timestamp: new Date().toISOString(),
-            status: MessageStatus.SENT,
-        };
+    //     const newMessage: Message = {
+    //         id: new Date().toISOString(),
+    //         senderId: 'me',
+    //         content,
+    //         type,
+    //         timestamp: new Date().toISOString(),
+    //         status: MessageStatus.SENT,
+    //     };
 
-        const updatedConversations = conversations.map(convo => {
-            if (convo.userId === selectedConversationId) {
-                return { ...convo, messages: [...convo.messages, newMessage] };
-            }
-            return convo;
-        });
-        setConversations(updatedConversations);
+    //     const updatedConversations = conversations.map(convo => {
+    //         if (convo.userId === selectedConversationId) {
+    //             return { ...convo, messages: [...convo.messages, newMessage] };
+    //         }
+    //         return convo;
+    //     });
+    //     //setConversations(updatedConversations);
 
-        // Simulate message status updates and a reply
-        setTimeout(() => {
-            setConversations(prev => prev.map(c => c.userId === selectedConversationId ? { ...c, messages: c.messages.map(m => m.id === newMessage.id ? { ...m, status: MessageStatus.DELIVERED } : m) } : c));
-        }, 1000);
+    //     // Simulate message status updates and a reply
+    //     setTimeout(() => {
+    //         //setConversations(prev => prev.map(c => c.userId === selectedConversationId ? { ...c, messages: c.messages.map(m => m.id === newMessage.id ? { ...m, status: MessageStatus.DELIVERED } : m) } : c));
+    //     }, 1000);
 
-        setTimeout(() => {
-            setConversations(prev => prev.map(c => c.userId === selectedConversationId ? { ...c, messages: c.messages.map(m => m.id === newMessage.id ? { ...m, status: MessageStatus.READ } : m) } : c));
-            setIsTyping(true);
-        }, 2500);
+    //     setTimeout(() => {
+    //         //setConversations(prev => prev.map(c => c.userId === selectedConversationId ? { ...c, messages: c.messages.map(m => m.id === newMessage.id ? { ...m, status: MessageStatus.READ } : m) } : c));
+    //         setIsTyping(true);
+    //     }, 2500);
 
-        setTimeout(() => {
-            setIsTyping(false);
-            const mockReply: Message = {
-                id: new Date().toISOString() + '-reply',
-                senderId: selectedConversationId,
-                content: `That's interesting! Tell me more.`,
-                type: MessageType.TEXT,
-                timestamp: new Date().toISOString(),
-                status: MessageStatus.READ, // Assuming it's read by the user instantly
-            };
-            setConversations(prev => prev.map(c => c.userId === selectedConversationId ? { ...c, messages: [...c.messages, mockReply] } : c));
-        }, 4500);
+    //     setTimeout(() => {
+    //         setIsTyping(false);
+    //         const mockReply: Message = {
+    //             id: new Date().toISOString() + '-reply',
+    //             senderId: selectedConversationId,
+    //             content: `That's interesting! Tell me more.`,
+    //             type: MessageType.TEXT,
+    //             timestamp: new Date().toISOString(),
+    //             status: MessageStatus.READ, // Assuming it's read by the user instantly
+    //         };
+    //         //setConversations(prev => prev.map(c => c.userId === selectedConversationId ? { ...c, messages: [...c.messages, mockReply] } : c));
+    //     }, 4500);
 
-    }, [selectedConversationId, conversations]);
+    // }, [selectedConversationId, conversations]);
 
     const selectedConversation = conversations.find(c => c.userId === selectedConversationId);
-    const selectedUser = mockUsers.find(u => u.id === selectedConversationId);
+    const selectedUser = conversations.find(u => u.userId === selectedConversationId);
 
     // console.log('Rendering Messages component with conversations:', conversations);
     // console.log('Selected conversation:', selectedConversation);
@@ -371,7 +397,7 @@ const Messages: React.FC = () => {
                             /> */}
                             <ChatWindow
                                 conversation={selectedConversation}
-                                user={selectedUser as Match}
+                                user={selectedUser as Conversation}
                                 onSendMessage={sendMessageToFriend}
                                 isTyping={isTyping}
                             />

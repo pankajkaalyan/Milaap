@@ -1,6 +1,7 @@
 import React from 'react';
 import { Conversation, MessageType } from '../../../types';
 import { mockUsers } from '../../../data/mockUsers';
+import { use } from 'framer-motion/client';
 
 interface ConversationListProps {
   conversations: Conversation[];
@@ -11,8 +12,8 @@ interface ConversationListProps {
 const ConversationList: React.FC<ConversationListProps> = ({ conversations, selectedConversationId, onSelectConversation }) => {
 
   const getAvatarUrl = (userId: string | number) => {
-    const user = mockUsers.find(u => u.id === userId);
-    return user?.photos?.[0] || `https://picsum.photos/100/100?random=${userId}`;
+    const user = conversations.find(u => u.userId === userId);
+    return user?.profilePic;
   };
 
   const getLastMessagePreview = (conversation: Conversation) => {

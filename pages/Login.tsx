@@ -11,7 +11,7 @@ import { useForm } from '../hooks/useForm';
 import { required, email } from '../utils/validators';
 import SEO from '../components/ui/SEO';
 import Spinner from '../components/ui/Spinner';
-import { loginAPI } from '@/services/api/auth';
+import { loginAPI, refreshTokenAPI } from '@/services/api/auth';
 import { fetchCurrentUserAPI } from '@/services/api/profile';
 import { eventBus } from '@/utils/eventBus';
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -31,34 +31,25 @@ const Login: React.FC = () => {
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("loginTime");
       localStorage.removeItem("user");
+      localStorage.removeItem("expiresIn");
       const isAdminLogin = data.email === 'admin@example.com' || data.email === 'moderator@example.com';
       const role = isAdminLogin ? UserRole.ADMIN : UserRole.CUSTOMER;
       const credentials = { username: data.email, password: data.password };
       loginAPI(credentials)
-        .then((res) => {
+        .then(async (res) => {
           localStorage.setItem("token", res.accessToken);
           localStorage.setItem("refreshToken", res.refreshToken);
+          localStorage.setItem("expiresIn", JSON.stringify(res.expiresIn));
           localStorage.setItem("loginTime", Date.now().toString());
           login(credentials.username, role, undefined, res.accessToken);
           trackEvent('login_success', { email: data.email, role });
           addToast('Login successful!', 'success');
-          // fetchCurrentUserAPI().then(async data => {
-          //   // console.log('Fetched current user:', data);
-          //   let mockUser = {
-          //     id: data.id,
-          //     email: data.email,
-          //     name: data.name,
-          //     role: data.role,
-          //     createdAt: data.createdAt,
-          //     profile: data.profile,
-          //   };
-          //   localStorage.setItem('user', JSON.stringify(mockUser));
-          //   await delay(1000); // Wait 2 seconds
-          //   navigate(role === UserRole.ADMIN ? '/admin/dashboard' : '/dashboard');
-          // }).catch(err => {
-          //   console.error('Error fetching current user:', err);
-          // });
-
+          // const result = await refreshTokenAPI();
+          // console.log('Token refreshed after login:', result);
+          // localStorage.setItem("token", result.accessToken);
+          // localStorage.setItem("refreshToken", result.refreshToken);
+          // localStorage.setItem("expiresIn", String(result.expiresIn));
+          // localStorage.setItem("loginTime", Date.now().toString());
         })
         .catch((err) => {
           console.error('Login failed:', err);
@@ -75,8 +66,8 @@ const Login: React.FC = () => {
     eventBus.on(AppEventStatus.LOGIN_SUCCESS, loggedInHandler);
     return () => {
       eventBus.off(AppEventStatus.LOGIN_SUCCESS, loggedInHandler);
-    };  
-  
+    };
+
   }, []);
   const handleGoogleLogin = () => {
     setIsSocialLoginLoading('google');

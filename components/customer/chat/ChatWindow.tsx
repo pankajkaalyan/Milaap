@@ -9,7 +9,7 @@ import PhoneIcon from '../../icons/PhoneIcon';
 
 interface ChatWindowProps {
   conversation: Conversation;
-  user: Match;
+  user: Conversation;
   onSendMessage: (content: string, type: MessageType) => void;
   isTyping: boolean;
 }
@@ -30,12 +30,15 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversation, user, onSendMessa
       setIsCalling(true);
   }
 
+  // console.log('Rendering ChatWindow for conversation:', conversation);
+  // console.log('user:', user);
+
   return (
     <Card className="h-full !p-0 flex flex-col">
       <div className="flex items-center justify-between p-3 border-b border-white/10 shrink-0">
         <div className="flex items-center space-x-3">
-            <img src={user.photos?.[0] || `https://picsum.photos/100/100?random=${user.id}`} alt={user.name} className="w-10 h-10 rounded-full object-cover" />
-            <h2 className="font-semibold text-white">{user.name}</h2>
+            <img src={user.profilePic} alt={user.userName} className="w-10 h-10 rounded-full object-cover" />
+            <h2 className="font-semibold text-white">{user.userName}</h2>
         </div>
         <div className="flex items-center space-x-4 text-gray-400">
             <button className="hover:text-white transition-colors" onClick={() => handleCall('voice')} aria-label="Start voice call"><PhoneIcon className="h-6 w-6" /></button>
@@ -49,7 +52,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversation, user, onSendMessa
         ))}
         {isTyping && (
              <div className="flex items-center space-x-2">
-                <img src={user.photos?.[0] || `https://picsum.photos/100/100?random=${user.id}`} alt={user.name} className="w-8 h-8 rounded-full object-cover" />
+                <img src={user.profilePic} alt={user.userName} className="w-8 h-8 rounded-full object-cover" />
                 <div className="bg-gray-700 text-white p-3 rounded-lg rounded-bl-none text-sm">
                     <span className="typing-indicator">
                         <span></span><span></span><span></span>

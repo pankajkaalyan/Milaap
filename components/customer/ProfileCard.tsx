@@ -122,10 +122,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ match, isFavourite, onToggleF
         <Link to={`/profile/${match.id}`} className="block bg-white/10 rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 flex flex-col group cursor-pointer">
             <div className="relative">
                 <img src={match.photos && match.photos.length > 0 ? match.photos[0] : `https://picsum.photos/400/300?random=${match.id}`} alt={match.name} className="w-full h-48 object-cover" />
-                <div className={`absolute top-2 right-2 px-2 py-1 text-xs font-bold rounded-full ${getScoreColor(match.compatibilityScore)} backdrop-blur-sm`}>
+                <div className={`absolute top-6 right-2 px-2 py-1 text-xs font-bold rounded-full ${getScoreColor(match.compatibilityScore)} backdrop-blur-sm`}>
                     {match.compatibilityScore}% {t('dashboard.compatibility_score')}
                 </div>
-                <div className="absolute top-2 left-2 flex space-x-2">
+                <div className="absolute top-6 left-2 flex space-x-2">
                     <button
                         onClick={(e) => handleActionClick(e, onToggleFavourite)}
                         className="p-2 bg-black/30 rounded-full backdrop-blur-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400"
@@ -133,13 +133,13 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ match, isFavourite, onToggleF
                     >
                         <HeartIcon isFavourite={isFavourite} />
                     </button>
-                    <button
+                    {/* <button
                         onClick={(e) => handleActionClick(e, handleStartChat)}
                         className="p-2 bg-black/30 rounded-full backdrop-blur-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400"
                         aria-label="Start chat"
                     >
                         <MessageIcon />
-                    </button>
+                    </button> */}
                 </div>
             </div>
             <div className="p-4 flex flex-col flex-grow">
