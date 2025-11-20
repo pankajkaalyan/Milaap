@@ -1,7 +1,5 @@
 import React from 'react';
 import { Conversation, MessageType } from '../../../types';
-import { mockUsers } from '../../../data/mockUsers';
-import { use } from 'framer-motion/client';
 
 interface ConversationListProps {
   conversations: Conversation[];

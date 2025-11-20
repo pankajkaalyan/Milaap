@@ -91,6 +91,7 @@ export interface User {
   profile?: UserProfile;
   adminRole?: AdminRole;
   age?: number;
+  interestShownList?: InterestShown[];
 }
 
 export interface ToastMessage {
@@ -106,6 +107,7 @@ export interface Match extends UserProfile {
   location?: string;
   compatibilityScore?: number;
   photos?: string[];
+  interestShownList?: InterestShown[];
 }
 
 export interface Message {

@@ -1,41 +1,92 @@
 import axios from "axios";
 
-// Base instance
+/* ------------------------------------------------
+   🚀 BASE API INSTANCE
+---------------------------------------------------*/
 export const API = axios.create({
-    baseURL:
+  baseURL:
     import.meta.env.MODE === "development"
       ? ""
-      : import.meta.env.VITE_API_URL, // Example API
+      : import.meta.env.VITE_API_URL,
+  timeout: 15000,
+  headers: { "Content-Type": "application/json" },
 });
 
-API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+/* ------------------------------------------------
+   🔑 REQUEST INTERCEPTOR — Add Token
+---------------------------------------------------*/
+API.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+/* ------------------------------------------------
+   🛑 RESPONSE INTERCEPTOR — Handle 401
+---------------------------------------------------*/
+API.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const status = error?.response?.status;
+
+    if (status === 401) {
+      console.warn("⚠️ 401 detected → Logging out user...");
+
+      await logoutCleanup();
+
+      // safest redirection inside interceptors
+      window.location.replace("/login");
+    }
+
+    return Promise.reject(error);
   }
-  return config;
-});
+);
 
-// Example GET request
+/* ------------------------------------------------
+   🚪 LOGOUT CLEANUP (Fully improved)
+---------------------------------------------------*/
+async function logoutCleanup() {
+  try {
+    // Clear storage
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Clear caches
+    if ("caches" in window) {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map((name) => caches.delete(name)));
+      console.log("🧹 PWA caches cleared");
+    }
+
+    // Unregister Service Workers
+    if ("serviceWorker" in navigator) {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      for (const registration of registrations) {
+        await registration.unregister();
+      }
+      console.log("🧹 Service workers unregistered");
+    }
+  } catch (err) {
+    console.error("Logout cleanup error:", err);
+  }
+}
+
+/* ------------------------------------------------
+   📌 API HELPERS (Reusable)
+---------------------------------------------------*/
 export const fetchPosts = async () => {
-    try {
-        const response = await API.get("/posts");
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching posts:", error);
-        throw error;
-    }
+  const { data } = await API.get("/posts");
+  return data;
 };
 
-// Example POST request
 export const createPost = async (postData) => {
-    try {
-        const response = await API.post("/posts", postData);
-        return response.data;
-    } catch (error) {
-        console.error("Error creating post:", error);
-        throw error;
-    }
+  const { data } = await API.post("/posts", postData);
+  return data;
 };
-
-

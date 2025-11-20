@@ -48,7 +48,7 @@ const ProfileMenu: React.FC = () => {
   return (
     <div className="relative" ref={menuRef}>
       <button onClick={() => setIsOpen(prev => !prev)} className="flex items-center space-x-2 focus:outline-none">
-        {user.role === UserRole.CUSTOMER ? (
+        {user.role === UserRole.CUSTOMER || user.role === UserRole.ROLE_USER ? (
           <img src={user.profile?.photos?.[0] || `https://i.pravatar.cc/150?u=${user.id}`} alt="My Profile" className="w-9 h-9 rounded-full object-cover border-2 border-amber-500/50" />
         ) : (
           <div className="w-9 h-9 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold border-2 border-purple-500/50">
@@ -58,7 +58,7 @@ const ProfileMenu: React.FC = () => {
       </button>
       {isOpen && (
         <div className={`absolute right-0 mt-2 ${user.role === UserRole.ADMIN ? 'w-56' : 'w-48'} bg-gray-800 border border-gray-700 rounded-md shadow-lg z-20 animate-fade-in-up-fast`}>
-          {user.role === UserRole.CUSTOMER ? (
+          {user.role === UserRole.CUSTOMER || user.role === UserRole.ROLE_USER ? (
             <ul className="py-1">
               <li><NavLink to="/profile" className="w-full text-left block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700" onClick={closeMenu}>{t('nav.my_profile')}</NavLink></li>
               <li><NavLink to="/settings" className="w-full text-left block px-4 py-2 text-sm text-gray-200 hover:bg-gray-700" onClick={closeMenu}>{t('nav.settings')}</NavLink></li>

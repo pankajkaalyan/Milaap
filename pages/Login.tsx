@@ -11,8 +11,7 @@ import { useForm } from '../hooks/useForm';
 import { required, email } from '../utils/validators';
 import SEO from '../components/ui/SEO';
 import Spinner from '../components/ui/Spinner';
-import { loginAPI, refreshTokenAPI } from '@/services/api/auth';
-import { fetchCurrentUserAPI } from '@/services/api/profile';
+import { loginAPI } from '@/services/api/auth';
 import { eventBus } from '@/utils/eventBus';
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const Login: React.FC = () => {

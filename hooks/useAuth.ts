@@ -33,8 +33,8 @@ export const useAuth = () => {
         console.log("⏰ Setting up token refresh timer", { token, expiresIn });
         if (!token || !expiresIn) return;
 
-        // Refresh 2 minutes before expiry
-        const refreshBefore = (expiresIn - 120) * 1000;
+        // Refresh 10 minutes before expiry
+        const refreshBefore = (expiresIn - 600) * 1000;
         console.log(`⏰ Scheduling token refresh in ${refreshBefore / 1000 / 60} minutes`);
         console.log("⏰ refreshBefore :", refreshBefore);
         if (refreshTimer.current) clearTimeout(refreshTimer.current);
@@ -96,6 +96,7 @@ export const useAuth = () => {
                 role: UserRole.CUSTOMER,
                 profile: data.profile,
                 createdAt: data.createdAt,
+                interestShownList: data.interestShownList,
             };
 
             setUser(newUser);

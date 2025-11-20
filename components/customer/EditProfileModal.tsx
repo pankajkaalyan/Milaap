@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
-import { UserProfile, EditProfileFormData, FamilyDetails, HoroscopeDetails, PartnerPreferences, ButtonVariant, ModalSize } from '../../types';
+import { UserProfile, EditProfileFormData, FamilyDetails, HoroscopeDetails, PartnerPreferences, ButtonVariant, ModalSize, User, UserRole } from '../../types';
 import Button from '../ui/Button';
 import Input from '../ui/Input';
 import AIProfileAssistantModal from './AIProfileAssistantModal';
@@ -9,8 +9,8 @@ import Dropdown from '../ui/Dropdown';
 import { useForm } from '../../hooks/useForm';
 import Modal from '../ui/Modal';
 import UserPlusIcon from '../icons/UserPlusIcon';
-import { updateProfileAPI } from '@/services/api/profile';
-import { p } from 'framer-motion/client';
+import { fetchCurrentUserAPI, updateProfileAPI } from '@/services/api/profile';
+import { findIntrest } from '@/transform/transformMutualUser';
 
 const SparkleIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -53,11 +53,11 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
                 },
             };
             console.log('Submitting profile update with data:', finalProfileData);
-            // updateUserProfile(finalProfileData);
             updateProfileAPI(finalProfileData, photos, videoFile).then(updatedProfile => {
                 console.log('Profile updated successfully:', updatedProfile);
                 addToast(t('profile.update_success'), 'success');
                 onClose();
+                updateUserProfile(updatedProfile);
             });
         }
     );

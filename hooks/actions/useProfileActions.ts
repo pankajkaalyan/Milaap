@@ -4,6 +4,7 @@ import { User, UserProfile, MembershipPlan } from '../../types';
 import { verificationService } from '../../services/ai/verificationService';
 import { userService } from '../../services/api/userService';
 import { mockUsers } from '../../data/mockUsers';
+import { fetchCurrentUserAPI } from '@/services/api/profile';
 
 type TFunction = (key: string, options?: Record<string, string | number>) => string;
 type AddToastFunction = (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -11,23 +12,35 @@ type UpdateUserFunction = (user: User) => void;
 type LogoutFunction = () => void;
 
 export const useProfileActions = (
-    user: User | null, 
-    updateCurrentUser: UpdateUserFunction, 
-    t: TFunction, 
+    user: User | null,
+    updateCurrentUser: UpdateUserFunction,
+    t: TFunction,
     addToast: AddToastFunction,
     logout: LogoutFunction
 ) => {
-    
+
     const updateUserProfile = useCallback(async (profile: Partial<UserProfile>) => {
         if (!user) return;
-        const updatedUser = await userService.updateProfile(user.id, profile);
-        updateCurrentUser(updatedUser); // Update context state
+        // const updatedUser = await userService.updateProfile(user.id, profile);
+        const currentUser = await fetchCurrentUserAPI(); // Simulate fetching updated user
+        const newUser: User = {
+            id: currentUser.id,
+            email: currentUser.email,
+            name: currentUser.name,
+            role: currentUser.role,
+            profile: currentUser.profile,
+            createdAt: currentUser.createdAt,
+            interestShownList: currentUser.interestShownList,
+        };
+        console.log('Final profile data to update:', newUser);
+        updateCurrentUser(newUser);
+        // updateCurrentUser(updatedUser); // Update context state
     }, [user, updateCurrentUser]);
 
     const submitVerification = useCallback(async () => {
         await updateUserProfile({ verificationStatus: 'Pending' });
     }, [updateUserProfile]);
-    
+
     const verifyProfileWithAI = useCallback(async (idDocument: File) => {
         if (!user) return;
         try {
@@ -59,7 +72,7 @@ export const useProfileActions = (
         const newBlockedList = isBlocked
             ? currentBlocked.filter(id => id !== userIdToBlock.toString())
             : [...currentBlocked, userIdToBlock.toString()];
-        
+
         await updateUserProfile({ blockedUsers: newBlockedList });
         const targetUser = mockUsers.find(u => u.id === userIdToBlock);
         addToast(
@@ -73,7 +86,7 @@ export const useProfileActions = (
         const targetUser = mockUsers.find(u => u.id === userId);
         addToast(t('toasts.user.reported', { name: targetUser?.name || '' }), 'success');
     }, [addToast, t]);
-    
+
     const deactivateAccount = useCallback(async () => {
         await updateUserProfile({ status: 'deactivated' });
         logout();

@@ -92,7 +92,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                         ) : (
                             <Button onClick={onExpressInterest} className="w-auto px-4 py-2 !text-sm">{t('interests.express_interest')}</Button>
                         )}
-                        <Button onClick={onMessage} variant={ButtonVariant.SECONDARY} className="w-auto px-4 py-2 !text-sm">Message</Button>
+                        {/* <Button onClick={onMessage} variant={ButtonVariant.SECONDARY} className="w-auto px-4 py-2 !text-sm">Message</Button> */}
                         <Button onClick={onToggleFavourite} variant={ButtonVariant.SECONDARY} className="w-auto px-4 py-2 !text-sm">
                             {user.profile.isFavourite ? 'Favourited' : 'Favourite'}
                         </Button>
