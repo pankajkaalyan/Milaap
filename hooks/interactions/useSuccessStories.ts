@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { SuccessStory } from '../../types';
 import { storyService } from '../../services/api/storyService';
+import { submitSuccessStoryAPI } from '@/services/api/profile';
 
 type TFunction = (key: string, options?: Record<string, string | number>) => string;
 type AddToastFunction = (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -19,8 +20,8 @@ export const useSuccessStories = (t: TFunction, addToast: AddToastFunction) => {
                 addToast("Could not load success stories.", 'error');
             }
         };
-        fetchStories();
-    }, [addToast]);
+        // fetchStories();
+    }, []);
     
     const submitSuccessStory = async (storyData: Omit<SuccessStory, 'id' | 'imageUrl' | 'status'> & { couplePhoto?: File }) => {
         const newStoryData: Omit<SuccessStory, 'id' | 'status'> = {
@@ -29,7 +30,8 @@ export const useSuccessStories = (t: TFunction, addToast: AddToastFunction) => {
             story: storyData.story,
             imageUrl: `https://picsum.photos/seed/${Date.now()}/600/400`,
         };
-        const newStory = await storyService.submitSuccessStory(newStoryData);
+        // const newStory = await storyService.submitSuccessStory(newStoryData);
+        const newStory = await submitSuccessStoryAPI({ ...newStoryData, couplePhoto: storyData.couplePhoto } as any );
         setAllSuccessStories(prev => [newStory, ...prev]);
         addToast(t('toasts.story.submitted'), 'success');
     };

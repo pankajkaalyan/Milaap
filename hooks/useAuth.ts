@@ -69,6 +69,7 @@ export const useAuth = () => {
     // LOGIN
     // ---------------------------------------------------
     const login = async (email: string, role: UserRole, profile?: UserProfile, userToken?: string) => {
+        // logout(); // Clear previous state
         if (role === UserRole.ADMIN) {
             const isSuper = email === "admin@example.com";
             const mockUser: User = {

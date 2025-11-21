@@ -35,7 +35,7 @@ API.interceptors.response.use(
   (response) => response,
   async (error) => {
     const status = error?.response?.status;
-
+    console.log("⚠️ API Response Error Interceptor:", { status, error });
     if (status === 401) {
       console.warn("⚠️ 401 detected → Logging out user...");
 
