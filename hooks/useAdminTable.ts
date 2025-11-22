@@ -12,7 +12,10 @@ export const useAdminTable = (initialUsers: User[]) => {
   const [selectedUserIds, setSelectedUserIds] = useState<Set<string | number>>(new Set());
 
   const filteredUsers = useMemo(() => {
+    // console.log('Filtering users with searchTerm:', searchTerm, 'and roleFilter:', roleFilter);
+    // console.log('Initial users:', initialUsers);
     return initialUsers.filter(user => {
+        // console.log('Checking user:', user);
         const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                             user.email.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesRole = roleFilter === 'ALL' || user.role === roleFilter;

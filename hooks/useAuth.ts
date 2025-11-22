@@ -94,7 +94,7 @@ export const useAuth = () => {
                 id: data.id,
                 email: data.email,
                 name: data.name,
-                role: data.role === UserRole.ROLE_ADMIN ? UserRole.ADMIN : role,
+                role: data.role === UserRole.ROLE_ADMIN ? UserRole.ADMIN : UserRole.CUSTOMER,
                 adminRole: data.role === UserRole.ROLE_ADMIN ? AdminRole.SUPER_ADMIN : undefined,
                 profile: data.profile,
                 createdAt: data.createdAt,

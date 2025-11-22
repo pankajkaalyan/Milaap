@@ -3,7 +3,8 @@ import {
     AdminRole, MembershipPlan, Notification, UserRole, User, UserProfile,
     Match, SuccessStory, Report, AIKundliReport, 
     AIMatchSuggestion, VerificationLog, AdminUser, Interest, 
-    Interests
+    Interests,
+    ImportedUser
 } from '../types';
 
 import { useAuthContext } from '../hooks/useAuthContext';
@@ -74,10 +75,11 @@ export interface AppDataContextType {
   retriggerVerification: (logId: string) => void;
   updateAdminRole: (userId: string | number, newRole: AdminRole) => void;
   deleteUsers: (userIds: (string | number)[]) => void;
-  addBulkUsers: (users: User[]) => void;
+  addBulkUsers: (users: ImportedUser[]) => void;
   bulkUpdateUserRole: (userIds: (string | number)[], role: UserRole) => void;
   addUser: (name: string, email: string, role: UserRole) => void;
   updateUser: (userId: string | number, userData: Partial<Pick<User, 'name' | 'role'>>) => void;
+  initializeUsers: (users: User[]) => void;
 }
 
 export const AppDataContext = createContext<AppDataContextType | undefined>(undefined);

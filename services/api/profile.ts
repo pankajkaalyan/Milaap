@@ -23,7 +23,7 @@ export const getProfileByIdAPI = async (profileId) => {
 export const updateProfileAPI = async (
     profileData: any,
     photos: File[] = [],
-    video?: File
+    video: File[] = []
 ) => {
     try {
         console.log("Updating profile with data:", profileData);
@@ -46,8 +46,12 @@ export const updateProfileAPI = async (
         }
 
         // Attach video (single)
-        if (video instanceof File) {
-            formData.append("video", video);
+        if (video && Array.isArray(video)) {
+            video.forEach((vid) => {
+                if (vid) {
+                    formData.append("video", vid);
+                }
+            });
         }
 
         // Send request

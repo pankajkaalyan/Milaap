@@ -80,6 +80,7 @@ export interface UserProfile {
   isBlocked?: boolean;
   isVerified?: boolean;
   age?: number;
+  joiningDate?: string;
 }
 
 export interface User {
@@ -260,3 +261,15 @@ export interface ChatHistory {
   sender: string;
   text: string;
 }
+
+export interface ImportedUser {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;  // assuming UserRole is already defined elsewhere
+  createdAt: string;
+  profile: {
+    verificationStatus: string;
+  };
+}
+ 

@@ -23,6 +23,7 @@ const UserTableFilters: React.FC<UserTableFiltersProps> = ({ searchTerm, onSearc
           type="text"
           placeholder={t('admin.users.search')}
           value={searchTerm}
+          hideinfo="true"
           onChange={(e) => onSearchChange(e.target.value)}
         />
       </div>

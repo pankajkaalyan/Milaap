@@ -7,6 +7,7 @@ import FormLabel from './FormLabel';
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
   error?: string;
+  hideinfo? : string
 }
 
 const Input: React.FC<InputProps> = ({ label, id, error, type, ...props }) => {
@@ -22,7 +23,7 @@ const Input: React.FC<InputProps> = ({ label, id, error, type, ...props }) => {
 
   return (
     <div>
-      <FormLabel id={id || ''} label={label} required={props.required} />
+      <FormLabel id={id || ''} label={label} required={props.required}  hideinfo={props.hideinfo}/>
       <div className="relative">
         <input
           id={id}

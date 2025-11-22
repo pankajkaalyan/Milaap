@@ -23,7 +23,7 @@ const EditUserModal: React.FC<EditUserModalProps> = ({ isOpen, onClose, onUpdate
     { name: [required(t, t('register.name')), alphaOnly(t, t('register.name'))] },
     (data) => {
       if (user) {
-        onUpdateUser(user.id, { name: data.name, role: data.role });
+        onUpdateUser(user.id, {...user, ...data});
       }
     }
   );
