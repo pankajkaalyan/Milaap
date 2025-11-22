@@ -30,7 +30,7 @@ const Register: React.FC = () => {
 
     const { currentStep, next, back, isFirstStep, isLastStep } = useMultiStepForm(steps.length);
 
-    const { formData, errors, handleInputChange, setFieldValue, validate } = useForm<RegisterFormData>(
+    const { formData, errors, handleInputChange, setFieldValue, validate, setErrors } = useForm<RegisterFormData>(
         {
             name: '', email: '', password: '', dateOfBirth: '', timeOfBirth: '', gender: '', mobileNumber: null,
             height: '', profession: '', education: '', caste: '', subCaste: '', rashi: '', nakshatra: '',
@@ -126,8 +126,24 @@ const Register: React.FC = () => {
                 addToast('Registration successful! Welcome!', 'success');
                 navigate('/dashboard');
             }).catch((error) => {
-                console.error('Registration failed:', error);
-                addToast('Registration failed. Please try again.', 'error');
+                console.log("Registration failed:", error?.response?.data);
+
+                const apiError = error?.response?.data?.errorMessage || "Registration failed";
+                addToast(apiError, "error");
+
+                // Normalize to lowercase
+                const msg = apiError.toLowerCase();
+
+                // Update specific UI field errors if backend says duplicate email or mobile
+                setErrors(prev => ({
+                    ...prev,
+                    email: msg.includes("email") ? apiError : prev.email,
+                    mobileNumber:
+                        msg.includes("mobile") || msg.includes("contact")
+                            ? apiError
+                            : prev.mobileNumber
+                }));
+
             });
 
 

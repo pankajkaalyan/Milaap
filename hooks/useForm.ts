@@ -69,5 +69,6 @@ export const useForm = <T extends object>(
     setFieldValue,
     handleSubmit,
     validate,
+    setErrors
   };
 };
