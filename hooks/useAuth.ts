@@ -87,6 +87,7 @@ export const useAuth = () => {
         // }
 
         // CUSTOMER LOGIN → fetch user profile
+        if(!userToken) return;
         try {
             const data = await fetchCurrentUserAPI();
 

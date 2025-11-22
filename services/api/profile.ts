@@ -118,3 +118,39 @@ export const submitSuccessStoryAPI = async (storyData) => {
         throw error;
     }
 };
+
+
+export const rejectSuccessStoryAPI = async (id: number | string) => {
+    try {
+        const response = await API.put(
+            "/api/admin/verification/success-story/reject",
+            { id }
+        );
+        return response.data;
+    } catch (error: any) {
+        console.error(
+            "Error rejecting success story:",
+            error.response?.data || error
+        );
+        throw error;
+    }
+};
+
+export const approveSuccessStoryAPI = async (id: number | string) => {
+    try {
+        const response = await API.put(
+            "/api/admin/verification/success-story/approve",
+            { id }
+        );
+        return response.data;
+    } catch (error: any) {
+        console.error(
+            "Error approving success story:",
+            error.response?.data || error
+        );
+        throw error;
+    }
+};
+
+
+

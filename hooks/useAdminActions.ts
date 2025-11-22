@@ -83,7 +83,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
     };
 
     const rejectStory = async (storyId: number) => {
-        await storyService.updateStoryStatus(storyId, SuccessStoryStatus.REJECTED);
+        // await storyService.updateStoryStatus(storyId, SuccessStoryStatus.REJECTED);
         setStorySubmissions(prev => prev.filter(s => s.id !== storyId));
         addToast(t('toasts.story.rejected'), 'error');
         addNotification({ type: NotificationType.STORY_REJECTED, message: t('notifications.story_rejected'), link: '/success-stories', userId: 1 });

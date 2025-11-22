@@ -33,11 +33,11 @@ const SuccessStories: React.FC = () => {
 
     fetchSuccessStoriesAPI()
       .then((storyData) => {
-        console.log("Fetched success stories:", storyData);
+        // console.log("Fetched success stories:", storyData);
         setAllSuccessStories(storyData);
       })
       .catch((error) => {
-        console.error("Error fetching success stories on mount:", error);
+        console.warn("Error fetching success stories on mount:", error);
       });
   }, []);
 
