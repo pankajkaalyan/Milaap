@@ -70,21 +70,21 @@ export const useAuth = () => {
     // ---------------------------------------------------
     const login = async (email: string, role: UserRole, profile?: UserProfile, userToken?: string) => {
         // logout(); // Clear previous state
-        if (role === UserRole.ADMIN) {
-            const isSuper = email === "admin@example.com";
-            const mockUser: User = {
-                id: isSuper ? "admin-super-1" : "admin-mod-1",
-                email,
-                name: isSuper ? "Super Admin" : "Moderator",
-                role: UserRole.ADMIN,
-                adminRole: isSuper ? AdminRole.SUPER_ADMIN : AdminRole.MODERATOR,
-                createdAt: new Date().toISOString(),
-            };
+        // if (role === UserRole.ADMIN) {
+        //     const isSuper = email === "admin@example.com";
+        //     const mockUser: User = {
+        //         id: isSuper ? "admin-super-1" : "admin-mod-1",
+        //         email,
+        //         name: isSuper ? "Super Admin" : "Moderator",
+        //         role: UserRole.ADMIN,
+        //         adminRole: isSuper ? AdminRole.SUPER_ADMIN : AdminRole.MODERATOR,
+        //         createdAt: new Date().toISOString(),
+        //     };
 
-            setUser(mockUser);
-            localStorage.setItem("user", JSON.stringify(mockUser));
-            return;
-        }
+        //     setUser(mockUser);
+        //     localStorage.setItem("user", JSON.stringify(mockUser));
+        //     return;
+        // }
 
         // CUSTOMER LOGIN → fetch user profile
         try {
@@ -94,7 +94,8 @@ export const useAuth = () => {
                 id: data.id,
                 email: data.email,
                 name: data.name,
-                role: UserRole.CUSTOMER,
+                role: data.role === UserRole.ROLE_ADMIN ? UserRole.ADMIN : role,
+                adminRole: data.role === UserRole.ROLE_ADMIN ? AdminRole.SUPER_ADMIN : undefined,
                 profile: data.profile,
                 createdAt: data.createdAt,
                 interestShownList: data.interestShownList,
@@ -113,7 +114,7 @@ export const useAuth = () => {
                 localStorage.setItem("expiresIn", String(data.tokenExpiresIn));
             }
 
-            eventBus.emit(AppEventStatus.LOGIN_SUCCESS);
+            eventBus.emit(AppEventStatus.LOGIN_SUCCESS, {role: newUser.role, userId: newUser.id});
 
         } catch (err) {
             console.error("❌ Login failed:", err);

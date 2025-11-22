@@ -16,7 +16,7 @@ import { eventBus } from '@/utils/eventBus';
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const Login: React.FC = () => {
   const navigate = useNavigate();
-  const { login, addToast, t, trackEvent } = useAppContext();
+  const { login,addToast, t, trackEvent } = useAppContext();
   const [isSocialLoginLoading, setIsSocialLoginLoading] = useState<null | 'google' | 'facebook'>(null);
 
   const { formData, errors, handleInputChange, handleSubmit } = useForm<LoginFormData>(
@@ -57,8 +57,12 @@ const Login: React.FC = () => {
     }
   );
 
-  const loggedInHandler = () => {
-    navigate('/dashboard');
+  const loggedInHandler = ({role}) => {
+    if(role === UserRole.ADMIN) {
+      navigate('/admin/dashboard');
+    } else {
+      navigate('/dashboard');
+    }
   }
   useEffect(() => {
     // localStorage.removeItem("token");

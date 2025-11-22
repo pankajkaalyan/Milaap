@@ -222,8 +222,8 @@ const AppRouter: React.FC = () => {
               </PrivateRoute>
             } 
           >
-            {/* <Route index element={<Navigate to="dashboard" replace />} /> */}
-            {/* <Route path="dashboard" element={<AdminDashboard />} /> */}
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="user-management" element={<AdminUsers />} />
             <Route path="verification-requests" element={<VerificationRequests />} />
             <Route path="verification-logs" element={<VerificationLogs />} />

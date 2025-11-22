@@ -53,7 +53,7 @@ export const updateProfileAPI = async (
         // Send request
         const response = await API.post(`/api/profile/update`, formData, {
             headers: {
-            "Content-Type": "multipart/form-data",
+                "Content-Type": "multipart/form-data",
             },
         });
 

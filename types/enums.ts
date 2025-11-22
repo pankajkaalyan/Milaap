@@ -2,6 +2,7 @@ export enum UserRole {
   CUSTOMER = 'CUSTOMER',
   ADMIN = 'ADMIN',
   ROLE_USER = 'ROLE_USER', // For future use with OAuth
+  ROLE_ADMIN = 'ROLE_ADMIN', // For future use with OAuth
 }
 
 export enum AdminRole {
