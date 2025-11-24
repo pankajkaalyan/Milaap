@@ -16,7 +16,7 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
 
   const getLastMessagePreview = (conversation: Conversation) => {
     if (conversation.messages.length === 0) {
-      return 'No messages yet';
+      return conversation.lastMessage ? conversation.lastMessage : 'No messages yet';
     }
     const lastMessage = conversation.messages[conversation.messages.length - 1];
     switch(lastMessage.type) {

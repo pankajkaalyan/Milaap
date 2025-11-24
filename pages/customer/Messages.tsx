@@ -279,69 +279,72 @@ const Messages: React.FC = () => {
     }
 
     //Chat Integration Code End here
+    const selectedConversation = conversations.find(c => c.userId === selectedConversationId);
+    const selectedUser = conversations.find(u => u.userId === selectedConversationId);
 
-
+    // 1️⃣ Load conversations ONLY once when token exists
     useEffect(() => {
-        // Try connection ONLY when userId + token available
         const token = localStorage.getItem("token");
-        if (token && conversations?.length === 0) {
-            getChatConversationsAPI().then((data) => {
-                setAllConversations(data);
-                // console.log("Fetched conversations from API:", data);
-            }).catch((error) => {
-                console.error("Error fetching conversations:", error);
-            });
+        if (token && conversations.length === 0) {
+            getChatConversationsAPI()
+                .then((data) => setAllConversations(data))
+                .catch((error) =>
+                    console.error("Error fetching conversations:", error)
+                );
         }
+    }, []);  // <-- empty dependency (runs only once)
+
+
+    // 2️⃣ Connect STOMP when userId + token available
+    useEffect(() => {
+        const token = localStorage.getItem("token");
         if (userId && token) {
             connectStomp();
-            const numericUserId = parseInt(userId, 10);
-            const conversationExists = conversations.some(
-                (c: Conversation) => c.userId === numericUserId
-            );
+        }
+
+        return () => disconnectStomp();
+    }, [userId]);  // ← only reconnect when userId changes
+
+    // 4️⃣ When userId changes, select the conversation
+    useEffect(() => {
+        if (!userId) return;
+
+        const numericUserId = parseInt(userId, 10);
+        setSelectedConversationId(numericUserId);
+    }, [userId]);
 
 
-            if (!conversationExists) {
-                // Check if user can start a new conversation
-                if (!isPremiumUser && conversations.length >= MESSAGING_LIMIT_FREE_TIER) {
-                    setIsPremiumModalOpen(true);
-                    navigate('/messages'); // Go back to the main messages view
-                    return;
-                }
+    // 3️⃣ Load messages for the selected conversation
+    useEffect(() => {
+        if (!selectedConversation) return;
 
-                const targetUser = mockUsers.find(u => u.id === numericUserId);
-                if (targetUser) {
-                    const newConversation: Conversation = {
-                        userId: targetUser.id,
-                        userName: targetUser.name,
-                        messages: [],
-                    };
-                    //setConversations(prev => [newConversation, ...prev]);
-                }
-            }
-            if (selectedConversation?.messages.length === 0) {
-                getConversationMessagesAPI(selectedConversation.roomId).then((data) => {
+        if (selectedConversation.messages.length === 0) {
+            getConversationMessagesAPI(selectedConversation.roomId)
+                .then((data) => {
                     const transformedMessages = data
-                        .map((msg) => transformMessage(msg, user?.id || user?.profile?.id))
+                        .map((msg) =>
+                            transformMessage(msg, user?.id || user?.profile?.id)
+                        )
                         .sort((a, b) => a.messageId - b.messageId);
 
-                    setConversations((prevConversations) =>
-                        prevConversations.map((convo) =>
-                            convo.userId === numericUserId
+                    setConversations((prev) =>
+                        prev.map((convo) =>
+                            convo.userId === selectedConversation.userId
                                 ? { ...convo, messages: transformedMessages }
                                 : convo
                         )
                     );
-                }).catch((error) => {
-                    console.error("Error fetching conversation messages:", error);
-                });
-            }
-            setSelectedConversationId(numericUserId);
+                })
+                .catch((error) =>
+                    console.error("Error fetching conversation messages:", error)
+                );
         }
-        // Cleanup on unmount
-        return () => {
-            disconnectStomp();
-        };
-    }, [userId, conversations, isPremiumUser, navigate]);
+    }, [selectedConversation]); // ← fetch when selected conversation changes
+
+
+
+
+
 
     const handleSelectConversation = (id: number) => {
         setSelectedConversationId(id);
@@ -393,8 +396,6 @@ const Messages: React.FC = () => {
 
     // }, [selectedConversationId, conversations]);
 
-    const selectedConversation = conversations.find(c => c.userId === selectedConversationId);
-    const selectedUser = conversations.find(u => u.userId === selectedConversationId);
 
     // console.log('Rendering Messages component with conversations:', conversations);
     // console.log('Selected conversation:', selectedConversation);

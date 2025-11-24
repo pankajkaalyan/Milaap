@@ -5,6 +5,7 @@ import { verificationService } from '../../services/ai/verificationService';
 import { userService } from '../../services/api/userService';
 import { mockUsers } from '../../data/mockUsers';
 import { fetchCurrentUserAPI } from '@/services/api/profile';
+import { blockUserAPI } from '@/services/api/auth';
 
 type TFunction = (key: string, options?: Record<string, string | number>) => string;
 type AddToastFunction = (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -73,12 +74,13 @@ export const useProfileActions = (
             ? currentBlocked.filter(id => id !== userIdToBlock.toString())
             : [...currentBlocked, userIdToBlock.toString()];
 
-        await updateUserProfile({ blockedUsers: newBlockedList });
-        const targetUser = mockUsers.find(u => u.id === userIdToBlock);
-        addToast(
-            isBlocked ? t('toasts.user.unblocked', { name: targetUser?.name || '' }) : t('toasts.user.blocked', { name: targetUser?.name || '' }),
-            'info'
-        );
+        // await updateUserProfile({ blockedUsers: newBlockedList });
+        await blockUserAPI(userIdToBlock);
+        // const targetUser = mockUsers.find(u => u.id === userIdToBlock);
+        // addToast(
+        //     isBlocked ? t('toasts.user.unblocked', { name: targetUser?.name || '' }) : t('toasts.user.blocked', { name: targetUser?.name || '' }),
+        //     'info'
+        // );
     }, [user, updateUserProfile, addToast, t]);
 
     const reportUser = useCallback((userId: number, reason: string, details: string) => {

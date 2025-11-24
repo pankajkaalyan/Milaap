@@ -32,6 +32,23 @@ export const forgotPasswordAPI = async (email) => {
     }
 };
 
+export const changePasswordAPI = async (token: string, newPassword: string) => {
+    try {
+        const payload = {
+            token,
+            newPassword,
+        };
+
+        const response = await API.post("/api/auth/change-password", payload);
+
+        return response.data;
+    } catch (error) {
+        console.error("Error changing password:", error?.response?.data || error);
+        throw error;
+    }
+};
+ 
+
 
 export const refreshTokenAPI = async () => {
     try {
@@ -41,6 +58,16 @@ export const refreshTokenAPI = async () => {
         return response.data;
     } catch (error) {
         console.error("Error refreshing token:", error);
+        throw error;
+    }
+};
+
+export const blockUserAPI = async (targetUserId) => {
+    try {
+        const response = await API.post(`/api/user-interactions/block/${targetUserId}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error blocking user:", error);
         throw error;
     }
 };

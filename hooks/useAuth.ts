@@ -16,32 +16,66 @@ export const useAuth = () => {
     const [expiresIn, setExpiresIn] = useState<number | null>(null);
     const refreshTimer = useRef<NodeJS.Timeout | null>(null);
 
+    // ---------------------------------------------------
+    // Load from localStorage ONCE (when component mounts)
+    // ---------------------------------------------------
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         const storedToken = localStorage.getItem("token");
         const storedExpiry = localStorage.getItem("expiresIn");
+
         console.log("⏳ Loaded from localStorage", { storedUser, storedToken, storedExpiry });
+
         if (storedUser) setUser(JSON.parse(storedUser));
         if (storedToken) setToken(storedToken);
         if (storedExpiry) setExpiresIn(Number(storedExpiry));
-    }, [token]);
+    }, []);   // <- EMPTY dependency → runs only ONCE
+
+
 
     // ---------------------------------------------------
     // Auto-refresh token BEFORE expiration
     // ---------------------------------------------------
     useEffect(() => {
         console.log("⏰ Setting up token refresh timer", { token, expiresIn });
+
+        // If no token or no expiry, do nothing
         if (!token || !expiresIn) return;
 
         // Refresh 10 minutes before expiry
         const refreshBefore = (expiresIn - 600) * 1000;
+
         console.log(`⏰ Scheduling token refresh in ${refreshBefore / 1000 / 60} minutes`);
-        console.log("⏰ refreshBefore :", refreshBefore);
+
+        // If expiry time invalid or already expired
+        if (refreshBefore <= 0) {
+            console.warn("Token is expiring soon → refreshing now");
+            refreshTokenAPI()
+                .then(result => {
+                    if (!result.accessToken) {
+                        logout();
+                        return;
+                    }
+                    setToken(result.accessToken);
+                    setExpiresIn(result.expiresIn);
+
+                    localStorage.setItem("token", result.accessToken);
+                    localStorage.setItem("refreshToken", result.refreshToken);
+                    localStorage.setItem("expiresIn", String(result.expiresIn));
+                })
+                .catch(() => logout());
+            return;
+        }
+
+        // Clear previous timer
         if (refreshTimer.current) clearTimeout(refreshTimer.current);
+
+        // Set refresh timer
         refreshTimer.current = setTimeout(async () => {
             console.log("🔄 Refreshing token... Api will call");
+
             const result = await refreshTokenAPI();
-            console.log("🔄 Token refresh result:", result);
+
             if (!result.accessToken) {
                 console.warn("Token refresh failed → logging out");
                 logout();
@@ -54,15 +88,16 @@ export const useAuth = () => {
             localStorage.setItem("token", result.accessToken);
             localStorage.setItem("refreshToken", result.refreshToken);
             localStorage.setItem("expiresIn", String(result.expiresIn));
-            console.log("🔄 Token refreshed automatically");
 
+            console.log("🔄 Token refreshed automatically");
         }, refreshBefore);
 
         return () => {
             if (refreshTimer.current) clearTimeout(refreshTimer.current);
         };
 
-    }, [token, expiresIn]);
+    }, [token, expiresIn]);   // <- correct dependencies
+
 
 
     // ---------------------------------------------------
@@ -87,7 +122,7 @@ export const useAuth = () => {
         // }
 
         // CUSTOMER LOGIN → fetch user profile
-        if(!userToken) return;
+        if (!userToken) return;
         try {
             const data = await fetchCurrentUserAPI();
 
@@ -115,7 +150,7 @@ export const useAuth = () => {
                 localStorage.setItem("expiresIn", String(data.tokenExpiresIn));
             }
 
-            eventBus.emit(AppEventStatus.LOGIN_SUCCESS, {role: newUser.role, userId: newUser.id});
+            eventBus.emit(AppEventStatus.LOGIN_SUCCESS, { role: newUser.role, userId: newUser.id });
 
         } catch (err) {
             console.error("❌ Login failed:", err);
