@@ -54,7 +54,7 @@ const ViewProfile: React.FC = () => {
                 setTargetUserProfile(data);
                 // console.log('Fetched user profile:', data);
             } catch (err) {
-                console.error('Error fetching user profile:', err);
+                // console.error('Error fetching user profile:', err);
             } finally {
                 setLoading(false);
             }

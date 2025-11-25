@@ -1,15 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppContext } from '../../../hooks/useAppContext';
 import { mockUsers } from '../../../data/mockUsers';
 import Button from '../../ui/Button';
-import { ButtonVariant } from '../../../types';
+import { AppEventStatus, ButtonVariant } from '../../../types';
 import { getBlockedUsersAPI } from '@/services/api/profile';
+import { eventBus } from '@/utils/eventBus';
 
 const BlockedUsers: React.FC = () => {
     const { t, user, toggleBlockUser } = useAppContext();
     const [blockedUsersFullProfile, setBlockedUsersFullProfile] = useState([]);
     const [loading, setLoading] = useState(true);
-    
+
     // const blockedUsersFullProfile = useMemo(() => {
     //     if (!user?.profile?.blockedUsers) return [];
     //     return mockUsers.filter(u => user.profile!.blockedUsers!.includes(u.id.toString()));
@@ -17,18 +18,30 @@ const BlockedUsers: React.FC = () => {
 
     const loadBlockedUsers = async () => {
         try {
+            setLoading(true);
             const data = await getBlockedUsersAPI();
-            console.log("Blocked users data:", data);
             setBlockedUsersFullProfile(data || []);
-        } catch (error) {
-            console.error("Failed to load blocked users", error);
+        } catch (err) {
+            // console.error("Failed to load blocked users", err);
         } finally {
             setLoading(false);
         }
     };
+
+
+    const updateBlockedStatusHandler = (data: { targetUserId: number; isBlocked: boolean }) => {
+        setBlockedUsersFullProfile(prev => prev.filter(user => user.id !== data.targetUserId));
+    }
+
     useEffect(() => {
+        eventBus.on(AppEventStatus.BLOCK_USER, updateBlockedStatusHandler);
         loadBlockedUsers();
+        return () => {
+            eventBus.off(AppEventStatus.BLOCK_USER, updateBlockedStatusHandler);
+        }
     }, []);
+
+    if (loading) return (<p className="text-gray-300">Loading...</p>);
 
     return (
         <div>

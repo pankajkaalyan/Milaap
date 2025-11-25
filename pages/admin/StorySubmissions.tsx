@@ -30,7 +30,7 @@ const StorySubmissions: React.FC = () => {
     const rejectSelectedStory = (storyId: number) => {
         rejectSuccessStoryAPI(storyId)
             .then((response) => {
-                console.log('Rejected success story response:', response);
+                // console.log('Rejected success story response:', response);
                 // update local stories cache/state (if API doesn't return full list)
                 setAllSuccessStories(prev =>
                     prev.map(s => (s.id === storyId ? { ...s, status: SuccessStoryStatus.REJECTED } : s))
@@ -38,7 +38,7 @@ const StorySubmissions: React.FC = () => {
                 rejectStory(storyId);
             })
             .catch((error) => {
-                console.warn('Error rejecting success story:', error);
+                // console.warn('Error rejecting success story:', error);
             })
 
 
@@ -47,7 +47,7 @@ const StorySubmissions: React.FC = () => {
     const approveSelectedStory = async (storyId: number) => {
         try {
             const response = await approveSuccessStoryAPI(storyId);
-            console.log("Approved success story response:", response);
+            // console.log("Approved success story response:", response);
 
             // Update local cached stories
             setAllSuccessStories(prev =>
@@ -62,7 +62,7 @@ const StorySubmissions: React.FC = () => {
             approveStory(storyId);
 
         } catch (error) {
-            console.error("Error approving success story:", error);
+            // console.error("Error approving success story:", error);
         }
     };
 
@@ -74,11 +74,11 @@ const StorySubmissions: React.FC = () => {
 
         fetchSuccessStoriesAPI()
             .then((storyData) => {
-                console.log("Fetched success stories:", storyData);
+                // console.log("Fetched success stories:", storyData);
                 setAllSuccessStories(storyData);
             })
             .catch((error) => {
-                console.error("Error fetching success stories on mount:", error);
+                // console.error("Error fetching success stories on mount:", error);
             });
     }, []);
 

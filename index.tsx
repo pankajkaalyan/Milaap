@@ -5,29 +5,29 @@ import App from './App';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
+    throw new Error("Could not find root element to mount to");
 }
 
 const root = ReactDOM.createRoot(rootElement);
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+    <React.StrictMode>
+        <App />
+    </React.StrictMode>
 );
 
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/service-worker.js').then(registration => {
-      console.log('SW registered: ', registration);
-      let refreshing = false;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (refreshing) return;
-        refreshing = true;
-        console.log('Reloading app after SW update...');
-        window.location.reload();
-      });
-    }).catch(registrationError => {
-      console.log('SW registration failed: ', registrationError);
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js').then(registration => {
+            // console.log('SW registered: ', registration);
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (refreshing) return;
+                refreshing = true;
+                // console.log('Reloading app after SW update...');
+                window.location.reload();
+            });
+        }).catch(registrationError => {
+            // console.log('SW registration failed: ', registrationError);
+        });
     });
-  });
 }

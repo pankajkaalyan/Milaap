@@ -55,7 +55,7 @@ const AdminUsers: React.FC = () => {
                 closeModal();
             })
             .catch((err) => {
-                console.error('Failed to update user:', err);
+                // console.error('Failed to update user:', err);
             });
     };
 
@@ -69,7 +69,7 @@ const AdminUsers: React.FC = () => {
             resetSelection();
             closeModal();
         } catch (error) {
-            console.error('Failed to delete user(s):', error);
+            // console.error('Failed to delete user(s):', error);
         }
     };
 
@@ -86,11 +86,11 @@ const AdminUsers: React.FC = () => {
 
         roleChangeApi(ids, role)
             .then((data) => {
-                console.log("Role updated:", data);
+                // console.log("Role updated:", data);
                 bulkUpdateUserRole(ids, role);
             })
             .catch((error) => {
-                console.error("Error updating role:", error);
+                // console.error("Error updating role:", error);
             })
             .finally(() => {
                 resetSelection();
@@ -181,7 +181,7 @@ const AdminUsers: React.FC = () => {
                 }
             })
             .catch((err) => {
-                console.error('Failed to fetch admin users:', err);
+                // console.error('Failed to fetch admin users:', err);
             });
     }, []);
 

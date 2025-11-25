@@ -54,10 +54,10 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     const optionsRef = useRef(null);
 
     const updateFavouriteStatus = (data: { currentMatch: Match }) => {
-        console.log('updateFavouriteStatus called with data:', data);
+        // console.log('updateFavouriteStatus called with data:', data);
         if (data.currentMatch.id === user.id) {
             user.profile.isFavourite = !user.profile.isFavourite;
-            console.log(`Updated favourite status for match ${user.id} to ${user.profile.isFavourite} via eventBus`);
+            // console.log(`Updated favourite status for match ${user.id} to ${user.profile.isFavourite} via eventBus`);
         }
     }
 

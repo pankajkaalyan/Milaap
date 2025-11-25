@@ -18,11 +18,11 @@ const InterestCard: React.FC<InterestCardProps> = ({ interest, type, onAccept, o
     const { status } = interest;
 
     const updateStatusHandler = (data: { targetUserId: number; newStatus: InterestStatus }) => {
-        console.log('updateStatusHandler called with data:', data);
+        // console.log('updateStatusHandler called with data:', data);
         if (data.targetUserId === interest.profile.id) {
             if (interest.status !== data.newStatus) {
                 interest.status = data.newStatus;
-                console.log(`Updated interest status for match ${interest.profile.id} to ${data.newStatus} via eventBus ${interest.status}`);
+                // console.log(`Updated interest status for match ${interest.profile.id} to ${data.newStatus} via eventBus ${interest.status}`);
             }
         }
     }

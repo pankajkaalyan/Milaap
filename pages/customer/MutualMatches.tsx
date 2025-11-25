@@ -15,14 +15,14 @@ const MutualMatches: React.FC = () => {
 
 
     const updateFavouriteStatus = (data: { currentMatch: Match }) => {
-        console.log('updateFavouriteStatus Mutual Matches called with data:', data);
+        // console.log('updateFavouriteStatus Mutual Matches called with data:', data);
         const targetUser = mutualMatchesData.find(match => match.id === data.currentMatch.id);
         if (targetUser) {
             targetUser.isFavourite = !targetUser.isFavourite;
             setMutualMatchesData([...mutualMatchesData]);
-            console.log(`Updated favourite status for match ${targetUser.id} to ${targetUser.isFavourite}`);
+            // console.log(`Updated favourite status for match ${targetUser.id} to ${targetUser.isFavourite}`);
         }
-        console.log('Current mutual matches data:', mutualMatchesData);
+        // console.log('Current mutual matches data:', mutualMatchesData);
     };
 
     useEffect(() => {

@@ -65,7 +65,7 @@ const Verification: React.FC = () => {
         userId: number | string;
         newStatus: VerificationStatus;
     }) => {
-        console.log("Updating status for user:", userId);
+        // console.log("Updating status for user:", userId);
         setCurrentStatus(newStatus);
     };
 

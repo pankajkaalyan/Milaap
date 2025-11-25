@@ -44,7 +44,9 @@ const Search: React.FC = () => {
                 .then(data => {
                     setRecommendedMatches(data);
                 })
-                .catch(err => console.error("Dashboard fetch error:", err));
+                .catch(err => 
+                    console.error("Dashboard fetch error:", err)
+                );
         }
 
         // ----- TRACK EVENT: once per user -----

@@ -32,7 +32,7 @@ export const useProfileActions = (
             createdAt: currentUser.createdAt,
             interestShownList: currentUser.interestShownList,
         };
-        console.log('Final profile data to update:', newUser);
+        // console.log('Final profile data to update:', newUser);
         updateCurrentUser(newUser);
         // updateCurrentUser(updatedUser); // Update context state
     }, [user, updateCurrentUser]);
@@ -40,12 +40,12 @@ export const useProfileActions = (
     const submitVerification = useCallback(async (file: File) => {
         // await updateUserProfile({ verificationStatus: 'Pending' });
         verifyProfileAPI(file).then(() => {
-            console.log("Verification submitted for user:", user?.id);
+           // console.log("Verification submitted for user:", user?.id);
             updateUserProfile({ verificationStatus: 'Pending' });
             addToast(t('toasts.verification.submitted'), 'success');
             eventBus.emit(AppEventStatus.VERIFICATION_SUBMITTED, { userId: user?.id, newStatus: 'Pending'});
         }).catch((err) => {
-            console.error("Error submitting verification for user:", user?.id, err);
+            // console.error("Error submitting verification for user:", user?.id, err);
             addToast(t('toasts.verification.submission_failed'), 'error');
         });
     }, [updateUserProfile]);
@@ -60,10 +60,10 @@ export const useProfileActions = (
             } else {
                 // await submitVerification();
                 addToast(t('toasts.verification.ai_failed'), 'info');
-                console.log('AI Verification Mismatch:', result.details);
+                // console.log('AI Verification Mismatch:', result.details);
             }
         } catch (error) {
-            console.error("AI Verification Error:", error);
+            // console.error("AI Verification Error:", error);
             addToast(t('toasts.verification.ai_error'), 'error');
             // await submitVerification(); // Fallback to manual
         }
@@ -78,26 +78,26 @@ export const useProfileActions = (
         // await updateUserProfile({ blockedUsers: newBlockedList });
         if (isBlocked) {
             unblockUserAPI(userIdToBlock).then(() => {
-                console.log(`Unblocked user ${userIdToBlock}`);
+                // console.log(`Unblocked user ${userIdToBlock}`);
                 addToast(
                     isBlocked ? t('toasts.user.unblocked', { name: userName || '' }) : t('toasts.user.blocked', { name: userName || '' }),
                     'info'
                 );
                 eventBus.emit(AppEventStatus.BLOCK_USER, { targetUserId: userIdToBlock, isBlocked: !isBlocked });
             }).catch((err) => {
-                console.error(`Error unblocking user ${userIdToBlock}:`, err);
+                // console.error(`Error unblocking user ${userIdToBlock}:`, err);
             });
         }
         else {
             blockUserAPI(userIdToBlock).then(() => {
-                console.log(`Blocking user ${userIdToBlock}`);
+                // console.log(`Blocking user ${userIdToBlock}`);
                 addToast(
                     isBlocked ? t('toasts.user.unblocked', { name: userName || '' }) : t('toasts.user.blocked', { name: userName || '' }),
                     'info'
                 );
                 eventBus.emit(AppEventStatus.BLOCK_USER, { targetUserId: userIdToBlock, isBlocked: !isBlocked });
             }).catch((err) => {
-                console.error(`Error blocking user ${userIdToBlock}:`, err);
+                // console.error(`Error blocking user ${userIdToBlock}:`, err);
             });
         }
 
@@ -109,10 +109,10 @@ export const useProfileActions = (
         // console.log(`Reporting user ${userId} for ${reason}: ${details}`);
         // const targetUser = mockUsers.find(u => u.id === userId);
         reportUserAPI({ reportedId: userId, reason, description: details }).then(() => {
-            console.log(`Reported user ${userId} successfully`);
+            // console.log(`Reported user ${userId} successfully`);
             addToast(t('toasts.user.reported', { name: userName || '' }), 'success');
         }).catch((err) => {
-            console.error(`Error reporting user ${userId}:`, err);
+            // console.error(`Error reporting user ${userId}:`, err);
         });
         
     }, [addToast, t]);
@@ -124,7 +124,7 @@ export const useProfileActions = (
     }, [updateUserProfile, logout, addToast]);
 
     const deleteAccount = useCallback(async () => {
-        console.log("Deleting account for user:", user?.id);
+        // console.log("Deleting account for user:", user?.id);
         logout();
         addToast("Your account has been permanently deleted.", 'success');
     }, [user, logout, addToast]);

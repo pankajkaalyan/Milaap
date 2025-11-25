@@ -18,12 +18,12 @@ const ForgotPassword = () => {
     { email: [required(t, t('login.email')), email(t)] },
     async (data) => {
       // In a real app, you would make an API call here.
-      console.log('Password reset requested for:', data.email);
+      // console.log('Password reset requested for:', data.email);
       await forgotPasswordAPI(data.email).then(() => {
         addToast(t('forgotPassword.success'), 'success');
         navigate('/login');
       }).catch(err => {
-        console.error('Forgot password failed:', err);
+        // console.error('Forgot password failed:', err);
         addToast(t('forgotPassword.failure'), 'error');
       });
     }

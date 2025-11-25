@@ -20,7 +20,7 @@ export const useFavourites = (user: User | null, t: TFunction, addToast: AddToas
                     const favMatches = mockUsers.filter(u => favData.includes(u.id as number));
                     setFavourites(favMatches);
                 } catch (error) {
-                    console.error("Failed to fetch favourites:", error);
+                    // console.error("Failed to fetch favourites:", error);
                     addToast("Could not load your favourites.", 'error');
                 }
             };
@@ -41,7 +41,7 @@ export const useFavourites = (user: User | null, t: TFunction, addToast: AddToas
         // );
         if (!match.isFavourite) {
             addToFavouritesAPI(match.id).then(() => {
-                console.log('Added to favourites successfully');
+                // console.log('Added to favourites successfully');
                 setFavourites(prev => [...prev, match]);
                 eventBus.emit(AppEventStatus.FAVOURITE, { currentMatch: match });
                 addToast(t('toasts.favourite.added', { name: match.name }), 'success');
@@ -49,7 +49,7 @@ export const useFavourites = (user: User | null, t: TFunction, addToast: AddToas
         }
         else {
             removeFromFavouritesAPI(match.id).then(() => {
-                console.log('Removed from favourites successfully');
+                // console.log('Removed from favourites successfully');
                 setFavourites(prev => prev.filter(fav => fav.id !== match.id));
                 eventBus.emit(AppEventStatus.FAVOURITE, { currentMatch: match });
                 addToast(t('toasts.favourite.removed', { name: match.name }), 'info');

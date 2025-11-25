@@ -24,13 +24,13 @@ const ResetPassword = () => {
             ],
         },
         async (data: ResetPasswordFormData) => {
-            console.log('Password reset for token:', token);
+            // console.log('Password reset for token:', token);
             try {
                 // call API to change password (use token and new password)
                 await changePasswordAPI(token, data.password);
                 addToast(t('resetPassword.success'), 'success');
             } catch (err) {
-                console.error('Forgot password failed:', err);
+                // console.error('Forgot password failed:', err);
                 addToast(t('forgotPassword.failure'), 'error');
             }
             

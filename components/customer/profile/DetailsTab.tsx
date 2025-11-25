@@ -11,7 +11,7 @@ interface DetailsTabProps {
 const DetailsTab: React.FC<DetailsTabProps> = ({ user }) => {
     const { t } = useAppContext();
     const targetUserProfile = (user['profile'] ? user['profile'] : null) as UserProfile;
-    console.log('Target User:', user);
+    // console.log('Target User:', user);
 
     return (
         <div className="grid md:grid-cols-2 gap-8">

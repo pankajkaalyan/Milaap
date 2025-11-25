@@ -120,13 +120,13 @@ const Register: React.FC = () => {
             };
 
             registerAPI(userProfile).then(() => {
-                console.log('User registered successfully');
+                // console.log('User registered successfully');
                 login(formData.email, UserRole.CUSTOMER, userProfile);
                 trackEvent('registration_success', { email: formData.email });
                 addToast('Registration successful! Welcome!', 'success');
                 navigate('/dashboard');
             }).catch((error) => {
-                console.log("Registration failed:", error?.response?.data);
+                // console.log("Registration failed:", error?.response?.data);
 
                 const apiError = error?.response?.data?.errorMessage || "Registration failed";
                 addToast(apiError, "error");

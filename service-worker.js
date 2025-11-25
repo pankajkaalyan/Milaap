@@ -12,7 +12,7 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Service Worker: Caching app shell');
+        // console.log('Service Worker: Caching app shell');
         return cache.addAll(urlsToCache);
       })
       .then(() => self.skipWaiting()) // Activate the new service worker immediately.
@@ -27,7 +27,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
-            console.log('Service Worker: Deleting old cache', cacheName);
+            // console.log('Service Worker: Deleting old cache', cacheName);
             return caches.delete(cacheName);
           }
         })

@@ -94,7 +94,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
       recorder.start();
       setIsRecording(true);
     } catch (err) {
-      console.error('Error accessing microphone:', err);
+      // console.error('Error accessing microphone:', err);
       if (err instanceof DOMException && err.name === "NotAllowedError") {
         addToast(t('toast.mic.permission_denied'), 'error');
       } else {

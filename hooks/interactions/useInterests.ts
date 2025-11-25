@@ -24,7 +24,7 @@ export const useInterests = (user: User | null, t: TFunction, addToast: AddToast
             // console.log('Interests data fetched successfully:', data);
             return data;
         } catch (error) {
-            console.error("Failed to fetch interests:", error);
+            // console.error("Failed to fetch interests:", error);
             addToast("Could not load your interests data.", 'error');
         }
     }
@@ -35,11 +35,11 @@ export const useInterests = (user: User | null, t: TFunction, addToast: AddToast
         // const newInterest = await interactionService.expressInterest(user.id as number, targetUserId);
         // setInterests(prev => [newInterest, ...prev]);
         sendInterestAPI(targetUserId, 'Hi').then(() => {
-            console.log('Interest expressed successfully');
+            // console.log('Interest expressed successfully');
             eventBus.emit(AppEventStatus.EXPRESS_INTEREST, { targetUserId, newStatus: InterestStatus.PENDING });
             fetchInterests();
         }).catch((error) => {
-            console.error('Error expressing interest:', error);
+            // console.error('Error expressing interest:', error);
         });
         // const targetUser = mockUsers.find(u => u.id === targetUserId);
         addToast(t('toasts.interest.sent', { name: targetName || '' }), 'success');

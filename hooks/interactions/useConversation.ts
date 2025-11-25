@@ -28,7 +28,7 @@ export const useConversation = (
                 const data = await conversationService.getMessages(chatWithUserId);
                 setMessages(data);
             } catch (error) {
-                console.error("Failed to load messages:", error);
+                // console.error("Failed to load messages:", error);
                 addToast(t('errors.chat.loadFailed'), 'error');
             } finally {
                 setLoading(false);
@@ -50,7 +50,7 @@ export const useConversation = (
             setMessages(prev => [...prev, newMsg]);
 
         } catch (error) {
-            console.error("Failed to send message:", error);
+            // console.error("Failed to send message:", error);
             addToast(t('errors.chat.sendFailed'), 'error');
         }
     };

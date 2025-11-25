@@ -12,135 +12,135 @@ import DeleteAccountModal from '../../components/customer/settings/DeleteAccount
 
 
 const Settings: React.FC = () => {
-  const { t, user, updateUserProfile, addToast, deactivateAccount, deleteAccount } = useAppContext();
+    const { t, user, updateUserProfile, addToast, deactivateAccount, deleteAccount } = useAppContext();
 
-  const [formState, setFormState] = useState<Partial<UserProfile>>({});
+    const [formState, setFormState] = useState<Partial<UserProfile>>({});
 
-  const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  console.log('Settings - user:', user);
-  useEffect(() => {
-    if (user?.profile) {
-      setFormState(JSON.parse(JSON.stringify(user.profile)));
-    }
-  }, [user]);
-
-  const handleToggleChange = (category: keyof NotificationSettings, key: string, value: boolean) => {
-    setFormState(prev => {
-      if (!prev.notificationSettings) return prev;
-      const newSettings = { ...prev };
-      (newSettings.notificationSettings![category] as any)[key] = value;
-      return newSettings;
-    });
-  };
-
-  const handleDropdownChange = (key: keyof Pick<UserProfile, 'profileVisibility' | 'contactVisibility'>, value: string) => {
-    setFormState(prev => ({
-      ...prev,
-      [key]: value
-    }));
-  };
-
-  const handleSave = () => {
-    updateUserProfile(formState as UserProfile);
-    addToast(t('toast.settings.saved'), 'success');
-  };
-
-  const handleDeactivateConfirm = () => {
-    setIsDeactivateModalOpen(false);
-    deactivateAccount();
-  };
-
-  const handleDeleteConfirm = () => {
-    setIsDeleteModalOpen(false);
-    deleteAccount();
-  };
-
-  const defaultSettings: NotificationSettings = {
-    sms: { newMessage: false },
-    email: { newMatch: false, newMessage: false, weeklyDigest: false },
-    push: { newMatch: false, newMessage: false, profileView: false }
-  };
-
-  useEffect(() => {
-    if (user?.profile) {
-      setFormState({
-        ...user.profile,
-        notificationSettings: {
-          ...defaultSettings,
-          ...user.profile.notificationSettings
+    const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    // console.log('Settings - user:', user);
+    useEffect(() => {
+        if (user?.profile) {
+            setFormState(JSON.parse(JSON.stringify(user.profile)));
         }
-      });
-    }
-  }, [user]);
+    }, [user]);
 
+    const handleToggleChange = (category: keyof NotificationSettings, key: string, value: boolean) => {
+        setFormState(prev => {
+            if (!prev.notificationSettings) return prev;
+            const newSettings = { ...prev };
+            (newSettings.notificationSettings![category] as any)[key] = value;
+            return newSettings;
+        });
+    };
 
+    const handleDropdownChange = (key: keyof Pick<UserProfile, 'profileVisibility' | 'contactVisibility'>, value: string) => {
+        setFormState(prev => ({
+            ...prev,
+            [key]: value
+        }));
+    };
 
-  if (!formState.notificationSettings) {
-    return null; // Or a loading state
-  }
-  if (!user) return <div className="text-white">Loading...</div>;
+    const handleSave = () => {
+        updateUserProfile(formState as UserProfile);
+        addToast(t('toast.settings.saved'), 'success');
+    };
 
-  return (
-    <>
-      <div className="max-w-4xl mx-auto space-y-8">
-        <div className="text-center">
-          <h1 className="text-4xl font-bold text-white mb-2">{t('settings.title')}</h1>
-          <p className="text-gray-300">{t('settings.subtitle')}</p>
-        </div>
+    const handleDeactivateConfirm = () => {
+        setIsDeactivateModalOpen(false);
+        deactivateAccount();
+    };
 
-        <Card>
-          <PrivacySettings
-            profileVisibility={formState.profileVisibility}
-            contactVisibility={formState.contactVisibility}
-            onDropdownChange={handleDropdownChange}
-          />
-        </Card>
+    const handleDeleteConfirm = () => {
+        setIsDeleteModalOpen(false);
+        deleteAccount();
+    };
 
-        <Card>
-          <NotificationSettingsComponent
-            settings={formState.notificationSettings}
-            onToggleChange={handleToggleChange}
-          />
-        </Card>
+    const defaultSettings: NotificationSettings = {
+        sms: { newMessage: false },
+        email: { newMatch: false, newMessage: false, weeklyDigest: false },
+        push: { newMatch: false, newMessage: false, profileView: false }
+    };
 
-        <Card>
-          <BlockedUsers />
-        </Card>
-
-        <Card>
-          <AccountSettings
-            onDeactivateClick={() => setIsDeactivateModalOpen(true)}
-            onDeleteClick={() => setIsDeleteModalOpen(true)}
-          />
-        </Card>
-
-        <div className="flex justify-end">
-          <Button onClick={handleSave} className="w-auto">{t('settings.cta_save')}</Button>
-        </div>
-      </div>
-
-      {/* Modals */}
-      <ConfirmationModal
-        isOpen={isDeactivateModalOpen}
-        onClose={() => setIsDeactivateModalOpen(false)}
-        onConfirm={handleDeactivateConfirm}
-        title="Deactivate Account?"
-        message={
-          <>
-            <p>Your profile will be hidden from the platform. You can reactivate your account at any time by simply logging back in.</p>
-            <p className="mt-2">Are you sure you want to proceed?</p>
-          </>
+    useEffect(() => {
+        if (user?.profile) {
+            setFormState({
+                ...user.profile,
+                notificationSettings: {
+                    ...defaultSettings,
+                    ...user.profile.notificationSettings
+                }
+            });
         }
-        confirmButtonText="Deactivate"
-      />
-      <DeleteAccountModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleDeleteConfirm}
-      />
-    </>
-  );
+    }, [user]);
+
+
+
+    if (!formState.notificationSettings) {
+        return null; // Or a loading state
+    }
+    if (!user) return <div className="text-white">Loading...</div>;
+
+    return (
+        <>
+            <div className="max-w-4xl mx-auto space-y-8">
+                <div className="text-center">
+                    <h1 className="text-4xl font-bold text-white mb-2">{t('settings.title')}</h1>
+                    <p className="text-gray-300">{t('settings.subtitle')}</p>
+                </div>
+
+                <Card>
+                    <PrivacySettings
+                        profileVisibility={formState.profileVisibility}
+                        contactVisibility={formState.contactVisibility}
+                        onDropdownChange={handleDropdownChange}
+                    />
+                </Card>
+
+                <Card>
+                    <NotificationSettingsComponent
+                        settings={formState.notificationSettings}
+                        onToggleChange={handleToggleChange}
+                    />
+                </Card>
+
+                <Card>
+                    <BlockedUsers />
+                </Card>
+
+                <Card>
+                    <AccountSettings
+                        onDeactivateClick={() => setIsDeactivateModalOpen(true)}
+                        onDeleteClick={() => setIsDeleteModalOpen(true)}
+                    />
+                </Card>
+
+                <div className="flex justify-end">
+                    <Button onClick={handleSave} className="w-auto">{t('settings.cta_save')}</Button>
+                </div>
+            </div>
+
+            {/* Modals */}
+            <ConfirmationModal
+                isOpen={isDeactivateModalOpen}
+                onClose={() => setIsDeactivateModalOpen(false)}
+                onConfirm={handleDeactivateConfirm}
+                title="Deactivate Account?"
+                message={
+                    <>
+                        <p>Your profile will be hidden from the platform. You can reactivate your account at any time by simply logging back in.</p>
+                        <p className="mt-2">Are you sure you want to proceed?</p>
+                    </>
+                }
+                confirmButtonText="Deactivate"
+            />
+            <DeleteAccountModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => setIsDeleteModalOpen(false)}
+                onConfirm={handleDeleteConfirm}
+            />
+        </>
+    );
 };
 
 export default Settings;

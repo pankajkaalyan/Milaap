@@ -52,9 +52,9 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
                     professions: data.partnerPreferences?.professions ? data.partnerPreferences.professions.split(',').map(p => p.trim()) : [],
                 },
             };
-            console.log('Submitting profile update with data:', finalProfileData);
+            // console.log('Submitting profile update with data:', finalProfileData);
             updateProfileAPI(finalProfileData, photos, videoFile).then(updatedProfile => {
-                console.log('Profile updated successfully:', updatedProfile);
+                // console.log('Profile updated successfully:', updatedProfile);
                 addToast(t('profile.update_success'), 'success');
                 onClose();
                 updateUserProfile(updatedProfile);
@@ -72,7 +72,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
 
     useEffect(() => {
         if (user?.profile) {
-            console.log('Initializing edit profile form with user data:', user);
+            // console.log('Initializing edit profile form with user data:', user);
             const { partnerPreferences, ...restOfProfile } = user.profile;
             const initialFormState: EditProfileFormData = {
                 ...restOfProfile,
@@ -137,22 +137,22 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
             // In a real app, you'd upload the file and get a URL.
             // Here, we simulate it with a placeholder.
             const file = event.target.files[0];
-            console.log('Selected file for upload:', file);
+            // console.log('Selected file for upload:', file);
             if (file) {
                 setPhotos(prev => prev ? [...prev, file] : [file]);
                 // Generate a preview URL
                 const previewUrl = URL.createObjectURL(file);
-                console.log('Generated preview URL:', previewUrl);
+                // console.log('Generated preview URL:', previewUrl);
                 // const newPhotoUrl = `https://picsum.photos/seed/${Date.now()}/400/400`;
                 const currentPhotos = formData.photos || [];
-                console.log('Updated photos list:', currentPhotos);
+                // console.log('Updated photos list:', currentPhotos);
                 if (currentPhotos.length < 5) {
                     setFieldValue('photos', [...currentPhotos, previewUrl]);
                 } else {
                     addToast('You can upload a maximum of 5 photos.', 'error');
                 }
             }
-            console.log('Updated photos list:', formData.photos);
+            // console.log('Updated photos list:', formData.photos);
         }
     };
 

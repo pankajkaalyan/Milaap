@@ -55,7 +55,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ match, isFavourite, onToggleF
         (e.currentTarget as HTMLElement).blur();
         action();
         if (action === onToggleFavourite) {
-            console.log('Toggled favourite for match:', match.id);
+            // console.log('Toggled favourite for match:', match.id);
             // match.isFavourite = !match.isFavourite;
         }
     }
@@ -84,11 +84,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ match, isFavourite, onToggleF
     }
 
     const updateStatusHandler = (data: { targetUserId: number; newStatus: InterestStatus }) => {
-        console.log('updateStatusHandler called with data:', data);
+        // console.log('updateStatusHandler called with data:', data);
         if (data.targetUserId === match.id) {
             if (interestShown) {
                 interestShown.status = data.newStatus;
-                console.log(`Updated interest status for match ${match.id} to ${data.newStatus} via eventBus ${interestShown}`);
+                // console.log(`Updated interest status for match ${match.id} to ${data.newStatus} via eventBus ${interestShown}`);
                 if (data.newStatus === InterestStatus.PENDING) {
                     interestShown.isSent = true;
                 }
@@ -97,10 +97,10 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ match, isFavourite, onToggleF
     }
 
     const updateFavouriteStatus = (data: { currentMatch: Match }) => {
-        console.log('updateFavouriteStatus called with data:', data);
+        // console.log('updateFavouriteStatus called with data:', data);
         if (data.currentMatch.id === match.id) {
             match.isFavourite = !match.isFavourite;
-            console.log(`Updated favourite status for match ${match.id} to ${match.isFavourite} via eventBus`);
+            // console.log(`Updated favourite status for match ${match.id} to ${match.isFavourite} via eventBus`);
         }
     }
 

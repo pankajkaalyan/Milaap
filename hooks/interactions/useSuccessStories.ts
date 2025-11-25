@@ -16,7 +16,7 @@ export const useSuccessStories = (t: TFunction, addToast: AddToastFunction) => {
                 const storyData = await storyService.getSuccessStories();
                 setAllSuccessStories(storyData);
             } catch (error) {
-                console.error("Failed to fetch success stories:", error);
+                // console.error("Failed to fetch success stories:", error);
                 addToast("Could not load success stories.", 'error');
             }
         };

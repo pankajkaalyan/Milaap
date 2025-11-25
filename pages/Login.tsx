@@ -51,7 +51,7 @@ const Login: React.FC = () => {
           // localStorage.setItem("loginTime", Date.now().toString());
         })
         .catch((err) => {
-          console.error('Login failed:', err);
+          // console.error('Login failed:', err);
           addToast('Login failed. Please check your credentials and try again.', 'error');
         });
     }

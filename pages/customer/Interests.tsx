@@ -19,10 +19,10 @@ const Interests: React.FC = () => {
     const loadedRef = useRef(false);
 
     const { received, sent } = useMemo(() => {
-        console.log('user:', user);
+        // console.log('user:', user);
         if (!user) return { received: [], sent: [] };
         // console.log('mockUsers:', mockUsers);
-        console.log('interests interests: 2', interests);
+        // console.log('interests interests: 2', interests);
         const receivedInterestsByUser = interests?.received || [];
         const sentInterestsByUser = interests?.sent || [];
         // console.log('receivedInterestsByUser:', receivedInterestsByUser);
@@ -56,7 +56,7 @@ const Interests: React.FC = () => {
 
     const listToDisplay = activeTab === InterestTab.RECEIVED ? received : sent;
     const noResultsMessage = activeTab === InterestTab.RECEIVED ? t('interests.no_received') : t('interests.no_sent');
-    console.log('List to display:', listToDisplay);
+    // console.log('List to display:', listToDisplay);
     return (
         <div className="max-w-5xl mx-auto">
             <PageHeader title={t('interests.title')} />

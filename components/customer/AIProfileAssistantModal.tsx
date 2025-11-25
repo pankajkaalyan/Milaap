@@ -30,7 +30,7 @@ const AIProfileAssistantModal: React.FC<AIProfileAssistantModalProps> = ({ isOpe
       const text = await generativeService.generateProfileText(keywords);
       setGeneratedText(text);
     } catch (error) {
-      console.error('Error generating profile text:', error);
+      // console.error('Error generating profile text:', error);
       addToast(t('ai_assistant.error'), 'error');
     } finally {
       setIsLoading(false);
