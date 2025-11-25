@@ -2,9 +2,7 @@
 import { useCallback } from 'react';
 import { User, UserProfile, MembershipPlan, AppEventStatus } from '../../types';
 import { verificationService } from '../../services/ai/verificationService';
-import { userService } from '../../services/api/userService';
-import { mockUsers } from '../../data/mockUsers';
-import { fetchCurrentUserAPI } from '@/services/api/profile';
+import { fetchCurrentUserAPI, verifyProfileAPI } from '@/services/api/profile';
 import { blockUserAPI, reportUserAPI, unblockUserAPI } from '@/services/api/auth';
 import { eventBus } from '@/utils/eventBus';
 
@@ -39,8 +37,17 @@ export const useProfileActions = (
         // updateCurrentUser(updatedUser); // Update context state
     }, [user, updateCurrentUser]);
 
-    const submitVerification = useCallback(async () => {
-        await updateUserProfile({ verificationStatus: 'Pending' });
+    const submitVerification = useCallback(async (file: File) => {
+        // await updateUserProfile({ verificationStatus: 'Pending' });
+        verifyProfileAPI(file).then(() => {
+            console.log("Verification submitted for user:", user?.id);
+            updateUserProfile({ verificationStatus: 'Pending' });
+            addToast(t('toasts.verification.submitted'), 'success');
+            eventBus.emit(AppEventStatus.VERIFICATION_SUBMITTED, { userId: user?.id, newStatus: 'Pending'});
+        }).catch((err) => {
+            console.error("Error submitting verification for user:", user?.id, err);
+            addToast(t('toasts.verification.submission_failed'), 'error');
+        });
     }, [updateUserProfile]);
 
     const verifyProfileWithAI = useCallback(async (idDocument: File) => {
@@ -51,14 +58,14 @@ export const useProfileActions = (
                 await updateUserProfile({ verificationStatus: 'Verified' });
                 addToast(t('toasts.verification.ai_success'), 'success');
             } else {
-                await submitVerification();
+                // await submitVerification();
                 addToast(t('toasts.verification.ai_failed'), 'info');
                 console.log('AI Verification Mismatch:', result.details);
             }
         } catch (error) {
             console.error("AI Verification Error:", error);
             addToast(t('toasts.verification.ai_error'), 'error');
-            await submitVerification(); // Fallback to manual
+            // await submitVerification(); // Fallback to manual
         }
     }, [user, updateUserProfile, submitVerification, addToast, t]);
 

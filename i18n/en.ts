@@ -505,6 +505,7 @@ export const en = {
     plan_upgraded: 'Congratulations! You are now on the {plan} plan.',
     verification: {
       submitted: 'Verification documents submitted successfully!',
+      submission_failed: 'Verification documents submission failed. Please try again.',
       ai_success: 'AI Verification Successful! Your profile is now verified.',
       ai_failed: 'AI could not verify your document. It has been sent for manual review.',
       ai_error: 'An error occurred during AI verification. Please try again.',

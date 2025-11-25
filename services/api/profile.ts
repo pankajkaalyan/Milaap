@@ -152,5 +152,30 @@ export const approveSuccessStoryAPI = async (id: number | string) => {
     }
 };
 
+export const verifyProfileAPI = async (file: File) => {
+    try {
+        const formData = new FormData();
+        formData.append("file", file); // file key
+
+        const response = await API.patch(
+            "/api/profile/verify",
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data"
+                }
+            }
+        );
+
+        return response.data;
+    } catch (error: any) {
+        console.error("Error verifying profile:", error.response?.data || error);
+        throw error;
+    }
+};
+
+
+
+
 
 

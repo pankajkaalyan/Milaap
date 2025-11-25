@@ -42,7 +42,7 @@ export interface AppDataContextType {
   
   // from useProfileActions
   updateUserProfile: (profile: Partial<UserProfile>) => Promise<void>;
-  submitVerification: () => Promise<void>;
+  submitVerification: (file: File) => Promise<void>;
   verifyProfileWithAI: (idDocument: File) => Promise<void>;
   upgradePlan: (plan: MembershipPlan) => Promise<void>;
   toggleBlockUser: (userId: string | number, userName: string, isBlocked: boolean) => Promise<void>;
