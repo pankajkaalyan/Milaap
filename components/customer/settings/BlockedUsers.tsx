@@ -1,16 +1,34 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useAppContext } from '../../../hooks/useAppContext';
 import { mockUsers } from '../../../data/mockUsers';
 import Button from '../../ui/Button';
 import { ButtonVariant } from '../../../types';
+import { getBlockedUsersAPI } from '@/services/api/profile';
 
 const BlockedUsers: React.FC = () => {
     const { t, user, toggleBlockUser } = useAppContext();
+    const [blockedUsersFullProfile, setBlockedUsersFullProfile] = useState([]);
+    const [loading, setLoading] = useState(true);
     
-    const blockedUsersFullProfile = useMemo(() => {
-        if (!user?.profile?.blockedUsers) return [];
-        return mockUsers.filter(u => user.profile!.blockedUsers!.includes(u.id.toString()));
-    }, [user]);
+    // const blockedUsersFullProfile = useMemo(() => {
+    //     if (!user?.profile?.blockedUsers) return [];
+    //     return mockUsers.filter(u => user.profile!.blockedUsers!.includes(u.id.toString()));
+    // }, [user]);
+
+    const loadBlockedUsers = async () => {
+        try {
+            const data = await getBlockedUsersAPI();
+            console.log("Blocked users data:", data);
+            setBlockedUsersFullProfile(data || []);
+        } catch (error) {
+            console.error("Failed to load blocked users", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+    useEffect(() => {
+        loadBlockedUsers();
+    }, []);
 
     return (
         <div>

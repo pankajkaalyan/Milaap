@@ -175,6 +175,18 @@ export const verifyProfileAPI = async (file: File) => {
 };
 
 
+// Fetch list of blocked users
+export const getBlockedUsersAPI = async () => {
+    try {
+        const response = await API.get("/api/user-interactions/blocked");
+        return response.data;
+    } catch (error: any) {
+        console.error("Error fetching blocked users:", error.response?.data || error);
+        throw error;
+    }
+};
+
+
 
 
 
