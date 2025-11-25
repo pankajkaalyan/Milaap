@@ -15,9 +15,10 @@ const Settings: React.FC = () => {
   const { t, user, updateUserProfile, addToast, deactivateAccount, deleteAccount } = useAppContext();
 
   const [formState, setFormState] = useState<Partial<UserProfile>>({});
+
   const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-
+  console.log('Settings - user:', user);
   useEffect(() => {
     if (user?.profile) {
       setFormState(JSON.parse(JSON.stringify(user.profile)));
@@ -26,17 +27,17 @@ const Settings: React.FC = () => {
 
   const handleToggleChange = (category: keyof NotificationSettings, key: string, value: boolean) => {
     setFormState(prev => {
-        if (!prev.notificationSettings) return prev;
-        const newSettings = { ...prev };
-        (newSettings.notificationSettings![category] as any)[key] = value;
-        return newSettings;
+      if (!prev.notificationSettings) return prev;
+      const newSettings = { ...prev };
+      (newSettings.notificationSettings![category] as any)[key] = value;
+      return newSettings;
     });
   };
-  
+
   const handleDropdownChange = (key: keyof Pick<UserProfile, 'profileVisibility' | 'contactVisibility'>, value: string) => {
     setFormState(prev => ({
-        ...prev,
-        [key]: value
+      ...prev,
+      [key]: value
     }));
   };
 
@@ -55,10 +56,30 @@ const Settings: React.FC = () => {
     deleteAccount();
   };
 
+  const defaultSettings: NotificationSettings = {
+    sms: { newMessage: false },
+    email: { newMatch: false, newMessage: false, weeklyDigest: false },
+    push: { newMatch: false, newMessage: false, profileView: false }
+  };
+
+  useEffect(() => {
+    if (user?.profile) {
+      setFormState({
+        ...user.profile,
+        notificationSettings: {
+          ...defaultSettings,
+          ...user.profile.notificationSettings
+        }
+      });
+    }
+  }, [user]);
+
+
 
   if (!formState.notificationSettings) {
     return null; // Or a loading state
   }
+  if (!user) return <div className="text-white">Loading...</div>;
 
   return (
     <>
@@ -67,19 +88,19 @@ const Settings: React.FC = () => {
           <h1 className="text-4xl font-bold text-white mb-2">{t('settings.title')}</h1>
           <p className="text-gray-300">{t('settings.subtitle')}</p>
         </div>
-        
+
         <Card>
-          <PrivacySettings 
-              profileVisibility={formState.profileVisibility}
-              contactVisibility={formState.contactVisibility}
-              onDropdownChange={handleDropdownChange}
+          <PrivacySettings
+            profileVisibility={formState.profileVisibility}
+            contactVisibility={formState.contactVisibility}
+            onDropdownChange={handleDropdownChange}
           />
         </Card>
-        
+
         <Card>
-          <NotificationSettingsComponent 
-              settings={formState.notificationSettings}
-              onToggleChange={handleToggleChange}
+          <NotificationSettingsComponent
+            settings={formState.notificationSettings}
+            onToggleChange={handleToggleChange}
           />
         </Card>
 
@@ -88,14 +109,14 @@ const Settings: React.FC = () => {
         </Card>
 
         <Card>
-          <AccountSettings 
+          <AccountSettings
             onDeactivateClick={() => setIsDeactivateModalOpen(true)}
             onDeleteClick={() => setIsDeleteModalOpen(true)}
           />
         </Card>
-        
+
         <div className="flex justify-end">
-            <Button onClick={handleSave} className="w-auto">{t('settings.cta.save')}</Button>
+          <Button onClick={handleSave} className="w-auto">{t('settings.cta_save')}</Button>
         </div>
       </div>
 
@@ -113,7 +134,7 @@ const Settings: React.FC = () => {
         }
         confirmButtonText="Deactivate"
       />
-      <DeleteAccountModal 
+      <DeleteAccountModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDeleteConfirm}
