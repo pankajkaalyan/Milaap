@@ -24,7 +24,7 @@ export const useAuth = () => {
         const storedToken = localStorage.getItem("token");
         const storedExpiry = localStorage.getItem("expiresIn");
 
-        console.log("⏳ Loaded from localStorage", { storedUser, storedToken, storedExpiry });
+        // console.log("⏳ Loaded from localStorage", { storedUser, storedToken, storedExpiry });
 
         if (storedUser) setUser(JSON.parse(storedUser));
         if (storedToken) setToken(storedToken);
@@ -37,8 +37,9 @@ export const useAuth = () => {
     // Auto-refresh token BEFORE expiration
     // ---------------------------------------------------
     useEffect(() => {
-        console.log("⏰ Setting up token refresh timer", { token, expiresIn });
-
+        // console.log("⏰ Setting up token refresh timer", { token, expiresIn });
+        console.log("⏰ Setting up token refresh timer", { token, expiresIn:localStorage.getItem("expiresIn")});
+        if(!expiresIn) setExpiresIn(+localStorage.getItem("expiresIn"))
         // If no token or no expiry, do nothing
         if (!token || !expiresIn) return;
 
@@ -96,7 +97,7 @@ export const useAuth = () => {
             if (refreshTimer.current) clearTimeout(refreshTimer.current);
         };
 
-    }, [token, expiresIn]);   // <- correct dependencies
+    }, [token]);   // <- correct dependencies
 
 
 

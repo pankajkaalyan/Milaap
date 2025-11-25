@@ -24,7 +24,7 @@ const BlockedUsers: React.FC = () => {
                                 <img src={blockedUser.photos?.[0] || `https://i.pravatar.cc/150?u=${blockedUser.id}`} alt={blockedUser.name} className="w-10 h-10 rounded-full object-cover" />
                                 <span className="text-white font-semibold">{blockedUser.name}</span>
                             </div>
-                            <Button onClick={() => toggleBlockUser(blockedUser.id as number)} variant={ButtonVariant.SECONDARY} className="w-auto !py-1 !px-3 !text-sm !bg-gray-600 hover:!bg-gray-500">{t('settings.blocked.unblock')}</Button>
+                            <Button onClick={() => toggleBlockUser(blockedUser.id as number, blockedUser.name, blockedUser.isBlocked)} variant={ButtonVariant.SECONDARY} className="w-auto !py-1 !px-3 !text-sm !bg-gray-600 hover:!bg-gray-500">{t('settings.blocked.unblock')}</Button>
                         </li>
                     ))}
                 </ul>

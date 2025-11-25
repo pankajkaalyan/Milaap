@@ -26,7 +26,7 @@ const ViewProfile: React.FC = () => {
     const { userId } = useParams<{ userId: string }>();
     const navigate = useNavigate();
     const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') as User : null;
-    console.log('Current User:', user);
+    // console.log('Current User:', user);
 
     const {
         activeModal,
@@ -52,7 +52,7 @@ const ViewProfile: React.FC = () => {
             try {
                 const data = await getProfileByIdAPI(parseInt(userId || '0'));
                 setTargetUserProfile(data);
-                console.log('Fetched user profile:', data);
+                // console.log('Fetched user profile:', data);
             } catch (err) {
                 console.error('Error fetching user profile:', err);
             } finally {
@@ -76,26 +76,25 @@ const ViewProfile: React.FC = () => {
     // console.log('Target User Profile:', targetUserProfile);
     const currentInterest = sentInterest?.find(interest => interest.profile.id.toString() === userId) ||
         receivedInterest?.find(interest => interest.profile.id.toString() === userId);
-    console.log('Current Interest with target user:', currentInterest);
+    // console.log('Current Interest with target user:', currentInterest);
 
     let sentInterestStatus = currentInterest && sentInterest?.some(interest => interest.profile.id.toString() === userId) ? currentInterest.status : undefined;
     let receivedInterestStatus = currentInterest && receivedInterest?.some(interest => interest.profile.id.toString() === userId)
         ? currentInterest.status : undefined;
-
-    console.log('Sent Interest Status:', sentInterestStatus);
-    console.log('Received Interest Status:', receivedInterestStatus);
+    
+    // console.log('Sent Interest Status:', sentInterestStatus);
+    // console.log('Received Interest Status:', receivedInterestStatus);
 
     const updateStatusHandler = (data: { targetUserId: number; newStatus: InterestStatus }) => {
-        console.log('updateStatusHandler called with data:', data);
+        // console.log('updateStatusHandler called with data:', data);
         if (data.targetUserId === user.id) {
             if (sentInterestStatus) {
                 sentInterestStatus = data.newStatus;
-                console.log(`Updated interest status for user ${user.id} to ${sentInterestStatus} via sentInterestStatus`);
+                // console.log(`Updated interest status for user ${user.id} to ${sentInterestStatus} via sentInterestStatus`);
             } else if (receivedInterestStatus) {
                 receivedInterestStatus = data.newStatus;
-                console.log(`Updated interest status for user ${user.id} to ${receivedInterestStatus} via receivedInterestStatus`);
+                // console.log(`Updated interest status for user ${user.id} to ${receivedInterestStatus} via receivedInterestStatus`);
             }
-            
         }
     }
 
@@ -106,7 +105,7 @@ const ViewProfile: React.FC = () => {
     if (!user || !targetUserProfile) {
         return <NotFound />;
     }
-    const isBlocked = targetUserProfile?.profile?.blockedUsers?.includes(user.id.toString());
+    
     // const isFavourite = favourites.some(fav => fav.id === user.id);
     const isPremiumUser = targetUserProfile?.profile?.membership !== MembershipPlan.FREE;
     const handleViewContact = () => {
@@ -123,11 +122,11 @@ const ViewProfile: React.FC = () => {
                 <ProfileHeader
                     user={targetUserProfile}
                     isFavourite={targetUserProfile.profile.isFavourite}
-                    isBlocked={!!isBlocked}
+                    isBlocked={!!targetUserProfile.profile.isBlocked}
                     sentInterestStatus={sentInterestStatus ? sentInterestStatus : undefined}
                     receivedInterestStatus={receivedInterestStatus ? receivedInterestStatus : undefined}
-                    onToggleFavourite={() => toggleFavourite(targetUserProfile)}
-                    onToggleBlock={() => toggleBlockUser(targetUserProfile.id)}
+                    onToggleFavourite={() => toggleFavourite({...targetUserProfile, isFavourite: targetUserProfile.profile.isFavourite})}
+                    onToggleBlock={() => toggleBlockUser(targetUserProfile.id, targetUserProfile.name, !!targetUserProfile.profile.isBlocked)}
                     onReport={openReportModal}
                     onExpressInterest={() => expressInterest(targetUserProfile.id, targetUserProfile.name)}
                     onAcceptInterest={() => acceptInterest(currentInterest.interestRequestId, targetUserProfile.id, targetUserProfile.name)}

@@ -29,8 +29,8 @@ const CompatibilityChecklist: React.FC<CompatibilityChecklistProps> = ({ targetU
     const preferences = currentUser?.profile?.partnerPreferences;
     const currentUserProfile = currentUser?.profile;
     const targetUserProfile = (targetUser['profile']? targetUser['profile'] : null) as UserProfile;
-    console.log('Current User:', currentUser);
-    console.log('Target User:', targetUser);
+    // console.log('Current User:', currentUser);
+    // console.log('Target User:', targetUser);
     const compatibilityResults = useMemo(() => {
         if (!preferences) return null;
 

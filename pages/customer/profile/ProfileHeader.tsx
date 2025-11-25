@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Match, InterestStatus, ButtonVariant, User, AppEventStatus } from '../../../types';
 import { useAppContext } from '../../../hooks/useAppContext';
 import Card from '../../../components/ui/Card';
@@ -51,6 +51,8 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 
     const userPhotos = user.profile.photos && user.profile.photos.length > 0 ? user.profile.photos : [`https://picsum.photos/800/600?random=${user.id}`];
 
+    const optionsRef = useRef(null);
+
     const updateFavouriteStatus = (data: { currentMatch: Match }) => {
         console.log('updateFavouriteStatus called with data:', data);
         if (data.currentMatch.id === user.id) {
@@ -59,14 +61,41 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         }
     }
 
-    
+    const updateBlockedStatusHandler = (data: { targetUserId: number; isBlocked: boolean }) => {
+        if (data.targetUserId === user.id) {
+            user.profile.isBlocked = !user.profile.isBlocked;
+            // console.log(`Updated blocked status for user ${user.id} to ${isBlocked} via isBlocked`);
+        }
+    }
+
+
+
     useEffect(() => {
         // console.log('ProfileCard mounted for match:', match.id);
         eventBus.on(AppEventStatus.FAVOURITE, updateFavouriteStatus);
+        eventBus.on(AppEventStatus.BLOCK_USER, updateBlockedStatusHandler);
         return () => {
             eventBus.off(AppEventStatus.FAVOURITE, updateFavouriteStatus);
+            eventBus.off(AppEventStatus.BLOCK_USER, updateBlockedStatusHandler);
         }
     }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+                setIsOptionsOpen(false);
+            }
+        };
+
+        if (isOptionsOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isOptionsOpen]);
+
     return (
         <Card>
             <div className="flex flex-col sm:flex-row items-center sm:space-x-6 relative">
@@ -99,7 +128,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     </div>
                 </div>
 
-                <div className="absolute top-0 right-0">
+                <div className="absolute top-0 right-0" ref={optionsRef}>
                     <button onClick={() => setIsOptionsOpen(!isOptionsOpen)} className="p-2 text-gray-400 hover:text-white rounded-full transition-colors">
                         <MoreOptionsIcon />
                     </button>

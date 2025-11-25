@@ -18,7 +18,7 @@ const ProfileModals: React.FC<ProfileModalsProps> = ({ activeModal, modalData, o
   const { t, reportUser } = useAppContext();
 
   const handleReportSubmit = (reason: string, details: string) => {
-    reportUser(targetUser.id, reason, details);
+    reportUser(targetUser.id, reason, details, targetUser.name);
     onClose();
   };
 

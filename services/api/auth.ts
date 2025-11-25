@@ -71,3 +71,31 @@ export const blockUserAPI = async (targetUserId) => {
         throw error;
     }
 };
+
+export const unblockUserAPI = async (targetUserId) => {
+    try {
+        const response = await API.delete(`/api/user-interactions/block/${targetUserId}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error unblocking user:", error);
+        throw error;
+    }
+};
+
+export const reportUserAPI = async ({ reportedId, reason, description }) => {
+    try {
+        const payload = {
+            reportedId,
+            reason,
+            description,
+        };
+
+        const response = await API.post("/api/report", payload);
+        return response.data;
+
+    } catch (error) {
+        console.error("Error reporting user:", error);
+        throw error;
+    }
+};
+

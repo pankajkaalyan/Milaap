@@ -1,11 +1,12 @@
 
 import { useCallback } from 'react';
-import { User, UserProfile, MembershipPlan } from '../../types';
+import { User, UserProfile, MembershipPlan, AppEventStatus } from '../../types';
 import { verificationService } from '../../services/ai/verificationService';
 import { userService } from '../../services/api/userService';
 import { mockUsers } from '../../data/mockUsers';
 import { fetchCurrentUserAPI } from '@/services/api/profile';
-import { blockUserAPI } from '@/services/api/auth';
+import { blockUserAPI, reportUserAPI, unblockUserAPI } from '@/services/api/auth';
+import { eventBus } from '@/utils/eventBus';
 
 type TFunction = (key: string, options?: Record<string, string | number>) => string;
 type AddToastFunction = (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -66,27 +67,47 @@ export const useProfileActions = (
         addToast(t('toasts.plan_upgraded', { plan }), 'success');
     }, [updateUserProfile, addToast, t]);
 
-    const toggleBlockUser = useCallback(async (userIdToBlock: number) => {
-        if (!user?.profile) return;
-        const currentBlocked = user.profile.blockedUsers || [];
-        const isBlocked = currentBlocked.includes(userIdToBlock.toString());
-        const newBlockedList = isBlocked
-            ? currentBlocked.filter(id => id !== userIdToBlock.toString())
-            : [...currentBlocked, userIdToBlock.toString()];
-
+    const toggleBlockUser = useCallback(async (userIdToBlock: number, userName: string, isBlocked: boolean) => {
         // await updateUserProfile({ blockedUsers: newBlockedList });
-        await blockUserAPI(userIdToBlock);
-        // const targetUser = mockUsers.find(u => u.id === userIdToBlock);
-        // addToast(
-        //     isBlocked ? t('toasts.user.unblocked', { name: targetUser?.name || '' }) : t('toasts.user.blocked', { name: targetUser?.name || '' }),
-        //     'info'
-        // );
+        if (isBlocked) {
+            unblockUserAPI(userIdToBlock).then(() => {
+                console.log(`Unblocked user ${userIdToBlock}`);
+                addToast(
+                    isBlocked ? t('toasts.user.unblocked', { name: userName || '' }) : t('toasts.user.blocked', { name: userName || '' }),
+                    'info'
+                );
+                eventBus.emit(AppEventStatus.BLOCK_USER, { targetUserId: userIdToBlock, isBlocked: !isBlocked });
+            }).catch((err) => {
+                console.error(`Error unblocking user ${userIdToBlock}:`, err);
+            });
+        }
+        else {
+            blockUserAPI(userIdToBlock).then(() => {
+                console.log(`Blocking user ${userIdToBlock}`);
+                addToast(
+                    isBlocked ? t('toasts.user.unblocked', { name: userName || '' }) : t('toasts.user.blocked', { name: userName || '' }),
+                    'info'
+                );
+                eventBus.emit(AppEventStatus.BLOCK_USER, { targetUserId: userIdToBlock, isBlocked: !isBlocked });
+            }).catch((err) => {
+                console.error(`Error blocking user ${userIdToBlock}:`, err);
+            });
+        }
+
+
+
     }, [user, updateUserProfile, addToast, t]);
 
-    const reportUser = useCallback((userId: number, reason: string, details: string) => {
-        console.log(`Reporting user ${userId} for ${reason}: ${details}`);
-        const targetUser = mockUsers.find(u => u.id === userId);
-        addToast(t('toasts.user.reported', { name: targetUser?.name || '' }), 'success');
+    const reportUser = useCallback((userId: number, reason: string, details: string, userName: string) => {
+        // console.log(`Reporting user ${userId} for ${reason}: ${details}`);
+        // const targetUser = mockUsers.find(u => u.id === userId);
+        reportUserAPI({ reportedId: userId, reason, description: details }).then(() => {
+            console.log(`Reported user ${userId} successfully`);
+            addToast(t('toasts.user.reported', { name: userName || '' }), 'success');
+        }).catch((err) => {
+            console.error(`Error reporting user ${userId}:`, err);
+        });
+        
     }, [addToast, t]);
 
     const deactivateAccount = useCallback(async () => {

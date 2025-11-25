@@ -19,37 +19,38 @@ const ReportUserModal: React.FC<ReportUserModalProps> = ({ isOpen, onClose, onSu
   
   const { formData, errors, setFieldValue, handleInputChange, handleSubmit } = useForm<ReportUserFormData>(
     { reason: '', details: '' },
-    { reason: required(t, t('report.reason')) },
+    { reason: required(t, t('blockReport.reason')) },
     (data) => onSubmit(data.reason, data.details)
   );
   
   const footer = (
      <>
         <Button onClick={onClose} variant={ButtonVariant.SECONDARY} className="w-auto">Cancel</Button>
-        <Button onClick={handleSubmit} type="submit" className="w-auto">{t('report.cta')}</Button>
+        <Button onClick={handleSubmit} type="submit" className="w-auto">{t('blockReport.cta')}</Button>
      </>
   );
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title={t('report.title').replace('{name}', user.name)} footer={footer}>
+    <Modal isOpen={isOpen} onClose={onClose} title={t('blockReport.title').replace('{name}', user.name)} footer={footer}>
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <Dropdown
             id="reason"
-            label={t('report.reason')}
+            label={t('blockReport.reason')}
             value={formData.reason}
             onChange={(value) => setFieldValue('reason', value)}
             options={[
-                { value: 'fake', label: t('report.reason.fake') },
-                { value: 'inappropriate', label: t('report.reason.inappropriate') },
-                { value: 'scam', label: t('report.reason.scam') },
-                { value: 'other', label: t('report.reason.other') },
+                { value: 'fake', label: t('blockReport.reasons.fake') },
+                { value: 'inappropriate', label: t('blockReport.reasons.inappropriate') },
+                { value: 'scam', label: t('blockReport.reasons.scam') },
+                { value: 'other', label: t('blockReport.reasons.other') },
             ]}
-            placeholder={t('report.reason.placeholder')}
+            placeholder={t('blockReport.reason_placeholder')}
             error={errors.reason}
+            required
           />
           <div>
             <label htmlFor="details" className="block text-sm font-medium text-gray-300 mb-1">
-              {t('report.details')}
+              {t('blockReport.details')}
             </label>
             <textarea
               id="details"

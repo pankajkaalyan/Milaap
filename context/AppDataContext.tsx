@@ -45,8 +45,8 @@ export interface AppDataContextType {
   submitVerification: () => Promise<void>;
   verifyProfileWithAI: (idDocument: File) => Promise<void>;
   upgradePlan: (plan: MembershipPlan) => Promise<void>;
-  toggleBlockUser: (userId: string | number) => Promise<void>;
-  reportUser: (userId: string | number, reason: string, details: string) => void;
+  toggleBlockUser: (userId: string | number, userName: string, isBlocked: boolean) => Promise<void>;
+  reportUser: (userId: string | number, reason: string, details: string, userName: string) => void;
   deactivateAccount: () => Promise<void>;
   deleteAccount: () => Promise<void>;
   

@@ -142,4 +142,5 @@ export enum AppEventStatus {
   FAVOURITE = 'FAVOURITE',
   LOGIN_SUCCESS = 'LOGIN_SUCCESS',
   LOGOUT = 'LOGOUT',
+  BLOCK_USER = 'BLOCK_USER',
 }
