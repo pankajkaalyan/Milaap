@@ -139,15 +139,15 @@ const Login: React.FC = () => {
               <Button type="submit" disabled={isSocialLoginLoading !== null}>{t('login.cta')}</Button>
             </div>
           </form>
-          <p className="text-xs text-center text-gray-500 mt-4">
+          {/* <p className="text-xs text-center text-gray-500 mt-4">
             Admin users: admin@example.com, moderator@example.com
-          </p>
-          <div className="my-6 flex items-center">
+          </p> */}
+          {/* <div className="my-6 flex items-center">
             <div className="flex-grow border-t border-gray-600"></div>
             <span className="flex-shrink mx-4 text-gray-400 text-sm">{t('login.social_intro')}</span>
             <div className="flex-grow border-t border-gray-600"></div>
-          </div>
-          <div className="space-y-3">
+          </div> */}
+          {/* <div className="space-y-3">
             <Button
               variant={ButtonVariant.TERTIARY}
               className="flex items-center justify-center"
@@ -176,7 +176,7 @@ const Login: React.FC = () => {
                 </>
               )}
             </Button>
-          </div>
+          </div> */}
           <p className="mt-6 text-center text-sm text-gray-400">
             {t('login.no_account')} <Link to="/register" className="font-medium text-amber-400 hover:text-amber-300 cursor-pointer">{t('nav.register')}</Link>
           </p>

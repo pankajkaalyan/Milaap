@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-const SESSION_TIMEOUT = 29 * 60 * 1000; // 29 minutes
+const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 
 const useSessionTimeout = () => {
     useEffect(() => {

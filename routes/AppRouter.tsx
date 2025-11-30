@@ -42,6 +42,7 @@ import AccessControl from '../pages/admin/AccessControl';
 import Communication from '../pages/admin/Communication';
 import Reporting from '../pages/admin/Reporting';
 import SuccessStoryDetail from '../pages/SuccessStoryDetail';
+import ChangePassword from '@/pages/ChangePassword';
 
 interface PrivateRouteProps {
   children: React.ReactElement;
@@ -92,6 +93,14 @@ const AppRouter: React.FC = () => {
           <Route path="changelog" element={<Changelog />} />
           
           {/* Customer Routes */}
+          <Route 
+            path="change-password" 
+            element={
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
+                <ChangePassword />
+              </PrivateRoute>
+            }
+          />
           <Route 
             path="dashboard" 
             element={

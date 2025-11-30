@@ -708,4 +708,14 @@ export const en = {
     alpha_only: '{fieldName} can only contain letters and spaces.',
     alpha_comma_only: '{fieldName} can only contain letters, spaces, and commas.',
   },
+  changePassword: {
+    title: "Change Password",
+    old_password: "Old Password",
+    new_password: "New Password",
+    confirm_password: "Confirm Password",
+    cta: "Update Password",
+    success: "Password updated successfully!",
+    failure: "Failed to update password."
+  }
+
 };

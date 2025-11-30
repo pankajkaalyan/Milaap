@@ -186,6 +186,53 @@ export const getBlockedUsersAPI = async () => {
     }
 };
 
+export const deactivateProfileAPI = async () => {
+    try {
+        const response = await API.patch("/api/profile/deactivate");
+        return response.data;
+    } catch (error: any) {
+        console.error("Error deactivating profile:", error.response?.data || error);
+        throw error;
+    }
+};
+
+
+export const deleteProfileAPI = async () => {
+    try {
+        const response = await API.delete("/api/profile");
+        return response.data;
+    } catch (error: any) {
+        console.error("Error deleting profile:", error.response?.data || error);
+        throw error;
+    }
+};
+
+
+export const updatePasswordAPI = async (
+    oldPassword: string,
+    newPassword: string,
+    confirmNewPassword: string
+) => {
+    try {
+        const payload = {
+            oldPassword,
+            newPassword,
+            confirmNewPassword
+        };
+
+        const response = await API.post(
+            "/api/profile/update-password",
+            payload
+        );
+
+        return response.data;
+    } catch (error: any) {
+        console.error("Error updating password:", error.response?.data || error);
+        throw error;
+    }
+};
+
+
 
 
 

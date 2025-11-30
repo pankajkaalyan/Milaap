@@ -6,9 +6,10 @@ import { useAppContext } from '../../../hooks/useAppContext';
 interface AccountSettingsProps {
   onDeactivateClick: () => void;
   onDeleteClick: () => void;
+  onChangePasswordClick?: () => void;
 }
 
-const AccountSettings: React.FC<AccountSettingsProps> = ({ onDeactivateClick, onDeleteClick }) => {
+const AccountSettings: React.FC<AccountSettingsProps> = ({ onDeactivateClick, onDeleteClick, onChangePasswordClick }) => {
     const { t } = useAppContext();
     return (
         <div>
@@ -17,7 +18,7 @@ const AccountSettings: React.FC<AccountSettingsProps> = ({ onDeactivateClick, on
             <div className="space-y-4">
                 <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
                     <span>{t('settings.account.change_password')}</span>
-                    <Button variant={ButtonVariant.SECONDARY} className="w-auto !py-2 !px-4 !text-sm">Change</Button>
+                    <Button onClick={onChangePasswordClick} variant={ButtonVariant.SECONDARY} className="w-auto !py-2 !px-4 !text-sm">Change</Button>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
                     <div>

@@ -41,10 +41,12 @@ export const useAuth = () => {
         console.log("⏰ Setting up token refresh timer", { token, expiresIn:localStorage.getItem("expiresIn")});
         if(!expiresIn) setExpiresIn(+localStorage.getItem("expiresIn"))
         // If no token or no expiry, do nothing
+        // Add 1 minute delay before proceeding
+        
         if (!token || !expiresIn) return;
 
         // Refresh 10 minutes before expiry
-        const refreshBefore = (expiresIn - 600) * 1000;
+        const refreshBefore = (expiresIn - 120) * 1000;
 
         console.log(`⏰ Scheduling token refresh in ${refreshBefore / 1000 / 60} minutes`);
 
@@ -64,7 +66,10 @@ export const useAuth = () => {
                     localStorage.setItem("refreshToken", result.refreshToken);
                     localStorage.setItem("expiresIn", String(result.expiresIn));
                 })
-                .catch(() => logout());
+                .catch(() => 
+                    // {}
+                    logout()
+                );
             return;
         }
 

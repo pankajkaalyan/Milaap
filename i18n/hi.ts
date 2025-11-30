@@ -704,4 +704,13 @@ export const hi = {
     alpha_only: '{fieldName} में केवल अक्षर और स्थान हो सकते हैं।',
     alpha_comma_only: '{fieldName} में केवल अक्षर, स्थान और अल्पविराम हो सकते हैं।',
   },
+  changePassword: {
+    title: 'पासवर्ड बदलें',
+    old_password: 'पुराना पासवर्ड',
+    new_password: 'नया पासवर्ड',
+    confirm_password: 'पासवर्ड की पुष्टि करें',
+    cta: 'पासवर्ड अपडेट करें',
+    success: 'पासवर्ड सफलतापूर्वक अपडेट किया गया!',
+    failure: 'पासवर्ड अपडेट करने में विफल।',
+  },
 };

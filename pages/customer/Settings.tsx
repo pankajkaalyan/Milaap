@@ -9,6 +9,7 @@ import BlockedUsers from '../../components/customer/settings/BlockedUsers';
 import AccountSettings from '../../components/customer/settings/AccountSettings';
 import ConfirmationModal from '../../components/ui/ConfirmationModal';
 import DeleteAccountModal from '../../components/customer/settings/DeleteAccountModal';
+import { useNavigate } from 'react-router';
 
 
 const Settings: React.FC = () => {
@@ -18,6 +19,7 @@ const Settings: React.FC = () => {
 
     const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const navigate = useNavigate();
     // console.log('Settings - user:', user);
     useEffect(() => {
         if (user?.profile) {
@@ -56,6 +58,10 @@ const Settings: React.FC = () => {
         deleteAccount();
     };
 
+    const handleChangePasswordClick = () => {
+       navigate('/change-password');
+    }
+
     const defaultSettings: NotificationSettings = {
         sms: { newMessage: false },
         email: { newMatch: false, newMessage: false, weeklyDigest: false },
@@ -89,13 +95,13 @@ const Settings: React.FC = () => {
                     <p className="text-gray-300">{t('settings.subtitle')}</p>
                 </div>
 
-                <Card>
+                {/* <Card>
                     <PrivacySettings
                         profileVisibility={formState.profileVisibility}
                         contactVisibility={formState.contactVisibility}
                         onDropdownChange={handleDropdownChange}
                     />
-                </Card>
+                </Card> */}
 
                 <Card>
                     <NotificationSettingsComponent
@@ -112,6 +118,7 @@ const Settings: React.FC = () => {
                     <AccountSettings
                         onDeactivateClick={() => setIsDeactivateModalOpen(true)}
                         onDeleteClick={() => setIsDeleteModalOpen(true)}
+                        onChangePasswordClick={() => handleChangePasswordClick()}
                     />
                 </Card>
 

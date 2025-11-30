@@ -2,7 +2,7 @@
 import { useCallback } from 'react';
 import { User, UserProfile, MembershipPlan, AppEventStatus } from '../../types';
 import { verificationService } from '../../services/ai/verificationService';
-import { fetchCurrentUserAPI, verifyProfileAPI } from '@/services/api/profile';
+import { deactivateProfileAPI, deleteProfileAPI, fetchCurrentUserAPI, verifyProfileAPI } from '@/services/api/profile';
 import { blockUserAPI, reportUserAPI, unblockUserAPI } from '@/services/api/auth';
 import { eventBus } from '@/utils/eventBus';
 
@@ -118,13 +118,15 @@ export const useProfileActions = (
     }, [addToast, t]);
 
     const deactivateAccount = useCallback(async () => {
-        await updateUserProfile({ status: 'deactivated' });
+        // await updateUserProfile({ status: 'deactivated' });
+        await deactivateProfileAPI();
         logout();
         addToast("Your account has been deactivated.", 'info');
     }, [updateUserProfile, logout, addToast]);
 
     const deleteAccount = useCallback(async () => {
         // console.log("Deleting account for user:", user?.id);
+        await deleteProfileAPI();
         logout();
         addToast("Your account has been permanently deleted.", 'success');
     }, [user, logout, addToast]);
