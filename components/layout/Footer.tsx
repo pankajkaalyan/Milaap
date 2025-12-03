@@ -40,9 +40,9 @@ const Footer: React.FC = () => {
                     <Link to="/success-stories" className="hover:text-white transition-colors cursor-pointer">
                         {t('nav.success_stories')}
                     </Link>
-                    <Link to="/changelog" className="hover:text-white transition-colors cursor-pointer">
+                    {/* <Link to="/changelog" className="hover:text-white transition-colors cursor-pointer">
                         {t('nav.changelog')}
-                    </Link>
+                    </Link> */}
                 </div>
 
             </div>
