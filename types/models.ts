@@ -1,17 +1,18 @@
 import { AdminRole, InterestStatus, MembershipPlan, MessageStatus, MessageType, NotificationType, SuccessStoryStatus, UserRole } from './enums';
+import { IRange } from './mutualMatchModel';
 
 export interface HoroscopeDetails {
-  nakshatra?: string; // Birth Star
-  rashi?: string; // Moon Sign
-  gotra?: string; // Clan name
-  mangalDosha?: 'Yes' | 'No' | 'Partial';
+  nakshatra: string; // Birth Star
+  rashi: string; // Moon Sign
+  gotra: string; // Clan name
+  mangalDosha: 'Yes' | 'No' | 'Partial';
 }
 
 export interface FamilyDetails {
-  fatherName?: string;
-  motherName?: string;
-  siblings?: string; // e.g., "1 elder brother, 1 younger sister"
-  familyValues?: 'Traditional' | 'Moderate' | 'Liberal';
+  fatherName: string;
+  motherName: string;
+  siblings: string; // e.g., "1 elder brother, 1 younger sister"
+  familyValues: 'Traditional' | 'Moderate' | 'Liberal';
 }
 
 export type VerificationStatus = 'Not Verified' | 'Pending' | 'Verified';
@@ -33,8 +34,8 @@ export interface NotificationSettings {
 }
 
 export interface PartnerPreferences {
-  ageRange?: { min?: number; max?: number };
-  heightRange?: { min?: number; max?: number };
+  ageRange?: IRange;
+  heightRange?: IRange;
   castes?: string[];
   professions?: string[];
   mangalDosha?: 'Yes' | 'No' | 'Any';
@@ -42,19 +43,24 @@ export interface PartnerPreferences {
 
 
 export interface UserProfile {
-  gender?: 'male' | 'female';
-  dateOfBirth?: string;
-  timeOfBirth?: string;
-  height?: string;
+  id?: string | number;
+  fullName?: string;
+  email?: string;
+  contactNumber?: number | null;
+  password?: string;
+  dob?: string; // Date of Birth in ISO format
+  timeOfBirth?: string; // Time of Birth in HH:MM format
+  heightInCm?: number;
+  highestEducation?: string;
+  gender?: 'Male' | 'Female' | '';
   caste?: string;
   subCaste?: string;
   profession?: string;
-  education?: string;
+  horoscope?: HoroscopeDetails;
   photos?: string[]; // Array of base64 strings or URLs
   video?: string; // base64 string
   audio?: string; // base64 string
-  horoscope?: HoroscopeDetails;
-  family?: FamilyDetails;
+  familyDetails?: FamilyDetails;
   about?: string;
   verificationStatus?: VerificationStatus;
   blockedUsers?: string[];
@@ -68,6 +74,13 @@ export interface UserProfile {
   profileVisibility?: 'all' | 'premium';
   contactVisibility?: 'accepted' | 'premium';
   status?: 'active' | 'deactivated';
+  location?: string;
+  interestShown?: InterestShown;
+  isFavourite?: boolean;
+  isBlocked?: boolean;
+  isVerified?: boolean;
+  age?: number;
+  joiningDate?: string;
 }
 
 export interface User {
@@ -78,6 +91,8 @@ export interface User {
   createdAt: string;
   profile?: UserProfile;
   adminRole?: AdminRole;
+  age?: number;
+  interestShownList?: InterestShown[];
 }
 
 export interface ToastMessage {
@@ -87,27 +102,34 @@ export interface ToastMessage {
 }
 
 export interface Match extends UserProfile {
-  id: number;
+  id: string | number;
   name: string;
-  age: number;
-  location: string;
-  compatibilityScore: number;
+  age?: number;
+  location?: string;
+  compatibilityScore?: number;
   photos?: string[];
+  interestShownList?: InterestShown[];
 }
 
 export interface Message {
-  id: string;
+  id: string | number;
   senderId: number | 'me' | string;
   content: string;
   type: MessageType;
   timestamp: string;
   status: MessageStatus;
+  receiverId?: number | string;
 }
 
 export interface Conversation {
-  userId: number;
+  userId: string | number;
   userName: string;
   messages: Message[];
+  profilePic?: string;
+  lastMessageAt?: string;
+  lastMessage?: string;
+  unreadCount?: number;
+  roomId?: string;
 }
 
 export interface AdminConversation {
@@ -191,12 +213,63 @@ export interface AdminAnalyticsData {
 export interface Interest {
   id: number;
   senderId: number;
-  receiverId: number;
   status: InterestStatus;
   timestamp: string;
+  recipientId: number;
+  message?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface UserInterest {
+  id: number;
+  createdAt: string;
+  direction: string;
+  message: string;
+  recipientId: number;
+  senderId: number;
+  status: InterestStatus;
+  updatedAt: string;
+  profile: InterestUserProfile;
+  interestRequestId?: number;
+}
+
+export interface InterestUserProfile {
+  id: number;
+  fullName: string;
+  age: number;
+  caste: string;
+  profession: string;
+  city: string;
+  heigherEducation: string;
+  photos: string;
+}
+
+export interface Interests {
+  sent: UserInterest[];
+  received: UserInterest[];
+}
+
+export interface InterestShown {
+  interestRequestId: number;
+  isMutual: boolean;
+  isSent: boolean;
+  status: string;
 }
 
 export interface ChatHistory {
-    sender: string;
-    text: string;
+  sender: string;
+  text: string;
 }
+
+export interface ImportedUser {
+  id: string;
+  name: string;
+  email: string;
+  role: UserRole;  // assuming UserRole is already defined elsewhere
+  createdAt: string;
+  profile: {
+    verificationStatus: string;
+  };
+}
+ 

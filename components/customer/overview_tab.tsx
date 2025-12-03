@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Match, ButtonVariant } from '../../types';
+import { Match, ButtonVariant, UserProfile } from '../../types';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 import CompatibilityChecklist from './CompatibilityChecklist';
@@ -14,6 +14,7 @@ interface OverviewTabProps {
 
 const OverviewTab: React.FC<OverviewTabProps> = ({ user, showContact, onViewContact }) => {
     const { t } = useAppContext();
+    const targetUserProfile = (user['profile'] ? user['profile'] : null) as UserProfile;
 
     return (
         <div className="space-y-8">
@@ -26,7 +27,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ user, showContact, onViewCont
                     </Button>
                     {showContact && (
                         <div className="mt-4 p-4 bg-white/10 rounded-lg animate-fade-in">
-                            <p className="text-white font-semibold">Phone: +91 98765 43210</p>
+                            <p className="text-white font-semibold">Phone: {targetUserProfile.contactNumber || 'N/A'}</p>
                         </div>
                     )}
                 </Card>
@@ -39,7 +40,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ user, showContact, onViewCont
 
             <Card>
                 <h2 className="text-xl font-bold text-white mb-4">{t('profile.about')}</h2>
-                <p className="text-gray-300 leading-relaxed">{user.about || 'No information provided yet.'}</p>
+                <p className="text-gray-300 leading-relaxed">{targetUserProfile.about || 'No information provided yet.'}</p>
             </Card>
         </div>
     );

@@ -31,6 +31,8 @@ export interface RegisterFormData {
   password: string;
   dateOfBirth: string;
   timeOfBirth: string;
+  gender: 'Male' | 'Female' | '';
+  mobileNumber: number | null;
   height: string;
   profession: string;
   education: string;
@@ -38,12 +40,14 @@ export interface RegisterFormData {
   subCaste: string;
   gotra: string;
   mangalDosha: 'Yes' | 'No' | 'Partial';
+  rashi: string;
+  nakshatra: string;
   fatherName: string;
   motherName: string;
   siblings: string;
   familyValues: 'Traditional' | 'Moderate' | 'Liberal';
   photos: File[];
-  video: File[];
+  video: File;
 }
 
 export interface ContactFormData {
@@ -79,7 +83,7 @@ export interface EditProfileFormData {
   about?: string;
   video?: string;
   photos?: string[];
-  family?: FamilyDetails;
+  familyDetails?: FamilyDetails;
   horoscope?: HoroscopeDetails;
   partnerPreferences?: Omit<PartnerPreferences, 'castes' | 'professions'> & {
     castes?: string;

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
-import { Match } from '../../types';
+import { Match, UserProfile } from '../../types';
 import Card from '../ui/Card';
 
 interface CompatibilityChecklistProps {
@@ -27,7 +27,10 @@ const QuestionMarkIcon = () => (
 const CompatibilityChecklist: React.FC<CompatibilityChecklistProps> = ({ targetUser }) => {
     const { t, user: currentUser } = useAppContext();
     const preferences = currentUser?.profile?.partnerPreferences;
-
+    const currentUserProfile = currentUser?.profile;
+    const targetUserProfile = (targetUser['profile']? targetUser['profile'] : null) as UserProfile;
+    // console.log('Current User:', currentUser);
+    // console.log('Target User:', targetUser);
     const compatibilityResults = useMemo(() => {
         if (!preferences) return null;
 
@@ -36,49 +39,48 @@ const CompatibilityChecklist: React.FC<CompatibilityChecklistProps> = ({ targetU
 
         // Age Check
         if (preferences.ageRange?.min && preferences.ageRange?.max) {
-            const isMatch = targetUser.age >= preferences.ageRange.min && targetUser.age <= preferences.ageRange.max;
+            const isMatch = targetUserProfile.age >= preferences.ageRange.min && targetUserProfile.age <= preferences.ageRange.max;
             if(isMatch) matches++;
             results.push({
                 label: t('compatibility.age'),
                 match: isMatch,
-                value: `${targetUser.age} yrs`,
+                value: `${targetUserProfile.age} yrs`,
                 preference: `${preferences.ageRange.min}-${preferences.ageRange.max} yrs`
             });
         }
 
         // Height Check
-        if (preferences.heightRange?.min && preferences.heightRange?.max && targetUser.height) {
-            const targetHeight = parseInt(targetUser.height);
-            const isMatch = targetHeight >= preferences.heightRange.min && targetHeight <= preferences.heightRange.max;
+        if (preferences.heightRange?.min && preferences.heightRange?.max && targetUserProfile.heightInCm) {
+            const isMatch = targetUserProfile.heightInCm >= preferences.heightRange.min && targetUserProfile.heightInCm <= preferences.heightRange.max;
             if(isMatch) matches++;
             results.push({
                 label: t('compatibility.height'),
                 match: isMatch,
-                value: `${targetUser.height} cm`,
+                value: `${targetUserProfile.heightInCm} cm`,
                 preference: `${preferences.heightRange.min}-${preferences.heightRange.max} cm`
             });
         }
 
         // Caste Check
         if (preferences.castes && preferences.castes.length > 0) {
-            const isMatch = preferences.castes.some(c => c.toLowerCase() === targetUser.caste.toLowerCase());
+            const isMatch = preferences.castes?.some(c => c?.toLowerCase() === targetUserProfile.caste?.toLowerCase());
             if(isMatch) matches++;
             results.push({
                 label: t('compatibility.caste'),
                 match: isMatch,
-                value: targetUser.caste,
+                value: targetUserProfile.caste,
                 preference: preferences.castes.join(', ')
             });
         }
         
         // Mangal Dosha Check
-        if (preferences.mangalDosha && preferences.mangalDosha !== 'Any' && targetUser.horoscope?.mangalDosha) {
-             const isMatch = preferences.mangalDosha === targetUser.horoscope.mangalDosha;
+        if (preferences.mangalDosha && preferences.mangalDosha !== 'Any' && targetUserProfile.horoscope?.mangalDosha) {
+             const isMatch = preferences.mangalDosha === targetUserProfile.horoscope.mangalDosha;
              if(isMatch) matches++;
              results.push({
                 label: t('compatibility.mangal_dosha'),
                 match: isMatch,
-                value: targetUser.horoscope.mangalDosha,
+                value: targetUserProfile.horoscope.mangalDosha,
                 preference: preferences.mangalDosha
              });
         }

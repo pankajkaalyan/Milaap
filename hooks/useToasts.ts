@@ -9,7 +9,7 @@ export const useToasts = () => {
         setToasts(prevToasts => [...prevToasts, { id, message, type }]);
         setTimeout(() => {
             setToasts(prevToasts => prevToasts.filter(toast => toast.id !== id));
-        }, 3000);
+        }, 5000);
     }, []);
 
     return {

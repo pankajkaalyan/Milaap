@@ -1,39 +1,94 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { SuccessStory, SuccessStoryStatus, BadgeVariant } from '../../types';
 import Badge from '../../components/ui/Badge';
+import { approveSuccessStoryAPI, fetchSuccessStoriesAPI, rejectSuccessStoryAPI } from '@/services/api/profile';
 
 interface TabButtonProps {
-  status: SuccessStoryStatus;
-  label: string;
+    status: SuccessStoryStatus;
+    label: string;
 }
 
 const StorySubmissions: React.FC = () => {
-    const { t, allSuccessStories, approveStory, rejectStory } = useAppContext();
+    const { t, allSuccessStories, approveStory, rejectStory, setAllSuccessStories } = useAppContext();
     const [filter, setFilter] = useState<SuccessStoryStatus>(SuccessStoryStatus.PENDING);
-    
+    const hasFetched = useRef(false);
     const filteredStories = useMemo(() => {
-        return allSuccessStories.filter(s => s.status === filter);
+        return allSuccessStories.filter(s => s.status.toLocaleLowerCase() === filter.toLocaleLowerCase());
     }, [allSuccessStories, filter]);
 
     const getStatusBadge = (status?: SuccessStoryStatus) => {
-        switch(status) {
+        switch (status) {
             case SuccessStoryStatus.APPROVED: return <Badge variant={BadgeVariant.SUCCESS}>Approved</Badge>;
             case SuccessStoryStatus.REJECTED: return <Badge variant={BadgeVariant.DANGER}>Rejected</Badge>;
             default: return null;
         }
     }
 
+    const rejectSelectedStory = (storyId: number) => {
+        rejectSuccessStoryAPI(storyId)
+            .then((response) => {
+                // console.log('Rejected success story response:', response);
+                // update local stories cache/state (if API doesn't return full list)
+                setAllSuccessStories(prev =>
+                    prev.map(s => (s.id === storyId ? { ...s, status: SuccessStoryStatus.REJECTED } : s))
+                );
+                rejectStory(storyId);
+            })
+            .catch((error) => {
+                // console.warn('Error rejecting success story:', error);
+            })
+
+
+    }
+
+    const approveSelectedStory = async (storyId: number) => {
+        try {
+            const response = await approveSuccessStoryAPI(storyId);
+            // console.log("Approved success story response:", response);
+
+            // Update local cached stories
+            setAllSuccessStories(prev =>
+                prev.map(s =>
+                    s.id === storyId
+                        ? { ...s, status: SuccessStoryStatus.APPROVED }
+                        : s
+                )
+            );
+
+            // If you also maintain a separate "approved" list
+            approveStory(storyId);
+
+        } catch (error) {
+            // console.error("Error approving success story:", error);
+        }
+    };
+
+
+    useEffect(() => {
+        // Guard to ensure the API runs only once
+        if (hasFetched.current) return;
+        hasFetched.current = true;
+
+        fetchSuccessStoriesAPI()
+            .then((storyData) => {
+                // console.log("Fetched success stories:", storyData);
+                setAllSuccessStories(storyData);
+            })
+            .catch((error) => {
+                // console.error("Error fetching success stories on mount:", error);
+            });
+    }, []);
+
     const TabButton: React.FC<TabButtonProps> = ({ status, label }) => (
         <button
             onClick={() => setFilter(status)}
-            className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors ${
-                filter === status
+            className={`px-4 py-2 text-sm font-semibold rounded-md transition-colors ${filter === status
                 ? 'bg-pink-600 text-white'
                 : 'text-gray-300 hover:bg-white/10'
-            }`}
+                }`}
         >
             {label}
         </button>
@@ -63,13 +118,13 @@ const StorySubmissions: React.FC = () => {
                                     {story.status !== SuccessStoryStatus.PENDING && getStatusBadge(story.status)}
                                 </div>
                                 <p className="text-sm text-gray-300 flex-grow">"{story.story}"</p>
-                                
-                                {story.status === SuccessStoryStatus.PENDING && (
+
+                                {story.status.toLocaleLowerCase() === SuccessStoryStatus.PENDING.toLocaleLowerCase() && (
                                     <div className="flex justify-end space-x-3 mt-4">
-                                        <Button onClick={() => rejectStory(story.id)} className="w-auto !py-1 !px-3 !text-sm !bg-gradient-to-r !from-red-600 !to-orange-600">
+                                        <Button onClick={() => rejectSelectedStory(story.id)} className="w-auto !py-1 !px-3 !text-sm !bg-gradient-to-r !from-red-600 !to-orange-600">
                                             {t('admin.actions.reject')}
                                         </Button>
-                                        <Button onClick={() => approveStory(story.id)} className="w-auto !py-1 !px-3 !text-sm !bg-gradient-to-r !from-green-600 !to-teal-600">
+                                        <Button onClick={() => approveSelectedStory(story.id)} className="w-auto !py-1 !px-3 !text-sm !bg-gradient-to-r !from-green-600 !to-teal-600">
                                             {t('admin.actions.approve')}
                                         </Button>
                                     </div>

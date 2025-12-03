@@ -29,7 +29,7 @@ const SuccessStoryCard: React.FC<SuccessStoryCardProps> = ({ story }) => {
         </blockquote>
         <div className="mt-auto">
             <Link to={`/success-stories/${story.id}`} className="font-semibold text-amber-400 hover:text-amber-300 transition-colors cursor-pointer">
-                {t('success_stories.read_more')} &rarr;
+                {t('successStories.read_more')} &rarr;
             </Link>
         </div>
       </div>

@@ -64,7 +64,7 @@ const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onClose }) => {
                 }
 
             } catch (error) {
-                console.error("Error with AI support chat:", error);
+                // console.error("Error with AI support chat:", error);
                 addToast("Sorry, the AI assistant is currently unavailable.", 'error');
                 handleTransferToHuman(); // Fail over to human
             }

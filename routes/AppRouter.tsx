@@ -42,6 +42,7 @@ import AccessControl from '../pages/admin/AccessControl';
 import Communication from '../pages/admin/Communication';
 import Reporting from '../pages/admin/Reporting';
 import SuccessStoryDetail from '../pages/SuccessStoryDetail';
+import ChangePassword from '@/pages/ChangePassword';
 
 interface PrivateRouteProps {
   children: React.ReactElement;
@@ -49,7 +50,11 @@ interface PrivateRouteProps {
 }
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, roles }) => {
-  const { user } = useAuthContext();
+  let { user } = useAuthContext();
+  if(!user) { 
+    user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null;
+  }
+  // console.log('PrivateRoute - user:', user);
   if (!user || !roles.includes(user.role)) {
     return <Navigate to="/login" replace />;
   }
@@ -89,17 +94,25 @@ const AppRouter: React.FC = () => {
           
           {/* Customer Routes */}
           <Route 
+            path="change-password" 
+            element={
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
+                <ChangePassword />
+              </PrivateRoute>
+            }
+          />
+          <Route 
             path="dashboard" 
             element={
-              <PrivateRoute roles={[UserRole.CUSTOMER]}>
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
                 <CustomerDashboard />
               </PrivateRoute>
-            } 
+            }
           />
           <Route 
             path="matches" 
             element={
-              <PrivateRoute roles={[UserRole.CUSTOMER]}>
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
                 <Matches />
               </PrivateRoute>
             } 
@@ -107,7 +120,7 @@ const AppRouter: React.FC = () => {
            <Route 
             path="search" 
             element={
-              <PrivateRoute roles={[UserRole.CUSTOMER]}>
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
                 <Search />
               </PrivateRoute>
             } 
@@ -115,7 +128,7 @@ const AppRouter: React.FC = () => {
           <Route 
             path="mutual-matches" 
             element={
-              <PrivateRoute roles={[UserRole.CUSTOMER]}>
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
                 <MutualMatches />
               </PrivateRoute>
             } 
@@ -123,7 +136,7 @@ const AppRouter: React.FC = () => {
           <Route 
             path="favourites" 
             element={
-              <PrivateRoute roles={[UserRole.CUSTOMER]}>
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
                 <Favourites />
               </PrivateRoute>
             } 
@@ -131,7 +144,7 @@ const AppRouter: React.FC = () => {
            <Route 
             path="visitors" 
             element={
-              <PrivateRoute roles={[UserRole.CUSTOMER]}>
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
                 <Visitors />
               </PrivateRoute>
             } 
@@ -139,7 +152,7 @@ const AppRouter: React.FC = () => {
           <Route 
             path="profile" 
             element={
-              <PrivateRoute roles={[UserRole.CUSTOMER]}>
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
                 <Profile />
               </PrivateRoute>
             } 
@@ -147,7 +160,7 @@ const AppRouter: React.FC = () => {
           <Route 
             path="profile/:userId" 
             element={
-              <PrivateRoute roles={[UserRole.CUSTOMER]}>
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
                 <ViewProfile />
               </PrivateRoute>
             } 
@@ -155,7 +168,7 @@ const AppRouter: React.FC = () => {
            <Route 
             path="kundli-match/:userId" 
             element={
-              <PrivateRoute roles={[UserRole.CUSTOMER]}>
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
                 <KundliMatch />
               </PrivateRoute>
             } 
@@ -163,7 +176,7 @@ const AppRouter: React.FC = () => {
            <Route 
             path="messages" 
             element={
-              <PrivateRoute roles={[UserRole.CUSTOMER]}>
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
                 <Messages />
               </PrivateRoute>
             } 
@@ -171,7 +184,7 @@ const AppRouter: React.FC = () => {
           <Route 
             path="messages/:userId" 
             element={
-              <PrivateRoute roles={[UserRole.CUSTOMER]}>
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
                 <Messages />
               </PrivateRoute>
             } 
@@ -179,7 +192,7 @@ const AppRouter: React.FC = () => {
           <Route 
             path="verification" 
             element={
-              <PrivateRoute roles={[UserRole.CUSTOMER]}>
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
                 <Verification />
               </PrivateRoute>
             } 
@@ -187,7 +200,7 @@ const AppRouter: React.FC = () => {
            <Route 
             path="settings" 
             element={
-              <PrivateRoute roles={[UserRole.CUSTOMER]}>
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
                 <Settings />
               </PrivateRoute>
             } 
@@ -195,7 +208,7 @@ const AppRouter: React.FC = () => {
           <Route 
             path="membership" 
             element={
-              <PrivateRoute roles={[UserRole.CUSTOMER]}>
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
                 <Membership />
               </PrivateRoute>
             } 
@@ -203,7 +216,7 @@ const AppRouter: React.FC = () => {
           <Route 
             path="interests" 
             element={
-              <PrivateRoute roles={[UserRole.CUSTOMER]}>
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
                 <Interests />
               </PrivateRoute>
             } 

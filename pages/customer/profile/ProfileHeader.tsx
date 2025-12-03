@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { Match, InterestStatus, ButtonVariant } from '../../../types';
+import React, { useEffect, useRef, useState } from 'react';
+import { Match, InterestStatus, ButtonVariant, User, AppEventStatus } from '../../../types';
 import { useAppContext } from '../../../hooks/useAppContext';
 import Card from '../../../components/ui/Card';
 import Button from '../../../components/ui/Button';
+import { eventBus } from '@/utils/eventBus';
 
 // Icons
 const VerifiedBadge: React.FC = () => (
@@ -11,8 +12,8 @@ const VerifiedBadge: React.FC = () => (
         Verified
     </span>
 );
-const PremiumBadge: React.FC<{text: string}> = ({ text }) => (
-     <span className="inline-flex items-center ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
+const PremiumBadge: React.FC<{ text: string }> = ({ text }) => (
+    <span className="inline-flex items-center ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-yellow-400 to-orange-500 text-white">
         <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
         </svg>
@@ -26,7 +27,7 @@ const MoreOptionsIcon = () => (
 );
 
 interface ProfileHeaderProps {
-    user: Match;
+    user: User;
     isFavourite: boolean;
     isBlocked: boolean;
     sentInterestStatus?: InterestStatus;
@@ -46,9 +47,54 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
 }) => {
     const { t } = useAppContext();
     const [isOptionsOpen, setIsOptionsOpen] = useState(false);
-    const targetUserIsPremium = user.membership !== 'FREE';
-    
-    const userPhotos = user.photos && user.photos.length > 0 ? user.photos : [`https://picsum.photos/800/600?random=${user.id}`];
+    // const targetUserIsPremium = user.membership !== 'FREE';
+
+    const userPhotos = user.profile.photos && user.profile.photos.length > 0 ? user.profile.photos : [`https://picsum.photos/800/600?random=${user.id}`];
+
+    const optionsRef = useRef(null);
+
+    const updateFavouriteStatus = (data: { currentMatch: Match }) => {
+        // console.log('updateFavouriteStatus called with data:', data);
+        if (data.currentMatch.id === user.id) {
+            user.profile.isFavourite = !user.profile.isFavourite;
+            // console.log(`Updated favourite status for match ${user.id} to ${user.profile.isFavourite} via eventBus`);
+        }
+    }
+
+    const updateBlockedStatusHandler = (data: { targetUserId: number; isBlocked: boolean }) => {
+        if (data.targetUserId === user.id) {
+            user.profile.isBlocked = !user.profile.isBlocked;
+            // console.log(`Updated blocked status for user ${user.id} to ${isBlocked} via isBlocked`);
+        }
+    }
+
+
+
+    useEffect(() => {
+        // console.log('ProfileCard mounted for match:', match.id);
+        eventBus.on(AppEventStatus.FAVOURITE, updateFavouriteStatus);
+        eventBus.on(AppEventStatus.BLOCK_USER, updateBlockedStatusHandler);
+        return () => {
+            eventBus.off(AppEventStatus.FAVOURITE, updateFavouriteStatus);
+            eventBus.off(AppEventStatus.BLOCK_USER, updateBlockedStatusHandler);
+        }
+    }, []);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (optionsRef.current && !optionsRef.current.contains(event.target)) {
+                setIsOptionsOpen(false);
+            }
+        };
+
+        if (isOptionsOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isOptionsOpen]);
 
     return (
         <Card>
@@ -57,11 +103,11 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                 <div className="text-center sm:text-left mt-4 sm:mt-0 flex-grow">
                     <h1 className="text-4xl font-bold text-white flex items-center justify-center sm:justify-start flex-wrap">
                         {user.name}, {user.age}
-                        {user.verificationStatus === 'Verified' && <VerifiedBadge />}
-                        {targetUserIsPremium && <PremiumBadge text={t('profile.premium_member')} />}
+                        {user.profile.verificationStatus.toLocaleLowerCase() === 'verified' && <VerifiedBadge />}
+                        {/* {targetUserIsPremium && <PremiumBadge text={t('profile.premium_member')} />} */}
                     </h1>
-                    <p className="text-gray-300">{user.profession} in {user.location}</p>
-                    
+                    <p className="text-gray-300">{user.profile.profession} in {user.profile.location}</p>
+
                     <div className="flex flex-wrap justify-center sm:justify-start gap-2 mt-4">
                         {receivedInterestStatus === InterestStatus.PENDING ? (
                             <>
@@ -70,17 +116,19 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                             </>
                         ) : sentInterestStatus ? (
                             <Button disabled variant={ButtonVariant.SECONDARY} className="w-auto px-4 py-2 !text-sm cursor-not-allowed">{t(`interests.status.${sentInterestStatus.toLowerCase()}` as any)}</Button>
+                        ) : receivedInterestStatus ? (
+                            <Button disabled variant={ButtonVariant.SECONDARY} className="w-auto px-4 py-2 !text-sm cursor-not-allowed">{t(`interests.status.${receivedInterestStatus.toLowerCase()}` as any)}</Button>
                         ) : (
                             <Button onClick={onExpressInterest} className="w-auto px-4 py-2 !text-sm">{t('interests.express_interest')}</Button>
                         )}
-                         <Button onClick={onMessage} variant={ButtonVariant.SECONDARY} className="w-auto px-4 py-2 !text-sm">Message</Button>
+                        {/* <Button onClick={onMessage} variant={ButtonVariant.SECONDARY} className="w-auto px-4 py-2 !text-sm">Message</Button> */}
                         <Button onClick={onToggleFavourite} variant={ButtonVariant.SECONDARY} className="w-auto px-4 py-2 !text-sm">
-                            {isFavourite ? 'Favourited' : 'Favourite'}
+                            {user.profile.isFavourite ? 'Favourited' : 'Favourite'}
                         </Button>
                     </div>
                 </div>
-                
-                <div className="absolute top-0 right-0">
+
+                <div className="absolute top-0 right-0" ref={optionsRef}>
                     <button onClick={() => setIsOptionsOpen(!isOptionsOpen)} className="p-2 text-gray-400 hover:text-white rounded-full transition-colors">
                         <MoreOptionsIcon />
                     </button>

@@ -12,7 +12,7 @@ self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log('Service Worker: Caching app shell');
+        // console.log('Service Worker: Caching app shell');
         return cache.addAll(urlsToCache);
       })
       .then(() => self.skipWaiting()) // Activate the new service worker immediately.
@@ -27,12 +27,15 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
-            console.log('Service Worker: Deleting old cache', cacheName);
+            // console.log('Service Worker: Deleting old cache', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
     }).then(() => self.clients.claim()) // Take control of all open clients.
+  );
+  event.waitUntil(
+    caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key))))
   );
 });
 
@@ -70,7 +73,7 @@ self.addEventListener('fetch', (event) => {
             return networkResponse;
           }
         ).catch(error => {
-          console.error('Service Worker: Fetch failed.', error);
+          // console.error('Service Worker: Fetch failed.', error);
           // Optional: You could return a fallback offline page from the cache here.
           // For example: return caches.match('/offline.html');
           throw error;

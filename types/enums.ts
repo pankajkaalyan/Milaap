@@ -1,6 +1,8 @@
 export enum UserRole {
   CUSTOMER = 'CUSTOMER',
   ADMIN = 'ADMIN',
+  ROLE_USER = 'ROLE_USER', // For future use with OAuth
+  ROLE_ADMIN = 'ROLE_ADMIN', // For future use with OAuth
 }
 
 export enum AdminRole {
@@ -128,4 +130,18 @@ export enum InterestStatus {
   PENDING = 'PENDING',
   ACCEPTED = 'ACCEPTED',
   DECLINED = 'DECLINED',
+  NONE = 'NONE',
+}
+
+
+export enum AppEventStatus {
+  ACCEPTED = 'ACCEPTED',
+  DECLINED = 'DECLINED',
+  EXPRESS_INTEREST = 'EXPRESS_INTEREST',
+  NONE = 'NONE',
+  FAVOURITE = 'FAVOURITE',
+  LOGIN_SUCCESS = 'LOGIN_SUCCESS',
+  LOGOUT = 'LOGOUT',
+  BLOCK_USER = 'BLOCK_USER',
+  VERIFICATION_SUBMITTED = 'VERIFICATION_SUBMITTED',
 }

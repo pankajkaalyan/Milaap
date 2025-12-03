@@ -83,15 +83,17 @@ export const en = {
     finish: 'Finish Registration',
     dob: 'Date of Birth',
     tob: 'Time of Birth',
+    mobile: "Mobile Number",
     height: 'Height (in cm)',
     caste: 'Caste',
-    subcaste: 'Sub-caste (Optional)',
+    subcaste: 'Sub-caste',
     profession: 'Profession',
     education: 'Highest Education',
     steps: {
       account: 'Account Details',
       personal: 'Personal Info',
-      family: 'Family & Horoscope',
+      cast: 'Caste & Horoscope',
+      family: 'Family Details',
       uploads: 'Uploads',
     },
     uploads: {
@@ -123,6 +125,7 @@ export const en = {
     block_user: 'Block User',
     unblock_user: 'Unblock User',
     report_user: 'Report User',
+    gender: "Gender",
     details: {
       father_name: "Father's Name",
       mother_name: "Mother's Name",
@@ -262,6 +265,7 @@ export const en = {
       pending: 'Pending',
       accepted: 'Accepted',
       declined: 'Declined',
+      none: 'none',
     },
     accept: 'Accept',
     decline: 'Decline',
@@ -501,6 +505,7 @@ export const en = {
     plan_upgraded: 'Congratulations! You are now on the {plan} plan.',
     verification: {
       submitted: 'Verification documents submitted successfully!',
+      submission_failed: 'Verification documents submission failed. Please try again.',
       ai_success: 'AI Verification Successful! Your profile is now verified.',
       ai_failed: 'AI could not verify your document. It has been sent for manual review.',
       ai_error: 'An error occurred during AI verification. Please try again.',
@@ -703,4 +708,14 @@ export const en = {
     alpha_only: '{fieldName} can only contain letters and spaces.',
     alpha_comma_only: '{fieldName} can only contain letters, spaces, and commas.',
   },
+  changePassword: {
+    title: "Change Password",
+    old_password: "Old Password",
+    new_password: "New Password",
+    confirm_password: "Confirm Password",
+    cta: "Update Password",
+    success: "Password updated successfully!",
+    failure: "Failed to update password."
+  }
+
 };

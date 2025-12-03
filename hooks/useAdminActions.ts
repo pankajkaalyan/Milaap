@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { User, Report, SuccessStory, VerificationLog, AdminUser, AdminRole, UserRole, NotificationType, Notification, SuccessStoryStatus } from '../types';
+import { User, Report, SuccessStory, VerificationLog, AdminUser, AdminRole, UserRole, NotificationType, Notification, SuccessStoryStatus, ImportedUser } from '../types';
 import { userService } from '../services/api/userService';
 import { moderationService } from '../services/api/moderationService';
 import { storyService } from '../services/api/storyService';
@@ -42,11 +42,11 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
     };
 
     useEffect(() => {
-        fetchData();
+        // fetchData();
     }, []);
 
     useEffect(() => {
-        setVerificationRequests(allUsers.filter(u => u.profile?.verificationStatus === 'Pending'));
+        // setVerificationRequests(allUsers.filter(u => u.profile?.verificationStatus === 'Pending'));
     }, [allUsers]);
 
     const approveVerification = async (userId: string | number) => {
@@ -74,7 +74,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
         setReports(prev => prev.map(r => r.id === reportId ? updatedReport : r));
         addToast(t('toasts.report.dismissed'), 'info');
     };
-    
+
     const approveStory = async (storyId: number) => {
         const updatedStory = await storyService.updateStoryStatus(storyId, SuccessStoryStatus.APPROVED);
         setStorySubmissions(prev => prev.filter(s => s.id !== storyId));
@@ -83,7 +83,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
     };
 
     const rejectStory = async (storyId: number) => {
-        await storyService.updateStoryStatus(storyId, SuccessStoryStatus.REJECTED);
+        // await storyService.updateStoryStatus(storyId, SuccessStoryStatus.REJECTED);
         setStorySubmissions(prev => prev.filter(s => s.id !== storyId));
         addToast(t('toasts.story.rejected'), 'error');
         addNotification({ type: NotificationType.STORY_REJECTED, message: t('notifications.story_rejected'), link: '/success-stories', userId: 1 });
@@ -109,9 +109,9 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
         setAdminUsers(prev => prev.map(u => u.id === userId ? updatedAdmin : u));
         addToast(t('toasts.role.updated'), 'success');
     };
-    
+
     const deleteUsers = async (userIds: (string | number)[]) => {
-        await userService.deleteUsers(userIds);
+        // await userService.deleteUsers(userIds);
         setAllUsers(prev => prev.filter(u => !userIds.includes(u.id)));
         if (userIds.length > 1) {
             addToast(t('toasts.users.deleted_bulk', { count: userIds.length.toString() }), 'success');
@@ -120,8 +120,8 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
             addToast(t('toasts.user.deleted', { name: deletedUser?.name || '' }), 'success');
         }
     };
-    
-    const addBulkUsers = async (users: User[]) => {
+
+    const addBulkUsers = async (users: ImportedUser[]) => {
         // In a real app, this would be a single API call
         for (const user of users) {
             await userService.addUser(user.name, user.email, user.role);
@@ -132,8 +132,15 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
 
     const bulkUpdateUserRole = async (userIds: (string | number)[], role: UserRole) => {
         // In a real app, this would be a single API call
-        await Promise.all(userIds.map(id => userService.updateUser(id, { role })));
-        await fetchData(); // Refresh data
+        // await Promise.all(userIds.map(id => userService.updateUser(id, { role })));
+        // await fetchData(); // Refresh data
+        setAllUsers(prevUsers =>
+            prevUsers.map(user =>
+                userIds.includes(user.id)
+                    ? { ...user, role }
+                    : user
+            )
+        );
         addToast(t('toasts.users.updated_bulk', { count: userIds.length.toString() }), 'success');
     };
 
@@ -144,9 +151,11 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
     };
 
     const updateUser = async (userId: string | number, userData: Partial<Pick<User, 'name' | 'role'>>) => {
-        const updatedUser = await userService.updateUser(userId, userData);
-        setAllUsers(prev => prev.map(u => u.id === userId ? updatedUser : u));
-        addToast(t('toasts.user.updated', { name: updatedUser.name }), 'success');
+        // const updatedUser = await userService.updateUser(userId, userData);
+        // console.log('Data ', userData);
+        setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, ...userData } : u));
+        // console.log(" All Users ", allUsers)
+        addToast(t('toasts.user.updated', { name: userData.name }), 'success');
     };
 
     return {
@@ -172,5 +181,6 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
         bulkUpdateUserRole,
         addUser,
         updateUser,
+        initializeUsers: (users: User[]) => setAllUsers(users)
     };
 };

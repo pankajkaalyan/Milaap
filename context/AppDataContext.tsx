@@ -2,7 +2,9 @@ import React, { createContext, ReactNode } from 'react';
 import { 
     AdminRole, MembershipPlan, Notification, UserRole, User, UserProfile,
     Match, SuccessStory, Report, AIKundliReport, 
-    AIMatchSuggestion, VerificationLog, AdminUser, Interest 
+    AIMatchSuggestion, VerificationLog, AdminUser, Interest, 
+    Interests,
+    ImportedUser
 } from '../types';
 
 import { useAuthContext } from '../hooks/useAuthContext';
@@ -27,12 +29,12 @@ export interface AppDataContextType {
   toggleFavourite: (match: Match) => void;
   
   // from useInterests
-  interests: Interest[];
-  setInterests: React.Dispatch<React.SetStateAction<Interest[]>>;
-  expressInterest: (targetUserId: number) => void;
-  acceptInterest: (senderId: number) => void;
-  declineInterest: (senderId: number) => void;
-  
+  interests: Interests;
+  setInterests: React.Dispatch<React.SetStateAction<Interests>>;
+  expressInterest: (targetUserId: string | number, targetName: string, message?: string) => void;
+  acceptInterest: (interestId: string | number, targetUserId: string | number, senderName: string) => void;
+  declineInterest: (interestId: string | number, targetUserId: string | number, senderName: string) => void;
+
   // from useSuccessStories
   allSuccessStories: SuccessStory[];
   setAllSuccessStories: React.Dispatch<React.SetStateAction<SuccessStory[]>>;
@@ -40,11 +42,11 @@ export interface AppDataContextType {
   
   // from useProfileActions
   updateUserProfile: (profile: Partial<UserProfile>) => Promise<void>;
-  submitVerification: () => Promise<void>;
+  submitVerification: (file: File) => Promise<void>;
   verifyProfileWithAI: (idDocument: File) => Promise<void>;
   upgradePlan: (plan: MembershipPlan) => Promise<void>;
-  toggleBlockUser: (userId: number) => Promise<void>;
-  reportUser: (userId: number, reason: string, details: string) => void;
+  toggleBlockUser: (userId: string | number, userName: string, isBlocked: boolean) => Promise<void>;
+  reportUser: (userId: string | number, reason: string, details: string, userName: string) => void;
   deactivateAccount: () => Promise<void>;
   deleteAccount: () => Promise<void>;
   
@@ -53,7 +55,7 @@ export interface AppDataContextType {
   isFetchingAISuggestions: boolean;
   fetchAISuggestions: () => Promise<void>;
   kundliReports: Record<string, AIKundliReport | 'loading' | 'error'>;
-  fetchAIKundliReport: (targetUserId: number) => Promise<void>;
+  fetchAIKundliReport: (targetUserId: string | number) => Promise<void>;
   
   // from useAdminActions
   allUsers: User[];
@@ -73,10 +75,11 @@ export interface AppDataContextType {
   retriggerVerification: (logId: string) => void;
   updateAdminRole: (userId: string | number, newRole: AdminRole) => void;
   deleteUsers: (userIds: (string | number)[]) => void;
-  addBulkUsers: (users: User[]) => void;
+  addBulkUsers: (users: ImportedUser[]) => void;
   bulkUpdateUserRole: (userIds: (string | number)[], role: UserRole) => void;
   addUser: (name: string, email: string, role: UserRole) => void;
   updateUser: (userId: string | number, userData: Partial<Pick<User, 'name' | 'role'>>) => void;
+  initializeUsers: (users: User[]) => void;
 }
 
 export const AppDataContext = createContext<AppDataContextType | undefined>(undefined);

@@ -1,11 +1,11 @@
 
 import { useState, useEffect, useCallback } from 'react';
-import { Notification, NotificationType, User, Interest, InterestStatus, UserRole } from '../types';
+import { Notification, NotificationType, User, Interest, InterestStatus, UserRole, Interests } from '../types';
 import { mockUsers } from '../data/mockUsers';
 
 type TFunction = (key: string, options?: Record<string, string | number>) => string;
 
-export const useNotifications = (user: User | null, t: TFunction, setInterests: React.Dispatch<React.SetStateAction<Interest[]>>) => {
+export const useNotifications = (user: User | null, t: TFunction, setInterests: React.Dispatch<React.SetStateAction<Interests>>) => {
     const [notifications, setNotifications] = useState<Notification[]>([]);
 
     useEffect(() => {
@@ -65,17 +65,17 @@ export const useNotifications = (user: User | null, t: TFunction, setInterests: 
                         message = t('notifications.interest_received', { name: randomUser.name });
                         link = '/interests';
                         // Mock receiving an interest
-                        setInterests(prev => {
-                            if (prev.some(i => i.senderId === randomUser.id && i.receiverId === user.id)) return prev;
-                            const newInterest: Interest = {
-                                id: Date.now(),
-                                senderId: randomUser.id as number,
-                                receiverId: user.id as number,
-                                status: InterestStatus.PENDING,
-                                timestamp: new Date().toISOString(),
-                            };
-                            return [newInterest, ...prev];
-                        });
+                        // setInterests(prev => {
+                        //     if (prev && prev.received.some(i => i.senderId === randomUser.id && i.recipientId === user.id)) return prev;
+                        //     const newInterest: Interest = {
+                        //         id: Date.now(),
+                        //         senderId: randomUser.id as number,
+                        //         recipientId: user.id as number,
+                        //         status: InterestStatus.PENDING,
+                        //         timestamp: new Date().toISOString(),
+                        //     };
+                        //     return [newInterest, ...prev.received];
+                        // });
                         break;
                     case NotificationType.NEW_MESSAGE:
                         const randomConvoUser = mockUsers[Math.floor(Math.random() * 8)]; // Users with mock convos

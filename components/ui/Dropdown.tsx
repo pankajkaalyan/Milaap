@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import ChevronDownIcon from '../icons/ChevronDownIcon';
 import { DropdownSize } from '../../types';
+import FormLabel from './FormLabel';
 
 export interface DropdownOption {
   value: string;
@@ -20,6 +21,7 @@ interface DropdownProps {
   ariaLabel?: string;
   placeholder?: string;
   disabled?: boolean;
+  required?: boolean;
 }
 
 const Dropdown: React.FC<DropdownProps> = ({ 
@@ -34,6 +36,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   ariaLabel,
   placeholder,
   disabled = false,
+  required
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -154,9 +157,7 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   return (
     <div ref={wrapperRef} className={className}>
-      {label && <label htmlFor={id} className="block text-sm font-medium text-gray-300 mb-1">
-        {label}
-      </label>}
+      {label && <FormLabel id={id || ''} label={label} required={required} />}
       <div>
         <button
           ref={buttonRef}

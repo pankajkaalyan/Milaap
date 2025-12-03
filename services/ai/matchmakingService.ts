@@ -9,7 +9,7 @@ export const matchmakingService = {
 
         const formatProfileForPrompt = (p: User | Match) => {
             const profile = 'role' in p ? p.profile : p;
-            return `UserID: ${p.id}, Name: ${p.name}, Age: ${'age' in p ? p.age : ''}, Profession: ${profile?.profession}, About: ${profile?.about}, Family Values: ${profile?.family?.familyValues}, Horoscope: ${profile?.horoscope?.rashi}, Caste: ${profile?.caste}.`;
+            return `UserID: ${p.id}, Name: ${p.name}, Age: ${'age' in p ? p.age : ''}, Profession: ${profile?.profession}, About: ${profile?.about}, Family Values: ${profile?.familyDetails?.familyValues}, Horoscope: ${profile?.horoscope?.rashi}, Caste: ${profile?.caste}.`;
         };
     
         const currentUserForPrompt = formatProfileForPrompt(currentUser);

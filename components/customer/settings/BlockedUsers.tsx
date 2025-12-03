@@ -1,16 +1,47 @@
-import React, { useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useAppContext } from '../../../hooks/useAppContext';
 import { mockUsers } from '../../../data/mockUsers';
 import Button from '../../ui/Button';
-import { ButtonVariant } from '../../../types';
+import { AppEventStatus, ButtonVariant } from '../../../types';
+import { getBlockedUsersAPI } from '@/services/api/profile';
+import { eventBus } from '@/utils/eventBus';
 
 const BlockedUsers: React.FC = () => {
     const { t, user, toggleBlockUser } = useAppContext();
-    
-    const blockedUsersFullProfile = useMemo(() => {
-        if (!user?.profile?.blockedUsers) return [];
-        return mockUsers.filter(u => user.profile!.blockedUsers!.includes(u.id.toString()));
-    }, [user]);
+    const [blockedUsersFullProfile, setBlockedUsersFullProfile] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    // const blockedUsersFullProfile = useMemo(() => {
+    //     if (!user?.profile?.blockedUsers) return [];
+    //     return mockUsers.filter(u => user.profile!.blockedUsers!.includes(u.id.toString()));
+    // }, [user]);
+
+    const loadBlockedUsers = async () => {
+        try {
+            setLoading(true);
+            const data = await getBlockedUsersAPI();
+            setBlockedUsersFullProfile(data || []);
+        } catch (err) {
+            // console.error("Failed to load blocked users", err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    const updateBlockedStatusHandler = (data: { targetUserId: number; isBlocked: boolean }) => {
+        setBlockedUsersFullProfile(prev => prev.filter(user => user.id !== data.targetUserId));
+    }
+
+    useEffect(() => {
+        loadBlockedUsers();
+        eventBus.on(AppEventStatus.BLOCK_USER, updateBlockedStatusHandler);
+        return () => {
+            eventBus.off(AppEventStatus.BLOCK_USER, updateBlockedStatusHandler);
+        }
+    }, []);
+
+    if (loading) return (<p className="text-gray-300">Loading...</p>);
 
     return (
         <div>
@@ -24,7 +55,7 @@ const BlockedUsers: React.FC = () => {
                                 <img src={blockedUser.photos?.[0] || `https://i.pravatar.cc/150?u=${blockedUser.id}`} alt={blockedUser.name} className="w-10 h-10 rounded-full object-cover" />
                                 <span className="text-white font-semibold">{blockedUser.name}</span>
                             </div>
-                            <Button onClick={() => toggleBlockUser(blockedUser.id as number)} variant={ButtonVariant.SECONDARY} className="w-auto !py-1 !px-3 !text-sm !bg-gray-600 hover:!bg-gray-500">{t('settings.blocked.unblock')}</Button>
+                            <Button onClick={() => toggleBlockUser(blockedUser.id as number, blockedUser.name, true)} variant={ButtonVariant.SECONDARY} className="w-auto !py-1 !px-3 !text-sm !bg-gray-600 hover:!bg-gray-500">{t('settings.blocked.unblock')}</Button>
                         </li>
                     ))}
                 </ul>

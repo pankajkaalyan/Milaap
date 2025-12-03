@@ -14,7 +14,7 @@ const TemplateEditor: React.FC<TemplateProps> = ({ title, placeholders, initialC
 
     const handleSave = () => {
         // In a real app, this would be an API call
-        console.log(`Saving template "${title}":`, content);
+        // console.log(`Saving template "${title}":`, content);
         addToast(t('toast.template.saved'), 'success');
     };
 

@@ -1,23 +1,22 @@
 import React from 'react';
 import { Conversation, MessageType } from '../../../types';
-import { mockUsers } from '../../../data/mockUsers';
 
 interface ConversationListProps {
   conversations: Conversation[];
   selectedConversationId: number | null;
-  onSelectConversation: (userId: number) => void;
+  onSelectConversation: (userId: string | number) => void;
 }
 
 const ConversationList: React.FC<ConversationListProps> = ({ conversations, selectedConversationId, onSelectConversation }) => {
 
-  const getAvatarUrl = (userId: number) => {
-    const user = mockUsers.find(u => u.id === userId);
-    return user?.photos?.[0] || `https://picsum.photos/100/100?random=${userId}`;
+  const getAvatarUrl = (userId: string | number) => {
+    const user = conversations.find(u => u.userId === userId);
+    return user?.profilePic;
   };
 
   const getLastMessagePreview = (conversation: Conversation) => {
     if (conversation.messages.length === 0) {
-      return 'No messages yet';
+      return conversation.lastMessage ? conversation.lastMessage : 'No messages yet';
     }
     const lastMessage = conversation.messages[conversation.messages.length - 1];
     switch(lastMessage.type) {

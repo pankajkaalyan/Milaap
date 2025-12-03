@@ -3,8 +3,9 @@ import { User, UserRole, UserProfile } from '../types';
 import { useAuth } from '../hooks/useAuth';
 
 export interface AuthContextType {
+  token: string | null;
   user: User | null;
-  login: (email: string, role: UserRole, profile?: UserProfile) => void;
+  login: (email: string, role: UserRole, profile?: UserProfile, token?: string) => void;
   logout: () => void;
   updateCurrentUser: (updatedUser: User) => void;
 }
