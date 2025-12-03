@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
         define: {
             'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
             'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-            global: "window",
+            global: 'window',
         },
 
         resolve: {
@@ -29,49 +29,20 @@ export default defineConfig(({ mode }) => {
                     target: "http://localhost:8080",
                     changeOrigin: true,
                     secure: false,
-                    ws: true,
+                    ws: true
                 },
-
-                // ✅ WebSocket Fix (Vite + Spring Boot / Node works perfectly)
                 "/ws": {
                     target: env.VITE_API_URL || "ws://localhost:8080",
                     ws: true,
                     changeOrigin: true,
-                    secure: false,
+                    secure: false
                 }
             }
         },
 
         build: {
-            chunkSizeWarningLimit: 800, // smaller and safer default
-
-            rollupOptions: {
-                output: {
-                    manualChunks(id) {
-                        if (id.includes('node_modules')) {
-
-                            // --- SPLIT COMMON CHUNKS ---
-                            if (id.includes('react')) return "react-vendors";
-                            if (id.includes('@mui') || id.includes('mui')) return "mui-vendors";
-                            if (id.includes('lodash')) return "lodash";
-                            if (id.includes('date-fns')) return "date-utils";
-
-                            return "vendor"; 
-                        }
-
-                        // --- OPTIONAL: SPLIT LARGE FEATURE MODULES ---
-                        if (id.includes('/src/pages/')) {
-                            const name = id.split('/src/pages/')[1].split('/')[0];
-                            return `page-${name}`;
-                        }
-
-                        if (id.includes('/src/components/')) {
-                            const name = id.split('/src/components/')[1].split('/')[0];
-                            return `cmp-${name}`;
-                        }
-                    }
-                }
-            }
+            chunkSizeWarningLimit: 800
+            // ❌ NO manualChunks — this was breaking React
         }
     };
 });
