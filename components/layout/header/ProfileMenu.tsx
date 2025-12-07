@@ -34,16 +34,28 @@ const ProfileMenu: React.FC = () => {
                 logout();
                 setIsOpen(false);
                 navigate('/');
-            }).catch(err => 
+            }).catch(err =>
                 console.error('Error during logout:', err))
                 .finally(() => {
-                localStorage.removeItem("token");
-                localStorage.removeItem("refreshToken");
-            });
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("refreshToken");
+                });
         }
     };
 
     const closeMenu = () => setIsOpen(false);
+
+    const getInitials = (fullName) => {
+        if (!fullName) return "";
+        const parts = fullName.trim().split(" ");
+
+        if (parts.length === 1) {
+            return parts[0].substring(0, 2).toUpperCase();
+        }
+
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    };
+    const initials = getInitials(user.name);
 
     if (!user) return null;
 
@@ -51,7 +63,20 @@ const ProfileMenu: React.FC = () => {
         <div className="relative" ref={menuRef}>
             <button onClick={() => setIsOpen(prev => !prev)} className="flex items-center space-x-2 focus:outline-none">
                 {user.role === UserRole.CUSTOMER || user.role === UserRole.ROLE_USER ? (
-                    <img src={user.profile?.photos?.[0] || `https://i.pravatar.cc/150?u=${user.id}`} alt="My Profile" className="w-9 h-9 rounded-full object-cover border-2 border-amber-500/50" />
+                    // <img src={user.profile?.photos?.[0]} alt="My Profile" className="w-9 h-9 rounded-full object-cover border-2 border-amber-500/50" />
+                    <>
+                    {user.profile?.photos?.[0] ? (
+                        <img
+                            src={user.profile?.photos?.[0]}
+                            alt={user.name}
+                            className="w-12 h-12 rounded-full object-cover border-4 border-amber-500"
+                        />
+                    ) : (
+                        <div className="w-12 h-12 rounded-full border-4 border-amber-500 bg-amber-200 text-amber-800 flex items-center justify-center text-2xl font-bold">
+                          {initials}
+                        </div>
+                    )}
+                </>
                 ) : (
                     <div className="w-9 h-9 rounded-full bg-purple-600 flex items-center justify-center text-white font-bold border-2 border-purple-500/50">
                         {user.name?.charAt(0)}

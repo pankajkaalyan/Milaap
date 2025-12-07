@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Match, InterestStatus, InterestShown, AppEventStatus } from '../../types';
 import { useAppContext } from '../../hooks/useAppContext';
 import { useNavigate, Link } from 'react-router-dom';
@@ -43,6 +43,7 @@ const VerifiedBadge: React.FC = () => (
 const ProfileCard: React.FC<ProfileCardProps> = ({ match, isFavourite, onToggleFavourite }) => {
     const { t, user: currentUser, interests, expressInterest, acceptInterest, declineInterest } = useAppContext();
     const navigate = useNavigate();
+    const [imgError, setImgError] = useState(false);
     // console.log('ProfileCard render for match:', match);
 
     // const sentInterest = interests.find(i => i.senderId === currentUser?.id && i.recipientId === match.id);
@@ -118,10 +119,37 @@ const ProfileCard: React.FC<ProfileCardProps> = ({ match, isFavourite, onToggleF
         }
     }, [match.id]);
 
+    const getInitials = (fullName) => {
+        if (!fullName) return "";
+        const parts = fullName.trim().split(" ");
+
+        if (parts.length === 1) {
+            return parts[0].substring(0, 2).toUpperCase();
+        }
+
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    };
+    const initials = getInitials(match.name);
+    const showInitials = imgError || !match.photos[0];
+
     return (
         <Link to={`/profile/${match.id}`} className="block bg-white/10 rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 flex flex-col group cursor-pointer">
             <div className="relative">
-                <img src={match.photos && match.photos.length > 0 ? match.photos[0] : `https://picsum.photos/400/300?random=${match.id}`} alt={match.name} className="w-full h-48 object-cover" />
+                {/* <img src={match.photos && match.photos.length > 0 ? match.photos[0] : ``} alt={match.name} className="w-full h-48 object-cover" /> */}
+                <>
+                    {!showInitials ? (
+                        <img
+                            src={match.photos[0]}
+                            alt={match.name}
+                            className="w-full h-48 object-cover"
+                            onError={() => setImgError(true)}  
+                        />
+                    ) : (
+                        <div className="w-full h-48 object-cover text-white-800 flex items-center justify-center text-6xl font-bold">
+                            {initials}
+                        </div>
+                    )}
+                </>
                 {/* <div className={`absolute top-0 right-0 px-2 py-1 text-xs font-bold rounded-full ${getScoreColor(match.compatibilityScore)} backdrop-blur-sm`}>
                     {match.compatibilityScore}% {t('dashboard.compatibility_score')}
                 </div> */}
