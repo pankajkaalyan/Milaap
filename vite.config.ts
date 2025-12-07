@@ -26,13 +26,13 @@ export default defineConfig(({ mode }) => {
 
             proxy: {
                 "/api": {
-                    target: "http://localhost:8080",
+                    target: env.VITE_API_URL,
                     changeOrigin: true,
                     secure: false,
                     ws: true
                 },
                 "/ws": {
-                    target: env.VITE_API_URL || "ws://localhost:8080",
+                    target: env.VITE_API_URL || "ws://ec2-98-83-41-85.compute-1.amazonaws.com:8080",
                     ws: true,
                     changeOrigin: true,
                     secure: false

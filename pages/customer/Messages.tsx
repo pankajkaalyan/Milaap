@@ -76,7 +76,7 @@ const Messages: React.FC = () => {
 
         const WS_BASE =
             import.meta.env.MODE === "development"
-                ? import.meta.env.VITE_API_URL
+                ? ""
                 : import.meta.env.VITE_API_URL;
 
         console.log("Creating NEW WebSocket/STOMP connection…");
