@@ -24,8 +24,8 @@ const Register: React.FC = () => {
         t('register.steps.account'),
         t('register.steps.personal'),
         t('register.steps.cast'),
-        t('register.steps.family'),
-        t('register.steps.uploads')
+        t('register.steps.family')
+        // t('register.steps.uploads')
     ];
 
     const { currentStep, next, back, isFirstStep, isLastStep } = useMultiStepForm(steps.length);
@@ -35,7 +35,7 @@ const Register: React.FC = () => {
             name: '', email: '', password: '', dateOfBirth: '', timeOfBirth: '', gender: '', mobileNumber: null,
             height: '', profession: '', education: '', caste: '', subCaste: '', rashi: '', nakshatra: '',
             gotra: '', mangalDosha: 'No', fatherName: '', motherName: '',
-            siblings: '', familyValues: 'Moderate', photos: [] as File[], video: null,
+            siblings: '', familyValues: 'Moderate', photos: [], video: null
         },
         {
             name: [required(t, t('register.name')), alphaOnly(t, t('register.name'))],
@@ -68,7 +68,7 @@ const Register: React.FC = () => {
             ['dateOfBirth', 'timeOfBirth', 'gender', 'height', 'profession', 'education', 'mobileNumber'],
             ['caste', 'subCaste', 'gotra', 'mangalDosha', 'rashi', 'nakshatra'],
             ['fatherName', 'motherName', 'siblings', 'familyValues'],
-            ["photos", "video"] // No validation needed for uploads on "Next"
+            // ["photos", "video"] // No validation needed for uploads on "Next"
         ];
         if (validate(fieldsPerStep[currentStep])) {
             if (!isLastStep) {
@@ -162,8 +162,8 @@ const Register: React.FC = () => {
                 return <Step3Caste formData={formData} errors={errors} handleInputChange={handleInputChange} handleDropdownChange={handleDropdownChange} t={t} />;
             case 3:
                 return <Step4Family formData={formData} errors={errors} handleInputChange={handleInputChange} handleDropdownChange={handleDropdownChange} t={t} />;
-            case 4:
-                return <Step5Uploads formData={formData} errors={errors} handleFileChange={handleFileChange} t={t} />;
+            // case 4:
+            //     return <Step5Uploads formData={formData} errors={errors} handleFileChange={handleFileChange} t={t} />;
             default: return null;
         }
     }
