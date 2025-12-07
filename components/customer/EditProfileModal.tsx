@@ -58,6 +58,8 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
                 addToast(t('profile.update_success'), 'success');
                 onClose();
                 updateUserProfile(updatedProfile);
+            }).catch(error => {
+                addToast(t('profile.update_error'), 'error');
             });
         }
     );

@@ -114,6 +114,7 @@ export const hi = {
     photo_gallery: 'फोटो गैलरी',
     view_full: 'पूरी प्रोफ़ाइल देखें',
     update_success: 'प्रोफ़ाइल सफलतापूर्वक अपडेट की गई!',
+    update_error: 'प्रोफ़ाइल अपडेट करने में विफल। कृपया पुनः प्रयास करें।',
     verification_status: 'सत्यापन स्थिति',
     verify_now: 'अभी सत्यापित करें',
     view_contact: 'संपर्क विवरण देखें',

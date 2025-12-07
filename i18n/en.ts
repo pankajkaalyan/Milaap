@@ -116,6 +116,7 @@ export const en = {
     photo_gallery: 'Photo Gallery',
     view_full: 'View Full Profile',
     update_success: 'Profile updated successfully!',
+    update_error: 'Failed to update profile. Please try again.',
     verification_status: 'Verification Status',
     verify_now: 'Verify Now',
     view_contact: 'View Contact Details',

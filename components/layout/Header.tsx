@@ -54,11 +54,11 @@ const Header: React.FC = () => {
             {user ? (
               <>
                 <NotificationBell />
-                {user.role === UserRole.CUSTOMER || user.role === UserRole.ROLE_USER && (
+                {/* {user.role === UserRole.CUSTOMER || user.role === UserRole.ROLE_USER && (
                     <NavLink to="/membership" className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-amber-500 to-orange-500 rounded-md hover:opacity-90 transition-opacity cursor-pointer">
                       {t('nav.upgrade')}
                     </NavLink>
-                )}
+                )} */}
                 <ProfileMenu />
               </>
             ) : (
