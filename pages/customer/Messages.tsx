@@ -78,7 +78,7 @@ const Messages: React.FC = () => {
         const WS_BASE =
             import.meta.env.MODE === "development"
                 ? ""
-                : 'http://ec2-98-83-41-85.compute-1.amazonaws.com:8080';
+                : 'wss://ec2-98-83-41-85.compute-1.amazonaws.com:8080';
 
         console.log("Creating NEW WebSocket/STOMP connection…");
 
