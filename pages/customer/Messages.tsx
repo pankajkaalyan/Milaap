@@ -30,7 +30,8 @@ const Messages: React.FC = () => {
     const lastUserRef = useRef(null);
     const lastTokenRef = useRef(null);
     // State to track previous userId and token
-
+    const conversationsLoadedRef = useRef(false);
+    const messagesLoadedRef = useRef({});
 
 
     const navigate = useNavigate();
@@ -77,7 +78,7 @@ const Messages: React.FC = () => {
         const WS_BASE =
             import.meta.env.MODE === "development"
                 ? ""
-                : import.meta.env.VITE_API_URL;
+                : 'http://ec2-98-83-41-85.compute-1.amazonaws.com:8080';
 
         console.log("Creating NEW WebSocket/STOMP connection…");
 
@@ -285,6 +286,11 @@ const Messages: React.FC = () => {
     // 1️⃣ Load conversations ONLY once when token exists
     useEffect(() => {
         const token = localStorage.getItem("token");
+        if (!token) return;
+        // prevent re-fetch
+        if (conversationsLoadedRef.current) return;
+        conversationsLoadedRef.current = true;
+
         if (token && conversations.length === 0) {
             getChatConversationsAPI()
                 .then((data) => setAllConversations(data))
@@ -298,9 +304,9 @@ const Messages: React.FC = () => {
     // 2️⃣ Connect STOMP when userId + token available
     useEffect(() => {
         const token = localStorage.getItem("token");
-        if (userId && token) {
-            connectStomp();
-        }
+        if (!token || !userId) return;
+        connectStomp();
+
 
         return () => disconnectStomp();
     }, [userId]);  // ← only reconnect when userId changes
@@ -317,6 +323,13 @@ const Messages: React.FC = () => {
     // 3️⃣ Load messages for the selected conversation
     useEffect(() => {
         if (!selectedConversation) return;
+
+        const roomId = selectedConversation.roomId;
+
+        // already loaded this conversation in past?
+        if (messagesLoadedRef.current[roomId]) return;
+
+        messagesLoadedRef.current[roomId] = true; // prevent duplicates
 
         if (selectedConversation.messages.length === 0) {
             getConversationMessagesAPI(selectedConversation.roomId)

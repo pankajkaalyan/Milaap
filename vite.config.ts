@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => {
                     ws: true
                 },
                 "/ws": {
-                    target: env.VITE_API_URL || "ws://ec2-98-83-41-85.compute-1.amazonaws.com:8080",
+                    target: "ws://ec2-98-83-41-85.compute-1.amazonaws.com:8080",
                     ws: true,
                     changeOrigin: true,
                     secure: false
