@@ -75,10 +75,8 @@ const Messages: React.FC = () => {
         lastUserRef.current = userId;
         lastTokenRef.current = token;
 
-        const WS_BASE =
-            import.meta.env.MODE === "development"
-                ? ""
-                : 'ws://ec2-98-83-41-85.compute-1.amazonaws.com:8080';
+        const WS_BASE = import.meta.env.VITE_MESSAGING_WS_URL;
+
 
         console.log("Creating NEW WebSocket/STOMP connection…");
 

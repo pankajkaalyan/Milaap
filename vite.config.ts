@@ -11,6 +11,7 @@ export default defineConfig(({ mode }) => {
         define: {
             'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
             'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+            'process.env.VITE_MESSAGING_WS_URL': JSON.stringify(env.VITE_MESSAGING_WS_URL),
             global: 'window',
         },
 
@@ -32,10 +33,10 @@ export default defineConfig(({ mode }) => {
                     ws: true
                 },
                 "/ws": {
-                    target: "ws://ec2-98-83-41-85.compute-1.amazonaws.com:8080",
+                    target: env.VITE_MESSAGING_WS_URL,
                     ws: true,
                     changeOrigin: true,
-                    secure: false
+                    secure: false,
                 }
             }
         },

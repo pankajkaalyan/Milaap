@@ -93,7 +93,7 @@ const AnimatedBackground: React.FC = () => {
           />
 
           {/* Rotating Ring */}
-          <g transform="translate(50%, 50%)" style={{ animation: 'slow-rotate 120s linear infinite' }}>
+          <g transform="translate(50, 50)" style={{ animation: 'slow-rotate 120s linear infinite' }}>
             <circle cx="0" cy="0" r="25%" strokeDasharray="5,10" />
             <ellipse cx="0" cy="0" rx="35%" ry="20%" strokeDasharray="2,5" transform="rotate(45)" />
           </g>
