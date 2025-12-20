@@ -127,10 +127,10 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
         disabled={isRecording}
       />
 
-      <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" />
-      <input type="file" ref={videoInputRef} onChange={handleVideoUpload} accept="video/*" className="hidden" />
+      {/* <input type="file" ref={fileInputRef} onChange={handleImageUpload} accept="image/*" className="hidden" />
+      <input type="file" ref={videoInputRef} onChange={handleVideoUpload} accept="video/*" className="hidden" /> */}
 
-      <button
+      {/* <button
         onClick={() => fileInputRef.current?.click()}
         className="p-1 sm:p-2 text-gray-400 hover:text-white transition-colors 
                disabled:opacity-50 disabled:cursor-not-allowed"
@@ -158,7 +158,7 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage }) => {
         {isRecording
           ? <StopIcon className="text-red-500 animate-pulse h-5 w-5 sm:h-6 sm:w-6" />
           : <MicIcon className="h-5 w-5 sm:h-6 sm:w-6" />}
-      </button>
+      </button> */}
 
       <button
         onClick={handleSend}

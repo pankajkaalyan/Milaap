@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { User } from '../../../types';
 import Button from '../../ui/Button';
 import Card from '../../ui/Card';
@@ -11,7 +11,7 @@ interface MyProfileHeaderProps {
 
 
 const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({ user, onEditClick, t }) => {
-    
+    const [imgError, setImgError] = useState(false);
     // Extract initials
     const getInitials = (fullName) => {
         if (!fullName) return "";
@@ -24,16 +24,18 @@ const MyProfileHeader: React.FC<MyProfileHeaderProps> = ({ user, onEditClick, t 
         return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     };
     const initials = getInitials(user.name);
+    const showInitials = imgError || !user.profile?.photos?.[0];
     return (
         <Card>
             <div className="flex flex-col sm:flex-row items-center sm:space-x-6">
                 {/* || `https://images.pexels.com/photos/3764119/pexels-photo-3764119.jpeg?auto=compress&cs=tinysrgb&w=600` */}
                 <>
-                    {user.profile?.photos?.[0] ? (
+                    {!showInitials ? (
                         <img
                             src={user.profile?.photos?.[0]}
                             alt={user.name}
                             className="w-32 h-32 rounded-full object-cover border-4 border-amber-500"
+                            onError={() => setImgError(true)}  
                         />
                     ) : (
                         <div className="w-32 h-32 rounded-full border-4 border-amber-500 bg-amber-200 text-amber-800 flex items-center justify-center text-4xl font-bold">

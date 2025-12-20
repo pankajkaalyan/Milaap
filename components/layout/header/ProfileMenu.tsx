@@ -9,6 +9,7 @@ const ProfileMenu: React.FC = () => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
+    const [imgError, setImgError] = useState(false);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -56,6 +57,7 @@ const ProfileMenu: React.FC = () => {
         return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     };
     const initials = getInitials(user.name);
+    const showInitials = imgError || !user.profile?.photos?.[0];
 
     if (!user) return null;
 
@@ -65,11 +67,12 @@ const ProfileMenu: React.FC = () => {
                 {user.role === UserRole.CUSTOMER || user.role === UserRole.ROLE_USER ? (
                     // <img src={user.profile?.photos?.[0]} alt="My Profile" className="w-9 h-9 rounded-full object-cover border-2 border-amber-500/50" />
                     <>
-                    {user.profile?.photos?.[0] ? (
+                    {!showInitials ? (
                         <img
                             src={user.profile?.photos?.[0]}
                             alt={user.name}
                             className="w-12 h-12 rounded-full object-cover border-4 border-amber-500"
+                            onError={() => setImgError(true)}  
                         />
                     ) : (
                         <div className="w-12 h-12 rounded-full border-4 border-amber-500 bg-amber-200 text-amber-800 flex items-center justify-center text-2xl font-bold">

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Conversation, MessageType } from '../../../types';
 
 interface ConversationListProps {
@@ -19,17 +19,33 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
       return conversation.lastMessage ? conversation.lastMessage : 'No messages yet';
     }
     const lastMessage = conversation.messages[conversation.messages.length - 1];
-    switch(lastMessage.type) {
-        case MessageType.TEXT:
-            return lastMessage.content.length > 25 ? `${lastMessage.content.substring(0, 25)}...` : lastMessage.content;
-        case MessageType.IMAGE:
-            return '📷 Photo';
-        case MessageType.AUDIO:
-            return '🎤 Audio message';
-        default:
-            return '';
+    switch (lastMessage.type) {
+      case MessageType.TEXT:
+        return lastMessage.content.length > 25 ? `${lastMessage.content.substring(0, 25)}...` : lastMessage.content;
+      case MessageType.IMAGE:
+        return '📷 Photo';
+      case MessageType.AUDIO:
+        return '🎤 Audio message';
+      default:
+        return '';
     }
   };
+
+  const [imgError, setImgError] = useState(false)
+
+  const showInitials = (convo) => {
+    return imgError || !getAvatarUrl(convo.userId);
+  }
+
+  const getInitials = (convo) => {
+    return convo.userName
+    ?.split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+  };
+
 
   return (
     <div className="overflow-y-auto h-full">
@@ -38,17 +54,31 @@ const ConversationList: React.FC<ConversationListProps> = ({ conversations, sele
           <li key={convo.userId}>
             <button
               onClick={() => onSelectConversation(convo.userId)}
-              className={`w-full text-left p-3 flex items-center space-x-3 transition-colors duration-200 ${
-                selectedConversationId === convo.userId
-                  ? 'bg-white/20'
-                  : 'hover:bg-white/10'
-              }`}
+              className={`w-full text-left p-3 flex items-center space-x-3 transition-colors duration-200 ${selectedConversationId === convo.userId
+                ? 'bg-white/20'
+                : 'hover:bg-white/10'
+                }`}
             >
-              <img
+              {/* <img
                 src={getAvatarUrl(convo.userId)}
                 alt={convo.userName}
                 className="w-12 h-12 rounded-full object-cover"
-              />
+              /> */}
+              <>
+                {!showInitials(convo) ? (
+                  <img
+                    src={getAvatarUrl(convo.userId)}
+                    alt={convo.userName}
+                    className="w-12 h-12 rounded-full object-cover"
+                    onError={() => setImgError(true)}
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-orange-200 text-orange-800 flex items-center justify-center text-sm font-bold">
+                    {getInitials(convo)}
+                  </div>
+                )}
+              </>
+
               <div className="flex-1 overflow-hidden">
                 <h3 className="font-semibold text-white truncate">{convo.userName}</h3>
                 <p className="text-sm text-gray-400 truncate">{getLastMessagePreview(convo)}</p>

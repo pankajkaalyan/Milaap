@@ -96,10 +96,37 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
         };
     }, [isOptionsOpen]);
 
+    const [imgError, setImgError] = useState(false)
+
+    const initials = user.name
+        ?.split(' ')
+        .map(n => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2)
+
+    const showInitials = imgError || !userPhotos?.[0]
+
+
     return (
         <Card>
             <div className="flex flex-col sm:flex-row items-center sm:space-x-6 relative">
-                <img src={userPhotos[0]} alt={user.name} className="w-32 h-32 rounded-full object-cover border-4 border-orange-500" />
+                {/* <img src={userPhotos[0]} alt={user.name} className="w-32 h-32 rounded-full object-cover border-4 border-orange-500" /> */}
+                <>
+                    {!showInitials ? (
+                        <img
+                            src={userPhotos?.[0]}
+                            alt={user.name}
+                            className="w-32 h-32 rounded-full object-cover border-4 border-orange-500"
+                            onError={() => setImgError(true)}
+                        />
+                    ) : (
+                        <div className="w-32 h-32 rounded-full border-4 border-orange-500 bg-orange-200 text-orange-800 flex items-center justify-center text-4xl font-bold">
+                            {initials}
+                        </div>
+                    )}
+                </>
+
                 <div className="text-center sm:text-left mt-4 sm:mt-0 flex-grow">
                     <h1 className="text-4xl font-bold text-white flex items-center justify-center sm:justify-start flex-wrap">
                         {user.name}, {user.age}

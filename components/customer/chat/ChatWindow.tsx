@@ -26,9 +26,21 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversation, user, onSendMessa
   useEffect(scrollToBottom, [conversation.messages, isTyping]);
 
   const handleCall = (type: 'video' | 'voice') => {
-      setCallType(type);
-      setIsCalling(true);
+    setCallType(type);
+    setIsCalling(true);
   }
+
+  const [imgError, setImgError] = useState(false)
+
+  const initials = user.userName
+    ?.split(' ')
+    .map(n => n[0])
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
+
+  const showInitials = imgError || !user.profilePic
+
 
   // console.log('Rendering ChatWindow for conversation:', conversation);
   // console.log('user:', user);
@@ -37,28 +49,43 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversation, user, onSendMessa
     <Card className="h-full !p-0 flex flex-col">
       <div className="flex items-center justify-between p-3 border-b border-white/10 shrink-0">
         <div className="flex items-center space-x-3">
-            <img src={user.profilePic} alt={user.userName} className="w-10 h-10 rounded-full object-cover" />
-            <h2 className="font-semibold text-white">{user.userName}</h2>
+          {/* <img src={user.profilePic} alt={user.userName} className="w-10 h-10 rounded-full object-cover" /> */}
+          <>
+            {!showInitials ? (
+              <img
+                src={user.profilePic}
+                alt={user.userName}
+                className="w-10 h-10 rounded-full object-cover"
+                onError={() => setImgError(true)}
+              />
+            ) : (
+              <div className="w-10 h-10 rounded-full bg-orange-200 text-orange-800 flex items-center justify-center text-xs font-bold">
+                {initials}
+              </div>
+            )}
+          </>
+
+          <h2 className="font-semibold text-white">{user.userName}</h2>
         </div>
-        <div className="flex items-center space-x-4 text-gray-400">
-            <button className="hover:text-white transition-colors" onClick={() => handleCall('voice')} aria-label="Start voice call"><PhoneIcon className="h-6 w-6" /></button>
-            <button className="hover:text-white transition-colors" onClick={() => handleCall('video')} aria-label="Start video call"><VideoIcon className="h-6 w-6" /></button>
-        </div>
+        {/* <div className="flex items-center space-x-4 text-gray-400">
+          <button className="hover:text-white transition-colors" onClick={() => handleCall('voice')} aria-label="Start voice call"><PhoneIcon className="h-6 w-6" /></button>
+          <button className="hover:text-white transition-colors" onClick={() => handleCall('video')} aria-label="Start video call"><VideoIcon className="h-6 w-6" /></button>
+        </div> */}
       </div>
-      
+
       <div className="flex-1 p-4 overflow-y-auto space-y-4">
         {conversation.messages.map((msg) => (
           <MessageBubble key={msg.id} message={msg} />
         ))}
         {isTyping && (
-             <div className="flex items-center space-x-2">
-                <img src={user.profilePic} alt={user.userName} className="w-8 h-8 rounded-full object-cover" />
-                <div className="bg-gray-700 text-white p-3 rounded-lg rounded-bl-none text-sm">
-                    <span className="typing-indicator">
-                        <span></span><span></span><span></span>
-                    </span>
-                </div>
+          <div className="flex items-center space-x-2">
+            <img src={user.profilePic} alt={user.userName} className="w-8 h-8 rounded-full object-cover" />
+            <div className="bg-gray-700 text-white p-3 rounded-lg rounded-bl-none text-sm">
+              <span className="typing-indicator">
+                <span></span><span></span><span></span>
+              </span>
             </div>
+          </div>
         )}
         <div ref={messagesEndRef} />
       </div>
@@ -66,9 +93,9 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversation, user, onSendMessa
       <div className="p-4 border-t border-white/10 shrink-0">
         <ChatInput onSendMessage={onSendMessage} />
       </div>
-      
+
       {isCalling && callType && (
-          <CallingModal user={user} onClose={() => setIsCalling(false)} />
+        <CallingModal user={user} onClose={() => setIsCalling(false)} />
       )}
     </Card>
   );

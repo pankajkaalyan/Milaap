@@ -33,6 +33,19 @@ const BlockedUsers: React.FC = () => {
         setBlockedUsersFullProfile(prev => prev.filter(user => user.id !== data.targetUserId));
     }
 
+    const [imgError, setImgError] = useState(false)
+    const showInitials = (blockedUser) => {
+        return imgError || !blockedUser.photos?.[0];
+    }
+    const getInitials = (blockedUser) => {
+        return blockedUser.name
+            ?.split(' ')
+            .map(n => n[0])
+            .join('')
+            .toUpperCase()
+            .slice(0, 2)
+    };
+
     useEffect(() => {
         loadBlockedUsers();
         eventBus.on(AppEventStatus.BLOCK_USER, updateBlockedStatusHandler);
@@ -52,7 +65,22 @@ const BlockedUsers: React.FC = () => {
                     {blockedUsersFullProfile.map(blockedUser => (
                         <li key={blockedUser.id} className="flex items-center justify-between bg-white/5 p-3 rounded-lg">
                             <div className="flex items-center space-x-3">
-                                <img src={blockedUser.photos?.[0] || `https://i.pravatar.cc/150?u=${blockedUser.id}`} alt={blockedUser.name} className="w-10 h-10 rounded-full object-cover" />
+                                {/* <img src={blockedUser.photos?.[0] || `https://i.pravatar.cc/150?u=${blockedUser.id}`} alt={blockedUser.name} className="w-10 h-10 rounded-full object-cover" /> */}
+                                <>
+                                    {!showInitials(blockedUser) ? (
+                                        <img
+                                            src={blockedUser.photos?.[0]}
+                                            alt={blockedUser.name}
+                                            className="w-10 h-10 rounded-full object-cover"
+                                            onError={() => setImgError(true)}
+                                        />
+                                    ) : (
+                                        <div className="w-10 h-10 rounded-full bg-orange-200 text-orange-800 flex items-center justify-center text-xs font-bold">
+                                            {getInitials(blockedUser)}
+                                        </div>
+                                    )}
+                                </>
+
                                 <span className="text-white font-semibold">{blockedUser.name}</span>
                             </div>
                             <Button onClick={() => toggleBlockUser(blockedUser.id as number, blockedUser.name, true)} variant={ButtonVariant.SECONDARY} className="w-auto !py-1 !px-3 !text-sm !bg-gray-600 hover:!bg-gray-500">{t('settings.blocked.unblock')}</Button>

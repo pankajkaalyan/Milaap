@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { InterestStatus, InterestTab, BadgeVariant, UserInterest, AppEventStatus } from '../../types';
 import { useAppContext } from '../../hooks/useAppContext';
 import { Link } from 'react-router-dom';
@@ -16,6 +16,7 @@ interface InterestCardProps {
 const InterestCard: React.FC<InterestCardProps> = ({ interest, type, onAccept, onDecline }) => {
     const { t } = useAppContext();
     const { status } = interest;
+    const [imgError, setImgError] = useState(false);
 
     const updateStatusHandler = (data: { targetUserId: number; newStatus: InterestStatus }) => {
         // console.log('updateStatusHandler called with data:', data);
@@ -48,10 +49,37 @@ const InterestCard: React.FC<InterestCardProps> = ({ interest, type, onAccept, o
         }
     };
 
+
+    // Extract initials
+    const getInitials = (fullName) => {
+        if (!fullName) return "";
+        const parts = fullName.trim().split(" ");
+
+        if (parts.length === 1) {
+            return parts[0].substring(0, 2).toUpperCase();
+        }
+
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    };
+    const initials = getInitials(interest.profile.fullName);
+    const showInitials = imgError || !interest.profile?.photos?.[0];
+
     return (
         <div className="bg-white/10 rounded-lg p-4 flex flex-col sm:flex-row items-center gap-4 transition-all hover:bg-white/20">
             <Link to={`/profile/${interest.profile.id}`}>
-                <img src={interest.profile.photos || `https://picsum.photos/400/300?random=${interest.profile.id}`} alt={interest.profile.fullName} className="w-20 h-20 rounded-full object-cover border-2 border-amber-500" />
+                {/* <img src={interest.profile.photos || `https://picsum.photos/400/300?random=${interest.profile.id}`} alt={interest.profile.fullName} className="w-20 h-20 rounded-full object-cover border-2 border-amber-500" /> */}
+                {!showInitials ? (
+                    <img
+                        src={interest.profile.photos?.[0]}
+                        alt={interest.profile.fullName}
+                        className="w-20 h-20 rounded-full object-cover border-2 border-amber-500"
+                        onError={() => setImgError(true)}
+                    />
+                ) : (
+                    <div className="w-20 h-20 rounded-full border-2 border-amber-500 bg-amber-200 text-amber-800 flex items-center justify-center text-xl font-bold">
+                        {initials}
+                    </div>
+                )}
             </Link>
 
             <div className="flex-1 text-center sm:text-left">
