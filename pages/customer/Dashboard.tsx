@@ -51,7 +51,7 @@ const CustomerDashboard: React.FC = () => {
                 </div>
             </div>
 
-            <AIMatchSuggestions />
+            <AIMatchSuggestions recommendedMatches={recommendedMatches} />
 
         </div>
     );

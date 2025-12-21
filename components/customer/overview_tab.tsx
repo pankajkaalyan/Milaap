@@ -15,23 +15,26 @@ interface OverviewTabProps {
 const OverviewTab: React.FC<OverviewTabProps> = ({ user, showContact, onViewContact }) => {
     const { t } = useAppContext();
     const targetUserProfile = (user['profile'] ? user['profile'] : null) as UserProfile;
-
+    const interestShown = user.interestShownList[0];
     return (
         <div className="space-y-8">
             <CompatibilityChecklist targetUser={user} />
-            
+
             <div className="grid md:grid-cols-2 gap-8">
                 <Card className="text-center">
                     <Button onClick={onViewContact} className="w-full">
                         {t('profile.view_contact')}
                     </Button>
-                    {showContact && (
+                    {interestShown?.isMutual && showContact && (
                         <div className="mt-4 p-4 bg-white/10 rounded-lg animate-fade-in">
-                            <p className="text-white font-semibold">Phone: {targetUserProfile.contactNumber || 'N/A'}</p>
+                            <p className="text-white font-semibold">
+                                Phone: {targetUserProfile?.contactNumber ?? 'N/A'}
+                            </p>
                         </div>
                     )}
+
                 </Card>
-                 <Card className="text-center">
+                <Card className="text-center">
                     <Link to={`/kundli-match/${user.id}`}>
                         <Button className="w-full" variant={ButtonVariant.SECONDARY}>{t('kundli.check_match')}</Button>
                     </Link>

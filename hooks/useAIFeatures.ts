@@ -3,6 +3,7 @@ import { useState, useCallback } from 'react';
 import { User, AIMatchSuggestion, AIKundliReport } from '../types';
 import { matchmakingService } from '../services/ai/matchmakingService';
 import { mockUsers } from '../data/mockUsers';
+import { getDashboardDataAPI } from '@/services/api/dashboard';
 
 type TFunction = (key: string, options?: Record<string, string | number>) => string;
 type AddToastFunction = (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -18,14 +19,26 @@ export const useAIFeatures = (user: User | null, t: TFunction, addToast: AddToas
         setIsFetchingAISuggestions(true);
         try {
             const oppositeGender = user.profile.gender === 'Female' ? 'Male' : 'Female';
-            const potentialMatches = mockUsers.filter(u =>
-                u.id !== user.id &&
-                !user.profile?.blockedUsers?.includes(u.id.toString()) &&
-                u.gender === oppositeGender
-            ).slice(0, 10);
+            // const potentialMatches = mockUsers.filter(u =>
+            //     u.id !== user.id &&
+            //     !user.profile?.blockedUsers?.includes(u.id.toString()) &&
+            //     u.gender === oppositeGender
+            // ).slice(0, 10);
+            const dashboardMatches = await getDashboardDataAPI();
 
-            const suggestions = await matchmakingService.getAISuggestions(user, potentialMatches);
+            const potentialMatches = dashboardMatches.filter(match =>
+                match.id !== user.id &&
+                !user.profile?.blockedUsers?.includes(match.id.toString()) &&
+                match.gender === oppositeGender
+            );
+
+            const suggestions = await matchmakingService.getAISuggestions(
+                user,
+                potentialMatches
+            );
+
             setAiSuggestions(suggestions);
+
         } catch (error) {
             console.error("Error fetching AI suggestions:", error);
             addToast(t('dashboard.ai_suggestions.error'), 'error');
@@ -36,7 +49,9 @@ export const useAIFeatures = (user: User | null, t: TFunction, addToast: AddToas
 
     const fetchAIKundliReport = useCallback(async (targetUserId: number) => {
         if (!user?.profile) return;
-        const targetUser = mockUsers.find(u => u.id === targetUserId);
+        // const targetUser = mockUsers.find(u => u.id === targetUserId);
+        const dashboardMatches = await getDashboardDataAPI();
+        const targetUser = dashboardMatches.find(u => u.id === targetUserId);
         if (!targetUser) return;
         const reportKey = `${user.id}-${targetUserId}`;
         if (kundliReports[reportKey] && kundliReports[reportKey] !== 'error') return;

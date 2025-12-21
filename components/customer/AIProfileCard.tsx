@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Match } from '../../types';
 import { useAppContext } from '../../hooks/useAppContext';
 import { useNavigate, Link } from 'react-router-dom';
@@ -31,26 +31,51 @@ const SparkleIcon = (props: React.SVGProps<SVGSVGElement>) => (
 
 const AIProfileCard: React.FC<AIProfileCardProps> = ({ match, isFavourite, onToggleFavourite, reason }) => {
     const { t } = useAppContext();
-    
+
     const handleActionClick = (e: React.MouseEvent, action: () => void) => {
         e.preventDefault();
         e.stopPropagation();
         action();
     }
 
+    const [imgError, setImgError] = useState(false);
+
+    const showInitials = imgError || !match.photos?.length;
+    const initials = match.name
+        ?.split(' ')
+        .map(n => n[0])
+        .join('')
+        .toUpperCase();
+
+
+
     return (
         <Link to={`/profile/${match.id}`} className="block bg-white/10 rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 flex flex-col group cursor-pointer h-full">
             <div className="relative">
-                <img src={`https://picsum.photos/400/300?random=${match.id}`} alt={match.name} className="w-full h-48 object-cover"/>
-                <div className="absolute top-2 left-2 flex space-x-2">
-                    <button 
+                <>
+                    {!showInitials ? (
+                        <img
+                            src={match.photos[0]}
+                            alt={match.name}
+                            className="w-full h-48 object-cover"
+                            onError={() => setImgError(true)}
+                        />
+                    ) : (
+                        <div className="w-full h-48 flex items-center justify-center bg-gray-700 text-white text-6xl font-bold">
+                            {initials}
+                        </div>
+                    )}
+                </>
+
+                {/* <div className="absolute top-2 left-2 flex space-x-2">
+                    <button
                         onClick={(e) => handleActionClick(e, onToggleFavourite)}
                         className="p-2 bg-black/30 rounded-full backdrop-blur-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400"
                         aria-label="Toggle favourite"
                     >
                         <HeartIcon isFavourite={isFavourite} />
                     </button>
-                 </div>
+                </div> */}
             </div>
             <div className="p-4 flex flex-col flex-grow">
                 <h3 className="text-xl font-bold text-white flex items-center">
