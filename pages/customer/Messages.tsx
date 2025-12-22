@@ -75,15 +75,26 @@ const Messages: React.FC = () => {
         lastUserRef.current = userId;
         lastTokenRef.current = token;
 
-        const WS_BASE = import.meta.env.MODE === "development"
-            ? ""
-            : import.meta.env.VITE_MESSAGING_WS_URL;
+        // const WS_BASE = import.meta.env.MODE === "development"
+        //     ? ""
+        //     : import.meta.env.VITE_MESSAGING_WS_URL;
+
+        // const socket = new SockJS(
+        //     WS_BASE + "/ws/chat?token=" + encodeURIComponent(token),
+        //     null,
+        //     { withCredentials: true }
+        // );
+
+        const socketUrl = window.location.hostname === 'localhost'
+            ? '/ws/chat' // Local Dev
+            : `${window.location.origin}/ws/chat`; // Production (VPS)
 
         const socket = new SockJS(
-            WS_BASE + "/ws/chat?token=" + encodeURIComponent(token),
+            socketUrl + "?token=" + encodeURIComponent(token),
             null,
             { withCredentials: true }
         );
+
 
         stompClient.current = over(socket);
         stompClient.current.debug = () => { };
