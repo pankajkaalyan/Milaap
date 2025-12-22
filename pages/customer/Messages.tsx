@@ -23,9 +23,9 @@ const Messages: React.FC = () => {
     const [receiverId, setReceiverId] = useState<string | ''>('');
 
     // Refs to hold mutable values
-    const stompClient = useRef(null);
-    const subscriptionRef = useRef(null);
-    const connectedRef = useRef(false);
+    const stompClient = useRef<any>(null);
+    const subscriptionRef = useRef<any>(null);
+    const connectedRef = useRef<boolean>(false);
 
     const lastUserRef = useRef(null);
     const lastTokenRef = useRef(null);
@@ -78,7 +78,7 @@ const Messages: React.FC = () => {
         const WS_BASE = import.meta.env.VITE_MESSAGING_WS_URL;
 
 
-        console.log("Creating NEW WebSocket/STOMP connection…");
+        console.log("Creating NEW WebSocket/STOMP connection…", WS_BASE);
 
         const socket = new SockJS(
             WS_BASE + "/ws/chat?token=" + encodeURIComponent(token),
@@ -260,22 +260,39 @@ const Messages: React.FC = () => {
     function clearConversations() {
         //setConversations([]);
     }
-    function setAllConversations(data) {
-        data.forEach((convo) => {
-            convo.userName = convo.name;
-            convo.userId = convo.userId;
-            convo.profilePic = convo.profilePic;
-            convo.lastMessageAt = convo.lastMessageAt;
-            convo.lastMessage = convo.lastMessage;
-            convo.roomId = convo.roomId;
-            convo.messages = convo.messages
+    function setAllConversations(rawData: any) {
+        const data = Array.isArray(rawData)
+            ? rawData
+            : rawData?.data || rawData?.conversations || [];
+
+        if (!Array.isArray(data)) {
+            console.error("Invalid conversations response:", rawData);
+            return;
+        }
+
+        const normalized: Conversation[] = data.map((convo) => ({
+            ...convo,
+            userName: convo.name,
+            userId: convo.userId,
+            profilePic: convo.profilePic,
+            lastMessageAt: convo.lastMessageAt,
+            lastMessage: convo.lastMessage,
+            roomId: convo.roomId,
+            messages: Array.isArray(convo.messages)
                 ? convo.messages
-                    .sort((a, b) => a.messageId - b.messageId)   // <-- SORT HERE
-                    .map((msg) => transformMessage(msg, user?.id || user?.profile?.id))
-                : [];
-        });
-        setConversations(data);
+                    .map(msg =>
+                        transformMessage(msg, user?.id || user?.profile?.id)
+                    )
+                    .sort((a, b) =>
+                        new Date(a.timestamp).getTime() -
+                        new Date(b.timestamp).getTime()
+                    )
+                : [],
+        }));
+
+        setConversations(normalized);
     }
+
 
     //Chat Integration Code End here
     const selectedConversation = conversations.find(c => c.userId === selectedConversationId);
@@ -284,19 +301,17 @@ const Messages: React.FC = () => {
     // 1️⃣ Load conversations ONLY once when token exists
     useEffect(() => {
         const token = localStorage.getItem("token");
-        if (!token) return;
-        // prevent re-fetch
-        if (conversationsLoadedRef.current) return;
+        if (!token || conversationsLoadedRef.current) return;
+
         conversationsLoadedRef.current = true;
 
-        if (token && conversations.length === 0) {
-            getChatConversationsAPI()
-                .then((data) => setAllConversations(data))
-                .catch((error) =>
-                    console.error("Error fetching conversations:", error)
-                );
-        }
-    }, []);  // <-- empty dependency (runs only once)
+        getChatConversationsAPI()
+            .then(res => setAllConversations(res))
+            .catch(err =>
+                console.error("Error fetching conversations:", err)
+            );
+    }, []);
+
 
 
     // 2️⃣ Connect STOMP when userId + token available
@@ -320,41 +335,38 @@ const Messages: React.FC = () => {
 
     // 3️⃣ Load messages for the selected conversation
     useEffect(() => {
-        if (!selectedConversation) return;
+        if (!selectedConversation?.roomId) return;
 
         const roomId = selectedConversation.roomId;
-
-        // already loaded this conversation in past?
         if (messagesLoadedRef.current[roomId]) return;
 
-        messagesLoadedRef.current[roomId] = true; // prevent duplicates
+        messagesLoadedRef.current[roomId] = true;
 
-        if (selectedConversation.messages.length === 0) {
-            getConversationMessagesAPI(selectedConversation.roomId)
-                .then((data) => {
-                    const transformedMessages = data
-                        .map((msg) =>
-                            transformMessage(msg, user?.id || user?.profile?.id)
-                        )
-                        .sort((a, b) => a.messageId - b.messageId);
+        getConversationMessagesAPI(roomId)
+            .then((data) => {
+                if (!Array.isArray(data)) return;
 
-                    setConversations((prev) =>
-                        prev.map((convo) =>
-                            convo.userId === selectedConversation.userId
-                                ? { ...convo, messages: transformedMessages }
-                                : convo
-                        )
+                const transformedMessages = data
+                    .map(msg =>
+                        transformMessage(msg, user?.id || user?.profile?.id)
+                    )
+                    .sort((a, b) =>
+                        new Date(a.timestamp).getTime() -
+                        new Date(b.timestamp).getTime()
                     );
-                })
-                .catch((error) =>
-                    console.error("Error fetching conversation messages:", error)
+
+                setConversations(prev =>
+                    prev.map(convo =>
+                        convo.userId === selectedConversation.userId
+                            ? { ...convo, messages: transformedMessages }
+                            : convo
+                    )
                 );
-        }
-    }, [selectedConversation]); // ← fetch when selected conversation changes
-
-
-
-
+            })
+            .catch(err =>
+                console.error("Error fetching conversation messages:", err)
+            );
+    }, [selectedConversation]);
 
 
     const handleSelectConversation = (id: number) => {
