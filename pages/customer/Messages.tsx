@@ -75,10 +75,9 @@ const Messages: React.FC = () => {
         lastUserRef.current = userId;
         lastTokenRef.current = token;
 
-        const WS_BASE = import.meta.env.VITE_MESSAGING_WS_URL;
-
-
-        console.log("Creating NEW WebSocket/STOMP connection…", WS_BASE);
+        const WS_BASE = import.meta.env.MODE === "development"
+            ? ""
+            : import.meta.env.VITE_MESSAGING_WS_URL;
 
         const socket = new SockJS(
             WS_BASE + "/ws/chat?token=" + encodeURIComponent(token),
