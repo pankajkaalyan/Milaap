@@ -49,7 +49,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     const [isOptionsOpen, setIsOptionsOpen] = useState(false);
     // const targetUserIsPremium = user.membership !== 'FREE';
 
-    const userPhotos = user.profile.photos && user.profile.photos.length > 0 ? user.profile.photos : [`https://picsum.photos/800/600?random=${user.id}`];
+    const userPhotos = user.profile.photos && user.profile.photos.length > 0 ? user.profile.photos : [];
 
     const optionsRef = useRef(null);
 

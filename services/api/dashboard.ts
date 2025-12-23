@@ -2,7 +2,7 @@ import { API } from "../api";
 
 export const getDashboardDataAPI = async () => {
     try {
-        const response = await API.get("/api/dashboard");
+        const response = await API.get(`/api/dashboard?ts=${Date.now()}`);
         return response.data;
     } catch (error) {
         console.error("Error fetching dashboard data:", error);

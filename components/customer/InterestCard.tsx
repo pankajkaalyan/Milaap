@@ -15,27 +15,30 @@ interface InterestCardProps {
 
 const InterestCard: React.FC<InterestCardProps> = ({ interest, type, onAccept, onDecline }) => {
     const { t } = useAppContext();
-    const { status } = interest;
+    // Keep status in state so updates trigger re-renders
+    const [status, setStatus] = useState<InterestStatus>(interest.status);
     const [imgError, setImgError] = useState(false);
 
-    const updateStatusHandler = (data: { targetUserId: number; newStatus: InterestStatus }) => {
-        // console.log('updateStatusHandler called with data:', data);
-        if (data.targetUserId === interest.profile.id) {
-            if (interest.status !== data.newStatus) {
-                interest.status = data.newStatus;
-                // console.log(`Updated interest status for match ${interest.profile.id} to ${data.newStatus} via eventBus ${interest.status}`);
-            }
-        }
-    }
-
+    // Sync local status if prop changes
     useEffect(() => {
-        eventBus.on(AppEventStatus.ACCEPTED, updateStatusHandler);
-        eventBus.on(AppEventStatus.DECLINED, updateStatusHandler);
+        setStatus(interest.status);
+    }, [interest.status]);
+
+    // Subscribe to events and update local status via setter to trigger re-render
+    useEffect(() => {
+        const handler = (data: { targetUserId: number; newStatus: InterestStatus }) => {
+            if (data.targetUserId === interest.profile.id) {
+                setStatus(prev => (prev !== data.newStatus ? data.newStatus : prev));
+            }
+        };
+
+        eventBus.on(AppEventStatus.ACCEPTED, handler);
+        eventBus.on(AppEventStatus.DECLINED, handler);
         return () => {
-            eventBus.off(AppEventStatus.ACCEPTED, updateStatusHandler);
-            eventBus.off(AppEventStatus.DECLINED, updateStatusHandler);
+            eventBus.off(AppEventStatus.ACCEPTED, handler);
+            eventBus.off(AppEventStatus.DECLINED, handler);
         }
-    }, []);
+    }, [interest.profile.id]);
 
     const getStatusBadge = () => {
         switch (status) {

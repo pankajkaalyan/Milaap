@@ -46,7 +46,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
     }, []);
 
     useEffect(() => {
-        // setVerificationRequests(allUsers.filter(u => u.profile?.verificationStatus === 'Pending'));
+        setVerificationRequests(allUsers.filter(u => u.profile?.verificationStatus === 'Pending'));
     }, [allUsers]);
 
     const approveVerification = async (userId: string | number) => {

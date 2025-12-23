@@ -50,7 +50,7 @@ const AIProfileCard: React.FC<AIProfileCardProps> = ({ match, isFavourite, onTog
 
 
     return (
-        <Link to={`/profile/${match.id}`} className="block bg-white/10 rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 flex flex-col group cursor-pointer h-full">
+        <Link to={`/profile/${match.id}`} className="block bg-white/10 rounded-lg shadow-lg overflow-hidden transform hover:scale-105 transition-transform duration-300 flex flex-col group cursor-pointer">
             <div className="relative">
                 <>
                     {!showInitials ? (
@@ -61,7 +61,7 @@ const AIProfileCard: React.FC<AIProfileCardProps> = ({ match, isFavourite, onTog
                             onError={() => setImgError(true)}
                         />
                     ) : (
-                        <div className="w-full h-48 flex items-center justify-center bg-gray-700 text-white text-6xl font-bold">
+                        <div className="w-full h-48 flex items-center justify-center text-white text-6xl font-bold">
                             {initials}
                         </div>
                     )}
@@ -77,6 +77,7 @@ const AIProfileCard: React.FC<AIProfileCardProps> = ({ match, isFavourite, onTog
                     </button>
                 </div> */}
             </div>
+            <hr className="my-4 border-gray-300" />
             <div className="p-4 flex flex-col flex-grow">
                 <h3 className="text-xl font-bold text-white flex items-center">
                     {match.name}, {match.age}

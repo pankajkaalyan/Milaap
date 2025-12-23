@@ -12,7 +12,7 @@ export const fetchCurrentUserAPI = async () => {
 
 export const getProfileByIdAPI = async (profileId) => {
     try {
-        const response = await API.get(`/api/profile/${profileId}`);
+        const response = await API.get(`/api/profile/${profileId}?ts=${Date.now()}`);
         return response.data;
     } catch (error) {
         console.error("Error fetching user profile:", error);

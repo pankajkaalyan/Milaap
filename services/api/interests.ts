@@ -2,7 +2,7 @@ import { API } from "../api";
 
 export const fetchInterestsAPI = async () => {
     try {
-        const response = await API.get("/api/interests");
+        const response = await API.get(`/api/interests?ts=${Date.now()}`);
         return response.data;
     } catch (error) {
         console.error("Error fetching interests:", error);

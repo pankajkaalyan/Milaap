@@ -59,11 +59,13 @@ export const useInterests = (user: User | null, t: TFunction, addToast: AddToast
         if (status === InterestStatus.ACCEPTED) {
             acceptInterestAPI(interestId, '').then(() => {
                 addToast(t('toasts.interest.accepted', { name: targetName || '' }), 'success');
+                fetchInterests();
                 eventBus.emit(AppEventStatus.ACCEPTED, { targetUserId, newStatus: InterestStatus.ACCEPTED });
             });
         } else {
             declineInterestAPI(interestId, '').then(() => {
                 addToast(t('toasts.interest.declined', { name: targetName || '' }), 'info');
+                fetchInterests();
                 eventBus.emit(AppEventStatus.DECLINED, { targetUserId, newStatus: InterestStatus.DECLINED });
             });
         }

@@ -78,22 +78,37 @@ const ViewProfile: React.FC = () => {
         receivedInterest?.find(interest => interest.profile.id.toString() === userId);
     // console.log('Current Interest with target user:', currentInterest);
 
-    let sentInterestStatus = currentInterest && sentInterest?.some(interest => interest.profile.id.toString() === userId) ? currentInterest.status : undefined;
-    let receivedInterestStatus = currentInterest && receivedInterest?.some(interest => interest.profile.id.toString() === userId)
-        ? currentInterest.status : undefined;
-    
-    // console.log('Sent Interest Status:', sentInterestStatus);
-    // console.log('Received Interest Status:', receivedInterestStatus);
+    // Keep interest statuses in React state so updates trigger re-renders
+    const [sentInterestStatus, setSentInterestStatus] = useState<InterestStatus | undefined>(() =>
+        currentInterest && sentInterest?.some(interest => interest.profile.id.toString() === userId) ? currentInterest.status : undefined
+    );
+    const [receivedInterestStatus, setReceivedInterestStatus] = useState<InterestStatus | undefined>(() =>
+        currentInterest && receivedInterest?.some(interest => interest.profile.id.toString() === userId) ? currentInterest.status : undefined
+    );
+
+    // Re-sync statuses whenever interests or userId changes
+    const sentRef = useRef<boolean>(false);
+    const receivedRef = useRef<boolean>(false);
+
+    useEffect(() => {
+        sentRef.current = !!interests?.sent?.some(interest => interest.profile.id.toString() === userId);
+        receivedRef.current = !!interests?.received?.some(interest => interest.profile.id.toString() === userId);
+
+        const sent = interests?.sent?.find(interest => interest.profile.id.toString() === userId);
+        const received = interests?.received?.find(interest => interest.profile.id.toString() === userId);
+        setSentInterestStatus(sent ? sent.status : undefined);
+        setReceivedInterestStatus(received ? received.status : undefined);
+    }, [interests, userId]);
 
     const updateStatusHandler = (data: { targetUserId: number; newStatus: InterestStatus }) => {
         // console.log('updateStatusHandler called with data:', data);
         if (data.targetUserId === user.id) {
-            if (sentInterestStatus) {
-                sentInterestStatus = data.newStatus;
-                // console.log(`Updated interest status for user ${user.id} to ${sentInterestStatus} via sentInterestStatus`);
-            } else if (receivedInterestStatus) {
-                receivedInterestStatus = data.newStatus;
-                // console.log(`Updated interest status for user ${user.id} to ${receivedInterestStatus} via receivedInterestStatus`);
+            if (sentRef.current) {
+                setSentInterestStatus(data.newStatus);
+                // console.log(`Updated sent interest status for user ${user.id} to ${data.newStatus}`);
+            } else if (receivedRef.current) {
+                setReceivedInterestStatus(data.newStatus);
+                // console.log(`Updated received interest status for user ${user.id} to ${data.newStatus}`);
             }
         }
     }
@@ -129,8 +144,8 @@ const ViewProfile: React.FC = () => {
                     onToggleBlock={() => toggleBlockUser(targetUserProfile.id, targetUserProfile.name, !!targetUserProfile.profile.isBlocked)}
                     onReport={openReportModal}
                     onExpressInterest={() => expressInterest(targetUserProfile.id, targetUserProfile.name)}
-                    onAcceptInterest={() => acceptInterest(currentInterest.interestRequestId, targetUserProfile.id, targetUserProfile.name)}
-                    onDeclineInterest={() => declineInterest(currentInterest.interestRequestId, targetUserProfile.id, targetUserProfile.name)}
+                    onAcceptInterest={() => currentInterest?.interestRequestId && acceptInterest(currentInterest.interestRequestId, targetUserProfile.id, targetUserProfile.name)}
+                    onDeclineInterest={() => currentInterest?.interestRequestId && declineInterest(currentInterest.interestRequestId, targetUserProfile.id, targetUserProfile.name)}
                     onMessage={() => navigate(`/messages/${targetUserProfile.id}`)}
                 />
 
