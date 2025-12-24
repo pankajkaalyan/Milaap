@@ -83,6 +83,7 @@ export interface EditProfileFormData {
   about?: string;
   video?: string;
   photos?: string[];
+  removedPhotos?: string[];
   familyDetails?: FamilyDetails;
   horoscope?: HoroscopeDetails;
   partnerPreferences?: Omit<PartnerPreferences, 'castes' | 'professions'> & {

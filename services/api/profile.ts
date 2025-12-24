@@ -2,7 +2,7 @@ import { API } from "../api";
 
 export const fetchCurrentUserAPI = async () => {
     try {
-        const response = await API.get("/api/profile/me");
+        const response = await API.get(`/api/profile/me?ts=${Date.now()}`);
         return response.data;
     } catch (error) {
         console.error("Error fetching current user:", error);
@@ -71,7 +71,7 @@ export const updateProfileAPI = async (
 
 export const fetchSuccessStoriesAPI = async () => {
     try {
-        const response = await API.get("/api/success-stories");
+        const response = await API.get(`/api/success-stories?ts=${Date.now()}`);
         return response.data;
     } catch (error) {
         console.error("Error fetching success stories:", error);
@@ -178,7 +178,7 @@ export const verifyProfileAPI = async (file: File) => {
 // Fetch list of blocked users
 export const getBlockedUsersAPI = async () => {
     try {
-        const response = await API.get("/api/user-interactions/blocked");
+        const response = await API.get(`/api/user-interactions/blocked?ts=${Date.now()}`);
         return response.data;
     } catch (error: any) {
         console.error("Error fetching blocked users:", error.response?.data || error);

@@ -58,6 +58,7 @@ export interface UserProfile {
   profession?: string;
   horoscope?: HoroscopeDetails;
   photos?: string[]; // Array of base64 strings or URLs
+  removedPhotos?: string[]; // Array of base64 strings or URLs
   video?: string; // base64 string
   audio?: string; // base64 string
   familyDetails?: FamilyDetails;

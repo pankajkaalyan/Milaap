@@ -27,7 +27,10 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
     const { user, updateUserProfile, t, addToast } = useAppContext();
     const [photos, setPhotos] = useState<File[] | null>(null);
     const { formData, setFormData, setFieldValue, handleSubmit } = useForm<EditProfileFormData>(
-        { photos: [] as string[] },
+        {
+            photos: [] as string[],
+            removedPhotos: [] as string[],
+        },
         {},
         (data) => {
             const finalProfileData: Partial<UserProfile> = {
@@ -51,6 +54,7 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
                     castes: data.partnerPreferences?.castes ? data.partnerPreferences.castes.split(',').map(c => c.trim()) : [],
                     professions: data.partnerPreferences?.professions ? data.partnerPreferences.professions.split(',').map(p => p.trim()) : [],
                 },
+                removedPhotos: data.removedPhotos,
             };
             // console.log('Submitting profile update with data:', finalProfileData);
             updateProfileAPI(finalProfileData, photos, videoFile).then(updatedProfile => {
@@ -130,6 +134,14 @@ const EditProfileModal: React.FC<EditProfileModalProps> = ({ isOpen, onClose }) 
     }
 
     const handlePhotoDelete = (indexToDelete: number) => {
+        // 1. Get the photo that is about to be deleted
+        const photoToDelete = formData.photos[indexToDelete];
+
+        // 2. Only track it if it's an existing URL (not a newly uploaded blob/file)
+        if (typeof photoToDelete === 'string' && photoToDelete.startsWith('http')) {
+            const currentDeleted = formData.removedPhotos || [];
+            setFieldValue('removedPhotos', [...currentDeleted, photoToDelete]);
+        }
         const updatedPhotos = formData.photos?.filter((_, index) => index !== indexToDelete);
         setFieldValue('photos', updatedPhotos);
     };

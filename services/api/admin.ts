@@ -3,7 +3,7 @@ import { API } from "../api";
 
 export const getAdminUsersList = async (pageNumber: number = 0, pageSize: number = 100) => {
     try {
-        const response = await API.get(`/api/admin/users?page=${pageNumber}&size=${pageSize}`);
+        const response = await API.get(`/api/admin/users?page=${pageNumber}&size=${pageSize}&ts=${Date.now()}`);
         return response.data;
     } catch (error) {
         console.error("Error fetching admin users:", error);
