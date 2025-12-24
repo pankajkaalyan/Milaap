@@ -28,8 +28,8 @@ export const getVerificationReviewAPI = async () => {
  */
 export const approveVerificationAPI = async (userId: string | number, note?: string) => {
     try {
-        const payload = { id: userId, note };
-        const response = await API.post(`/api/admin/verification/review/approve`, payload);
+        const payload = { id: userId, status: "VERIFIED", comment: note };
+        const response = await API.patch(`/api/admin/verification/review/approve`, payload);
         return response.data;
     } catch (error) {
         console.error("Error approving verification:", error);

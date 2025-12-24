@@ -512,6 +512,8 @@ export const en = {
       ai_error: 'An error occurred during AI verification. Please try again.',
       approved: 'User has been verified.',
       rejected: 'User verification has been rejected.',
+      approve_failed: 'Failed to approve verification. Please try again.',
+      reject_failed: 'Failed to reject verification. Please try again.',
     },
     report: {
       resolved: 'Report has been marked as resolved.',

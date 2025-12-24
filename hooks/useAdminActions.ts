@@ -51,7 +51,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
     const refreshVerificationRequests = async () => {
         try {
             const pending = await getVerificationReviewAPI();
-            setVerificationRequests(pending.map(normalizeVerificationUser));
+            setVerificationRequests(pending.filter(u => u.verificationStatus !== 'VERIFIED').map(normalizeVerificationUser));
         } catch (err) {
             addToast("Failed to load pending verifications.", "error");
             throw err;
@@ -70,7 +70,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
                 const pending = await getVerificationReviewAPI();
                 if (!mounted) return;
                 // Normalize to a stable shape
-                setVerificationRequests(pending.map(normalizeVerificationUser));
+                setVerificationRequests(pending.filter(u => u.verificationStatus !== 'VERIFIED').map(normalizeVerificationUser));
             } catch (err) {
                 if (!mounted) return;
                 // Don't show toast here to avoid noisy errors during background retries
@@ -138,7 +138,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
 
             // Refresh the pending verification requests list from the server
             const pending = await getVerificationReviewAPI();
-            const normalizedPending = pending.map((u: any) => ({
+            const normalizedPending = pending.filter(u => u.verificationStatus !== 'VERIFIED').map((u: any) => ({
                 ...u,
                 email: u.userEmail || u.email,
                 name: u.userName || u.name,
@@ -167,7 +167,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
 
             // Refresh the pending verification requests list from the server
             const pending = await getVerificationReviewAPI();
-            setVerificationRequests(pending.map(normalizeVerificationUser));
+            setVerificationRequests(pending.filter(u => u.verificationStatus !== 'VERIFIED').map(normalizeVerificationUser));
             setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, verificationStatus: 'Verified' } : u));
             addToast(t('toasts.verification.rejected'), 'error');
             addNotification({ type: NotificationType.VERIFICATION_REJECTED, message: t('notifications.verification_rejected'), link: '/verification', userId: userId as number });
