@@ -34,8 +34,11 @@ API.interceptors.request.use(
 );
 
 /* ------------------------------------------------
-   🛑 RESPONSE INTERCEPTOR — Hide Loader + 401
+   🛑 RESPONSE INTERCEPTOR — Hide Loader + 401 + Refresh
 ---------------------------------------------------*/
+let isRefreshing = false;
+let refreshPromise: Promise<any> | null = null;
+
 API.interceptors.response.use(
     (response) => {
         hideGlobalLoader(); // 👈 HIDE
@@ -45,9 +48,55 @@ API.interceptors.response.use(
         hideGlobalLoader(); // 👈 HIDE
 
         const status = error?.response?.status;
+        const originalRequest = error?.config;
+
+        // If 401 (unauthorized), attempt to refresh token and retry once
         if (status === 401) {
-            await logoutCleanup();
-            window.location.replace("/login");
+            // Avoid infinite loop: if request already marked _retry, then logout
+            if (originalRequest && originalRequest._retry) {
+                await logoutCleanup();
+                window.location.replace('/login');
+                return Promise.reject(error);
+            }
+
+            // If a refresh is already in progress, wait for it
+            if (!isRefreshing) {
+                isRefreshing = true;
+                const { refreshTokenAPI } = await import('./api/auth');
+                refreshPromise = refreshTokenAPI()
+                    .then(result => {
+                        if (!result?.accessToken) throw new Error('No access token in refresh response');
+
+                        localStorage.setItem('token', result.accessToken);
+                        localStorage.setItem('refreshToken', result.refreshToken);
+                        localStorage.setItem('expiresIn', String(result.expiresIn));
+                        // Notify other parts of the app about the refresh
+                        try {
+                            window.dispatchEvent(new CustomEvent('token_refreshed', { detail: result }));
+                        } catch (e) {
+                            /* ignore */
+                        }
+                        isRefreshing = false;
+                        return result;
+                    })
+                    .catch(async (err) => {
+                        isRefreshing = false;
+                        await logoutCleanup();
+                        window.location.replace('/login');
+                        throw err;
+                    });
+            }
+
+            try {
+                const result = await refreshPromise;
+                // mark original request as retried
+                originalRequest._retry = true;
+                originalRequest.headers = originalRequest.headers || {};
+                originalRequest.headers.Authorization = `Bearer ${result.accessToken}`;
+                return API(originalRequest);
+            } catch (err) {
+                return Promise.reject(err);
+            }
         }
 
         return Promise.reject(error);

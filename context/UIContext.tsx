@@ -26,6 +26,33 @@ export const UIContextProvider: React.FC<{ children: ReactNode }> = ({ children 
     if (storedLang && (storedLang === 'en' || storedLang === 'hi')) {
       setLanguage(storedLang);
     }
+
+    // Listen to global show_toast events (used by non-React code paths)
+    const showToastListener = (e: Event) => {
+      const payload = (e as CustomEvent)?.detail;
+      if (!payload) return;
+      const { message, type } = payload;
+      addToast(message, type);
+    };
+    window.addEventListener('show_toast', showToastListener as EventListener);
+
+    // Forward generic tracking events to telemetry (best-effort)
+    const trackEventListener = async (e: Event) => {
+      const payload = (e as CustomEvent)?.detail;
+      if (!payload) return;
+      try {
+        const { logEvent } = await import('@/utils/telemetry');
+        await logEvent(payload.name, payload.props);
+      } catch (err) {
+        // ignore telemetry errors
+      }
+    };
+    window.addEventListener('track_event', trackEventListener as EventListener);
+
+    return () => {
+      window.removeEventListener('show_toast', showToastListener as EventListener);
+      window.removeEventListener('track_event', trackEventListener as EventListener);
+    };
   }, []);
 
   const t = useCallback((key: string, options?: Record<string, string | number>): string => {
@@ -61,6 +88,12 @@ export const UIContextProvider: React.FC<{ children: ReactNode }> = ({ children 
   const trackEvent = (eventName: string, eventProperties?: Record<string, string | number | boolean | null>) => {
     // console.log('Analytics Event:', eventName, eventProperties);
     // window.gtag('event', eventName, eventProperties);
+    // Provide a lightweight bridge for non-React code to send events via window
+    try {
+      window.dispatchEvent(new CustomEvent('track_event', { detail: { name: eventName, props: eventProperties } }));
+    } catch (e) {
+      /* ignore */
+    }
   };
   
   const value: UIContextType = { language, setLanguage: handleSetLanguage, t, toasts, addToast, trackEvent };

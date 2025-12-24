@@ -5,12 +5,20 @@ import { User } from '../../types';
 import VerificationReviewModal from '../../components/admin/VerificationReviewModal';
 
 const VerificationRequests: React.FC = () => {
-    const { t, verificationRequests } = useAppContext();
+    const { t, verificationRequests, refreshVerificationRequests } = useAppContext();
     const [selectedUser, setSelectedUser] = useState<User | null>(null);
 
     const handleReview = (user: User) => {
         setSelectedUser(user);
     };
+
+    // If pending requests are empty (e.g., not yet loaded), fetch them on landing
+    React.useEffect(() => {
+        if (!verificationRequests || verificationRequests.length === 0) {
+            // best effort; ignore errors here — notifications/toasts are handled in the hook
+            refreshVerificationRequests().catch(() => {});
+        }
+    }, []);
 
     return (
         <>
@@ -31,7 +39,7 @@ const VerificationRequests: React.FC = () => {
                                 {verificationRequests.map(user => (
                                     <tr key={user.id} className="border-b border-gray-700 hover:bg-white/5">
                                         <td className="p-3">
-                                            <div className="font-semibold">{user.name}</div>
+                                            <div className="font-semibold">{user.name || user.email}</div>
                                             <div className="text-sm text-gray-400">{user.email}</div>
                                         </td>
                                         <td className="p-3">{new Date(user.createdAt).toLocaleDateString()}</td>

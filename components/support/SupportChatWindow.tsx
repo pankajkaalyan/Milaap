@@ -26,6 +26,15 @@ const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onClose }) => {
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
+
+    // Close on Escape
+    useEffect(() => {
+        const handleKey = (e: KeyboardEvent) => {
+            if (e.key === 'Escape') onClose();
+        };
+        window.addEventListener('keydown', handleKey);
+        return () => window.removeEventListener('keydown', handleKey);
+    }, [onClose]);
     
     const handleTransferToHuman = () => {
         setChatMode(SupportChatMode.HUMAN);
@@ -80,7 +89,12 @@ const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onClose }) => {
     };
 
     return (
-        <div className="fixed bottom-6 right-6 z-50 w-full max-w-sm h-[70vh] max-h-[500px] bg-gray-900 border border-white/20 rounded-xl shadow-2xl flex flex-col animate-fade-in-up md:bottom-8 md:right-8">
+        <>
+            {/* Overlay: clicking outside should close the chat */}
+            <div className="fixed inset-0 z-40 bg-black/40 sm:bg-transparent" onClick={onClose} />
+
+            {/* Chat window — full-screen on very small screens, anchored on larger screens */}
+            <div onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={t('support.title')} className="fixed top-16 left-0 right-0 bottom-0 sm:inset-auto sm:bottom-6 sm:right-6 z-50 w-full sm:w-auto max-w-full sm:max-w-md md:max-w-lg sm:h-[70vh] bg-gray-900 border border-white/20 rounded-none sm:rounded-xl shadow-2xl flex flex-col animate-fade-in-up md:bottom-8 md:right-8 lg:bottom-10 lg:right-10">
             {/* Header */}
             <div className="p-4 bg-white/5 rounded-t-xl flex justify-between items-center border-b border-white/10 shrink-0">
                 <h3 className="text-lg font-bold text-white">{t('support.title')}</h3>
@@ -137,7 +151,7 @@ const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onClose }) => {
                         type="text"
                         value={userInput}
                         onChange={(e) => setUserInput(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                        onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                         placeholder={t('support.type_message')}
                         className="flex-1 px-4 py-2 bg-gray-700 border border-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-500 text-white"
                         aria-label="Support chat input"
@@ -154,6 +168,7 @@ const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onClose }) => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 

@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import { useAppContext } from '../../hooks/useAppContext';
 import SupportWidget from '../support/SupportWidget';
 import SupportChatWindow from '../support/SupportChatWindow';
+import WhatsAppWidget from '../support/WhatsAppWidget';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const Layout: React.FC = () => {
   const { user } = useAppContext();
   const [isSupportChatOpen, setIsSupportChatOpen] = useState(false);
   const location = useLocation();
+
+  // Hide support chat on route changes
+  useEffect(() => {
+    if (isSupportChatOpen) setIsSupportChatOpen(false);
+  }, [location.pathname]);
 
   return (
     <div className="flex flex-col min-h-screen font-sans text-gray-200">
@@ -32,6 +38,7 @@ const Layout: React.FC = () => {
       {user && (
         <>
           {!isSupportChatOpen && <SupportWidget onOpen={() => setIsSupportChatOpen(true)} />}
+          <WhatsAppWidget />
           {isSupportChatOpen && <SupportChatWindow onClose={() => setIsSupportChatOpen(false)} />}
         </>
       )}

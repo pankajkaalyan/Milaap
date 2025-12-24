@@ -50,14 +50,18 @@ export const changePasswordAPI = async (token: string, newPassword: string) => {
  
 
 
+import axios from 'axios';
+
 export const refreshTokenAPI = async () => {
     try {
-        const response = await API.post("/api/auth/refresh-token", {
-            refreshToken: localStorage.getItem("refreshToken"),
-        });
+        // Use a direct axios call (bypass main API instance) to avoid interceptor recursion
+        const baseURL = import.meta.env.MODE === 'development' ? '' : import.meta.env.VITE_API_URL;
+        const response = await axios.post(`${baseURL}/api/auth/refresh-token`, {
+            refreshToken: localStorage.getItem('refreshToken'),
+        }, { headers: { 'Content-Type': 'application/json' } });
         return response.data;
     } catch (error) {
-        console.error("Error refreshing token:", error);
+        console.error('Error refreshing token:', error);
         throw error;
     }
 };

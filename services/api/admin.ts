@@ -11,6 +11,47 @@ export const getAdminUsersList = async (pageNumber: number = 0, pageSize: number
     }
 }
 
+export const getVerificationReviewAPI = async () => {
+    try {
+        // Include a timestamp to avoid caching issues
+        const response = await API.get(`/api/admin/verification/review?ts=${Date.now()}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching pending verifications:", error);
+        throw error;
+    }
+}
+
+/**
+ * Approve a user's verification submission
+ * POST /api/admin/verification/review/approve
+ */
+export const approveVerificationAPI = async (userId: string | number, note?: string) => {
+    try {
+        const payload = { id: userId, note };
+        const response = await API.post(`/api/admin/verification/review/approve`, payload);
+        return response.data;
+    } catch (error) {
+        console.error("Error approving verification:", error);
+        throw error;
+    }
+}
+
+/**
+ * Reject a user's verification submission
+ * POST /api/admin/verification/review/reject
+ */
+export const rejectVerificationAPI = async (userId: string | number, reason?: string) => {
+    try {
+        const payload = { id: userId, reason };
+        const response = await API.post(`/api/admin/verification/review/reject`, payload);
+        return response.data;
+    } catch (error) {
+        console.error("Error rejecting verification:", error);
+        throw error;
+    }
+}
+
 export const updateUserApi = async (userId: string | number, payload: Partial<User> ) => {
     try {
         const payloadData = {

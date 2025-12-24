@@ -37,39 +37,28 @@ export const useAuth = () => {
     // Auto-refresh token BEFORE expiration
     // ---------------------------------------------------
     useEffect(() => {
-        // console.log("⏰ Setting up token refresh timer", { token, expiresIn });
-        console.log("⏰ Setting up token refresh timer", { token, expiresIn:localStorage.getItem("expiresIn")});
-        if(!expiresIn) setExpiresIn(+localStorage.getItem("expiresIn"))
-        // If no token or no expiry, do nothing
-        // Add 1 minute delay before proceeding
-        
+        // Setup token refresh timer. This effect runs when token *or* expiresIn changes.
         if (!token || !expiresIn) return;
 
-        // Refresh 10 minutes before expiry
+        // Refresh 2 minutes (120s) before expiry
         const refreshBefore = (expiresIn - 120) * 1000;
 
-        console.log(`⏰ Scheduling token refresh in ${refreshBefore / 1000 / 60} minutes`);
-
-        // If expiry time invalid or already expired
+        // If expiry time invalid or already expired, refresh immediately
         if (refreshBefore <= 0) {
-            console.warn("Token is expiring soon → refreshing now");
             refreshTokenAPI()
                 .then(result => {
-                    if (!result.accessToken) {
+                    if (!result?.accessToken) {
                         logout();
                         return;
                     }
                     setToken(result.accessToken);
                     setExpiresIn(result.expiresIn);
 
-                    localStorage.setItem("token", result.accessToken);
-                    localStorage.setItem("refreshToken", result.refreshToken);
-                    localStorage.setItem("expiresIn", String(result.expiresIn));
+                    localStorage.setItem('token', result.accessToken);
+                    localStorage.setItem('refreshToken', result.refreshToken);
+                    localStorage.setItem('expiresIn', String(result.expiresIn));
                 })
-                .catch(() => 
-                    // {}
-                    logout()
-                );
+                .catch(() => logout());
             return;
         }
 
@@ -78,31 +67,44 @@ export const useAuth = () => {
 
         // Set refresh timer
         refreshTimer.current = setTimeout(async () => {
-            console.log("🔄 Refreshing token... Api will call");
+            try {
+                const result = await refreshTokenAPI();
 
-            const result = await refreshTokenAPI();
+                if (!result?.accessToken) {
+                    logout();
+                    return;
+                }
 
-            if (!result.accessToken) {
-                console.warn("Token refresh failed → logging out");
+                setToken(result.accessToken);
+                setExpiresIn(result.expiresIn);
+
+                localStorage.setItem('token', result.accessToken);
+                localStorage.setItem('refreshToken', result.refreshToken);
+                localStorage.setItem('expiresIn', String(result.expiresIn));
+            } catch (err) {
                 logout();
-                return;
             }
-
-            setToken(result.accessToken);
-            setExpiresIn(result.expiresIn);
-
-            localStorage.setItem("token", result.accessToken);
-            localStorage.setItem("refreshToken", result.refreshToken);
-            localStorage.setItem("expiresIn", String(result.expiresIn));
-
-            console.log("🔄 Token refreshed automatically");
         }, refreshBefore);
 
         return () => {
             if (refreshTimer.current) clearTimeout(refreshTimer.current);
         };
 
-    }, [token]);   // <- correct dependencies
+    }, [token, expiresIn]);
+
+    // Listen to token_refresh events (dispatched by API interceptor) and update local state
+    useEffect(() => {
+        const handler = (e: Event) => {
+            const payload = (e as CustomEvent)?.detail;
+            if (!payload) return;
+            if (payload.accessToken) {
+                setToken(payload.accessToken);
+                setExpiresIn(payload.expiresIn);
+            }
+        };
+        window.addEventListener('token_refreshed', handler as EventListener);
+        return () => window.removeEventListener('token_refreshed', handler as EventListener);
+    }, []);
 
 
 

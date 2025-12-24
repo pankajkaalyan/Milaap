@@ -38,14 +38,60 @@ const VerificationReviewModal: React.FC<VerificationReviewModalProps> = ({ isOpe
         <div className="p-6 space-y-4">
             <h3 className="font-semibold text-white">Submitted Document:</h3>
             <div className="bg-gray-800 p-4 rounded-lg border border-gray-700">
-                {/* This is a placeholder for the actual document image */}
-                <img 
-                    src={`https://picsum.photos/seed/${user.id}-id/500/300`} 
-                    alt="ID Document" 
-                    className="w-full h-auto rounded-md"
-                />
+                {/* Load document images from backend response if available */}
+                {(() => {
+                    // Support multiple possible shapes:
+                    // - user.documents: [{ url } | { inlineData: { mimeType, data } }]
+                    // - user.idDocumentUrl or user.documentUrl or user.verificationDocumentUrl
+                    // - user.profile?.verificationDocument
+                    const docs: any[] = [];
+
+                    if ((user as any).documents && Array.isArray((user as any).documents)) {
+                        docs.push(...(user as any).documents);
+                    }
+
+                    const possibleFields = ['idDocumentUrl', 'documentUrl', 'verificationDocumentUrl'];
+                    for (const f of possibleFields) {
+                        if ((user as any)[f]) docs.push({ url: (user as any)[f] });
+                    }
+
+                    if ((user as any).profile && (user as any).profile.verificationDocument) {
+                        docs.push({ url: (user as any).profile.verificationDocument });
+                    }
+
+                    // Convert docs to image srcs
+                    const srcs = docs.map(d => {
+                        if (d.url) return d.url;
+                        if (d.inlineData && d.inlineData.data) {
+                            const mime = d.inlineData.mimeType || 'image/jpeg';
+                            return `data:${mime};base64,${d.inlineData.data}`;
+                        }
+                        return null;
+                    }).filter(Boolean) as string[];
+
+                    if (srcs.length > 0) {
+                        return (
+                            <div className="grid grid-cols-1 gap-4">
+                                {srcs.map((src, idx) => (
+                                    <a key={idx} href={src} target="_blank" rel="noopener noreferrer">
+                                        <img src={src} alt={`ID Document ${idx + 1} for ${user.name || user.email}`} className="w-full h-auto rounded-md" />
+                                    </a>
+                                ))}
+                            </div>
+                        );
+                    }
+
+                    // Fallback placeholder
+                    return (
+                        <img 
+                            src={`https://picsum.photos/seed/${user.id}-id/500/300`} 
+                            alt="ID Document" 
+                            className="w-full h-auto rounded-md"
+                        />
+                    );
+                })()}
             </div>
-            <p className="text-xs text-gray-500">Note: This is a placeholder image. In a real application, the user's uploaded document would be displayed here securely.</p>
+            <p className="text-xs text-gray-500">The user's uploaded verification documents are shown above (if available).</p>
         </div>
         <div className="p-6 border-t border-white/10 mt-auto flex justify-end space-x-4">
           <Button onClick={handleReject} className="w-auto !bg-gradient-to-r !from-red-600 !to-orange-600">

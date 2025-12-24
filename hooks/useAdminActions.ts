@@ -5,6 +5,8 @@ import { userService } from '../services/api/userService';
 import { moderationService } from '../services/api/moderationService';
 import { storyService } from '../services/api/storyService';
 import { adminService } from '../services/api/adminService';
+import { getVerificationReviewAPI, approveVerificationAPI, rejectVerificationAPI } from '../services/api/admin';
+import { normalizeVerificationUser } from '../utils/utils';
 
 type TFunction = (key: string, options?: Record<string, string | number>) => string;
 type AddToastFunction = (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -45,22 +47,137 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
         // fetchData();
     }, []);
 
+    // Public function to refresh verification requests (can be called from pages)
+    const refreshVerificationRequests = async () => {
+        try {
+            const pending = await getVerificationReviewAPI();
+            setVerificationRequests(pending.map(normalizeVerificationUser));
+        } catch (err) {
+            addToast("Failed to load pending verifications.", "error");
+            throw err;
+        }
+    };
+
     useEffect(() => {
-        setVerificationRequests(allUsers.filter(u => u.profile?.verificationStatus === 'Pending'));
-    }, [allUsers]);
+        // Fetch pending verification requests from the admin API wrapper only when an auth token exists.
+        // If there is no token now, set up a short retry (interval) and a storage listener to detect when token appears.
+
+        let mounted = true;
+        let retryHandle: number | undefined;
+
+        const loadPending = async () => {
+            try {
+                const pending = await getVerificationReviewAPI();
+                if (!mounted) return;
+                // Normalize to a stable shape
+                setVerificationRequests(pending.map(normalizeVerificationUser));
+            } catch (err) {
+                if (!mounted) return;
+                // Don't show toast here to avoid noisy errors during background retries
+                // addToast("Failed to load pending verifications.", "error");
+            }
+        };
+
+        const tryStartRetry = () => {
+            let attempts = 0;
+            // Retry every 2s up to 5 times (10s total)
+            retryHandle = window.setInterval(() => {
+                attempts += 1;
+                const token = localStorage.getItem('token');
+                if (token) {
+                    // token appeared — fetch and stop retrying
+                    if (retryHandle) {
+                        clearInterval(retryHandle);
+                        retryHandle = undefined;
+                    }
+                    loadPending();
+                } else if (attempts >= 5) {
+                    // give up after max attempts
+                    if (retryHandle) {
+                        clearInterval(retryHandle);
+                        retryHandle = undefined;
+                    }
+                }
+            }, 2000) as unknown as number;
+        };
+
+        const storageListener = (e: StorageEvent) => {
+            if (e.key === 'token' && e.newValue) {
+                // Token set in another tab — fetch and clear retry
+                if (retryHandle) {
+                    clearInterval(retryHandle);
+                    retryHandle = undefined;
+                }
+                loadPending();
+            }
+        };
+
+        const initialToken = localStorage.getItem('token');
+        if (initialToken) {
+            loadPending();
+        } else {
+            // No token now — try a few retries and listen for storage events
+            tryStartRetry();
+            window.addEventListener('storage', storageListener);
+        }
+
+        return () => {
+            mounted = false;
+            if (retryHandle) {
+                clearInterval(retryHandle);
+                retryHandle = undefined;
+            }
+            window.removeEventListener('storage', storageListener);
+        };
+    }, []);
 
     const approveVerification = async (userId: string | number) => {
-        const updatedUser = await userService.updateProfile(userId, { verificationStatus: 'Verified' });
-        setAllUsers(prev => prev.map(u => u.id === userId ? updatedUser : u));
-        addToast(t('toasts.verification.approved'), 'success');
-        addNotification({ type: NotificationType.VERIFICATION_APPROVED, message: t('notifications.verification_approved'), link: '/verification', userId: userId as number });
+        try {
+            // Call the admin API to approve the verification
+            const resp = await approveVerificationAPI(userId);
+
+            // Refresh the pending verification requests list from the server
+            const pending = await getVerificationReviewAPI();
+            const normalizedPending = pending.map((u: any) => ({
+                ...u,
+                email: u.userEmail || u.email,
+                name: u.userName || u.name,
+                createdAt: u.submittedAt || u.createdAt
+            }));
+            setVerificationRequests(normalizedPending);
+
+            // Update allUsers locally (best-effort): set verificationStatus to 'Verified'
+            setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, verificationStatus: 'Verified' } : u));
+
+            addToast(t('toasts.verification.approved'), 'success');
+            addNotification({ type: NotificationType.VERIFICATION_APPROVED, message: t('notifications.verification_approved'), link: '/verification', userId: userId as number });
+
+            return resp;
+        } catch (error) {
+            console.error('Failed to approve verification', error);
+            addToast(t('toasts.verification.approve_failed'), 'error');
+            throw error;
+        }
     };
 
     const rejectVerification = async (userId: string | number) => {
-        const updatedUser = await userService.updateProfile(userId, { verificationStatus: 'Not Verified' });
-        setAllUsers(prev => prev.map(u => u.id === userId ? updatedUser : u));
-        addToast(t('toasts.verification.rejected'), 'error');
-        addNotification({ type: NotificationType.VERIFICATION_REJECTED, message: t('notifications.verification_rejected'), link: '/verification', userId: userId as number });
+        try {
+            // Call admin API to reject the verification
+            const resp = await rejectVerificationAPI(userId);
+
+            // Refresh the pending verification requests list from the server
+            const pending = await getVerificationReviewAPI();
+            setVerificationRequests(pending.map(normalizeVerificationUser));
+            setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, verificationStatus: 'Verified' } : u));
+            addToast(t('toasts.verification.rejected'), 'error');
+            addNotification({ type: NotificationType.VERIFICATION_REJECTED, message: t('notifications.verification_rejected'), link: '/verification', userId: userId as number });
+
+            return resp;
+        } catch (error) {
+            console.error('Failed to reject verification', error);
+            addToast(t('toasts.verification.reject_failed'), 'error');
+            throw error;
+        }
     };
 
     const resolveReport = async (reportId: string) => {
@@ -168,6 +285,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
         isLoading,
         approveVerification,
         rejectVerification,
+        refreshVerificationRequests,
         resolveReport,
         dismissReport,
         approveStory,

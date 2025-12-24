@@ -66,6 +66,8 @@ export interface AppDataContextType {
   adminUsers: AdminUser[];
   approveVerification: (userId: string | number) => void;
   rejectVerification: (userId: string | number) => void;
+  // Refresh pending verification requests
+  refreshVerificationRequests: () => Promise<void>;
   resolveReport: (reportId: string) => void;
   dismissReport: (reportId: string) => void;
   approveStory: (storyId: number) => void;
