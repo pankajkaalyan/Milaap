@@ -43,8 +43,8 @@ export const approveVerificationAPI = async (userId: string | number, note?: str
  */
 export const rejectVerificationAPI = async (userId: string | number, reason?: string) => {
     try {
-        const payload = { id: userId, reason };
-        const response = await API.post(`/api/admin/verification/review/reject`, payload);
+        const payload = { id: userId, status: "REJECTED", comments: reason };
+        const response = await API.patch(`/api/admin/verification/review/reject`, payload);
         return response.data;
     } catch (error) {
         console.error("Error rejecting verification:", error);
