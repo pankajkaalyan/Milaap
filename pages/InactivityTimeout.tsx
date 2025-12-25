@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { AppEventStatus } from '@/types';
 
 /**
  * useInactivityTimeout
@@ -107,6 +108,7 @@ const useInactivityTimeout = (timeout = 10 * 60 * 1000, warningDuration = 60 * 1
         document.addEventListener('visibilitychange', handleVisibility);
 
         // Listen for token changes across tabs
+        // Note: `AppEventStatus.STORAGE` maps to the native "storage" event (StorageEvent) emitted across browser tabs
         const storageListener = (e: StorageEvent) => {
             if (e.key === 'token') {
                 if (e.newValue) {
@@ -118,13 +120,13 @@ const useInactivityTimeout = (timeout = 10 * 60 * 1000, warningDuration = 60 * 1
                 }
             }
         };
-        window.addEventListener('storage', storageListener);
+        window.addEventListener(AppEventStatus.STORAGE, storageListener as EventListener);
 
         // Listen for manual reset (e.g. user clicked "Stay signed in")
         const idleResetListener = () => {
             try { scheduleTimers(); } catch (e) { /* ignore */ }
         };
-        window.addEventListener('idle_reset', idleResetListener);
+        window.addEventListener(AppEventStatus.IDLE_RESET, idleResetListener);
 
         // Start only if token exists
         scheduleTimers();
@@ -133,8 +135,9 @@ const useInactivityTimeout = (timeout = 10 * 60 * 1000, warningDuration = 60 * 1
             stopTimers();
             events.forEach(event => window.removeEventListener(event, resetTimersOnActivity));
             document.removeEventListener('visibilitychange', handleVisibility);
-            window.removeEventListener('storage', storageListener);
-            window.removeEventListener('idle_reset', idleResetListener);
+            // Use the enum here as well for consistency with the addEventListener above
+            window.removeEventListener(AppEventStatus.STORAGE, storageListener as EventListener);
+            window.removeEventListener(AppEventStatus.IDLE_RESET, idleResetListener);
         };
     }, [timeout, warningDuration]);
 };

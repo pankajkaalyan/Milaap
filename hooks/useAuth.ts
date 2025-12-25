@@ -102,8 +102,8 @@ export const useAuth = () => {
                 setExpiresIn(payload.expiresIn);
             }
         };
-        window.addEventListener('token_refreshed', handler as EventListener);
-        return () => window.removeEventListener('token_refreshed', handler as EventListener);
+        window.addEventListener(AppEventStatus.TOKEN_REFRESHED, handler as EventListener);
+        return () => window.removeEventListener(AppEventStatus.TOKEN_REFRESHED, handler as EventListener);
     }, []);
 
 

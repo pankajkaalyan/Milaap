@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from 'react';
-import { User, Report, SuccessStory, VerificationLog, AdminUser, AdminRole, UserRole, NotificationType, Notification, SuccessStoryStatus, ImportedUser } from '../types';
+import { User, Report, SuccessStory, VerificationLog, AdminUser, AdminRole, UserRole, NotificationType, Notification, SuccessStoryStatus, ImportedUser, AppEventStatus } from '../types';
 import { userService } from '../services/api/userService';
 import { moderationService } from '../services/api/moderationService';
 import { storyService } from '../services/api/storyService';
@@ -118,7 +118,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
         } else {
             // No token now — try a few retries and listen for storage events
             tryStartRetry();
-            window.addEventListener('storage', storageListener);
+            window.addEventListener(AppEventStatus.STORAGE, storageListener as EventListener);
         }
 
         return () => {
@@ -127,8 +127,8 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
                 clearInterval(retryHandle);
                 retryHandle = undefined;
             }
-            window.removeEventListener('storage', storageListener);
-        };
+            window.removeEventListener(AppEventStatus.STORAGE, storageListener as EventListener);
+        }; 
     }, []);
 
     const approveVerification = async (userId: string | number) => {

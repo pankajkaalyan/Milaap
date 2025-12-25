@@ -23,6 +23,8 @@ export interface AppDataContextType {
   notifications: Notification[];
   markNotificationAsRead: (notificationId: string) => void;
   markAllNotificationsAsRead: () => void;
+  getNotifications: () => void;
+
   
   // from useFavourites
   favourites: Match[];
@@ -101,7 +103,8 @@ export const AppDataContextProvider: React.FC<{ children: ReactNode }> = ({ chil
   const notificationsHook = useNotifications(
     user, 
     t, 
-    interestsHook.setInterests
+    interestsHook.setInterests,
+    addToast
   );
 
   // Admin hook needs `addNotification` to send alerts on actions.

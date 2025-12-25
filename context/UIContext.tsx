@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, ReactNode, useState, useEffect } from 'react';
-import { Language, ToastMessage } from '../types';
+import { Language, ToastMessage, AppEventStatus } from '../types';
 import { en } from '../i18n/en';
 import { hi } from '../i18n/hi';
 import { useToasts } from '../hooks/useToasts';
@@ -34,7 +34,7 @@ export const UIContextProvider: React.FC<{ children: ReactNode }> = ({ children 
       const { message, type } = payload;
       addToast(message, type);
     };
-    window.addEventListener('show_toast', showToastListener as EventListener);
+    window.addEventListener(AppEventStatus.SHOW_TOAST, showToastListener as EventListener);
 
     // Forward generic tracking events to telemetry (best-effort)
     const trackEventListener = async (e: Event) => {
@@ -47,11 +47,11 @@ export const UIContextProvider: React.FC<{ children: ReactNode }> = ({ children 
         // ignore telemetry errors
       }
     };
-    window.addEventListener('track_event', trackEventListener as EventListener);
+    window.addEventListener(AppEventStatus.TRACK_EVENT, trackEventListener as EventListener);
 
     return () => {
-      window.removeEventListener('show_toast', showToastListener as EventListener);
-      window.removeEventListener('track_event', trackEventListener as EventListener);
+      window.removeEventListener(AppEventStatus.SHOW_TOAST, showToastListener as EventListener);
+      window.removeEventListener(AppEventStatus.TRACK_EVENT, trackEventListener as EventListener);
     };
   }, []);
 
@@ -90,7 +90,7 @@ export const UIContextProvider: React.FC<{ children: ReactNode }> = ({ children 
     // window.gtag('event', eventName, eventProperties);
     // Provide a lightweight bridge for non-React code to send events via window
     try {
-      window.dispatchEvent(new CustomEvent('track_event', { detail: { name: eventName, props: eventProperties } }));
+      window.dispatchEvent(new CustomEvent(AppEventStatus.TRACK_EVENT, { detail: { name: eventName, props: eventProperties } }));
     } catch (e) {
       /* ignore */
     }

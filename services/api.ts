@@ -1,5 +1,6 @@
 import axios from "axios";
 import { showGlobalLoader, hideGlobalLoader } from "../utils/loaderBus";
+import { AppEventStatus } from '../types';
 
 /* ------------------------------------------------
    🚀 BASE API INSTANCE
@@ -73,7 +74,7 @@ API.interceptors.response.use(
                         localStorage.setItem('expiresIn', String(result.expiresIn));
                         // Notify other parts of the app about the refresh
                         try {
-                            window.dispatchEvent(new CustomEvent('token_refreshed', { detail: result }));
+                            window.dispatchEvent(new CustomEvent(AppEventStatus.TOKEN_REFRESHED, { detail: result }));
                         } catch (e) {
                             /* ignore */
                         }

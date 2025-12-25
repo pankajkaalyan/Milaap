@@ -1,6 +1,9 @@
-import React, { useState, useMemo, useRef, useEffect } from 'react';
+import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
 import NotificationPanel from './NotificationPanel';
+import Spinner from '../ui/Spinner';
+import { AppEventStatus, SpinnerSize } from '../../types';
+import { eventBus } from '../../utils/eventBus';
 
 const BellIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -10,14 +13,39 @@ const BellIcon = () => (
 
 
 const NotificationBell: React.FC = () => {
-    const { notifications } = useAppContext();
+    const { notifications , getNotifications} = useAppContext();
     const [isOpen, setIsOpen] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
+
+    // Ensure we fetch notifications only once per session/load
+    const fetchedRef = useRef(false);
+    const isMountedRef = useRef(true);
+    const [isFetching, setIsFetching] = useState(false);
+
+    const fetchNotificationsOnce = useCallback(async () => {
+        if (fetchedRef.current || isFetching) return;
+        fetchedRef.current = true;
+        setIsFetching(true);
+        try {
+            await getNotifications();
+        } catch (e) {
+            // allow retry on failure
+            fetchedRef.current = false;
+        } finally {
+            if (isMountedRef.current) setIsFetching(false);
+        }
+    }, [getNotifications, isFetching]);
+
+    useEffect(() => {
+        // track mount status for safe state updates
+        isMountedRef.current = true;
+        return () => { isMountedRef.current = false; };
+    }, []);
 
     const unreadCount = useMemo(() => {
         return notifications.filter(n => !n.isRead).length;
     }, [notifications]);
-    
+
     // Close panel when clicking outside
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -31,18 +59,42 @@ const NotificationBell: React.FC = () => {
         };
     }, [wrapperRef]);
 
+    useEffect(() => {
+        // Only fetch if the notifications array is empty
+        // This prevents re-fetching every time the panel is opened/closed
+        if (notifications.length === 0) {
+            fetchNotificationsOnce();
+        }
+    }, [notifications.length, fetchNotificationsOnce]);
 
+    // When user logs in, refresh notifications
+    useEffect(() => {
+        const onLogin = () => {
+            try { fetchNotificationsOnce(); } catch (e) { /* ignore */ }
+        };
+        eventBus.on(AppEventStatus.LOGIN_SUCCESS, onLogin);
+        return () => eventBus.off(AppEventStatus.LOGIN_SUCCESS, onLogin);
+    }, [fetchNotificationsOnce]);
+
+    const toggleOpen = useCallback(() => setIsOpen(prev => !prev), []);
     return (
         <div className="relative" ref={wrapperRef}>
-            <button 
-                onClick={() => setIsOpen(!isOpen)} 
+            <button
+                onClick={toggleOpen}
+                aria-expanded={isOpen}
+                aria-haspopup="dialog"
                 className="relative text-gray-300 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10"
                 aria-label={`${unreadCount} new notifications`}
             >
                 <BellIcon />
+                {isFetching && (
+                    <span className="absolute -bottom-1 -right-1">
+                        <Spinner size={SpinnerSize.SM} />
+                    </span>
+                )}
                 {unreadCount > 0 && (
                     <span className="absolute top-1 right-1 block h-4 w-4 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center animate-pulse">
-                       {unreadCount > 9 ? '9+' : unreadCount}
+                        {unreadCount > 9 ? '9+' : unreadCount}
                     </span>
                 )}
             </button>

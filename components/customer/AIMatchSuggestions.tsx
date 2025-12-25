@@ -76,12 +76,14 @@ const AIMatchSuggestions: React.FC<AIMatchSuggestionsProps> = ({
             </h2>
 
             <div className="relative">
-                <div className="flex space-x-6 overflow-x-auto pb-4 -mx-4 px-4 scrollbar-thin">
+                {/*
+                  Use a responsive grid for suggestions so cards stack nicely on small screens
+                  and form columns on larger screens. This avoids horizontal overflow issues on mobile
+                  and ensures consistent spacing.
+                */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {suggestedMatches.map(match => (
-                        <div
-                            key={match!.id}
-                            className="w-full sm:w-1/3 lg:w-1/4 flex-shrink-0"
-                        >
+                        <div key={match!.id} className="w-full">
                             <AIProfileCard
                                 match={match!}
                                 reason={match!.reason}

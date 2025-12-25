@@ -146,4 +146,9 @@ export enum AppEventStatus {
   VERIFICATION_SUBMITTED = 'VERIFICATION_SUBMITTED',
   // UI & routing events
   ROUTE_CHANGE = 'ROUTE_CHANGE',
-}
+  SHOW_TOAST = 'show_toast',
+  TRACK_EVENT = 'track_event',
+  STORAGE = 'storage',
+  IDLE_RESET = 'idle_reset',
+  TOKEN_REFRESHED = 'token_refreshed',
+} 

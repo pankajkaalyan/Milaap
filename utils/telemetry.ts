@@ -1,6 +1,55 @@
 import { API } from '@/services/api';
 
+// Feature flag: set VITE_TELEMETRY_ENABLED=true in your environment to enable telemetry calls.
+// When disabled (default), telemetry helpers will no-op and avoid noisy console errors when
+// the telemetry backend is not available.
+const TELEMETRY_ENABLED = import.meta.env.VITE_TELEMETRY_ENABLED === 'true';
+let TELEMETRY_AVAILABLE = false; // runtime flag toggled by health-check
+
+/**
+ * Attempt to probe the telemetry endpoint to check availability.
+ * Returns true if probe succeeds (2xx), false otherwise.
+ */
+export const probeTelemetry = async (timeout = 3000): Promise<boolean> => {
+  if (!TELEMETRY_ENABLED) {
+    TELEMETRY_AVAILABLE = false;
+    // eslint-disable-next-line no-console
+    console.debug('Telemetry disabled: skipping probe');
+    return false;
+  }
+
+  try {
+    // Use a lightweight request (HEAD) to keep payload small and quick
+    const resp = await API.head('/api/telemetry/events', { timeout });
+    const ok = resp?.status >= 200 && resp?.status < 300;
+    TELEMETRY_AVAILABLE = ok;
+    // eslint-disable-next-line no-console
+    console.debug('Telemetry probe result:', ok, resp?.status);
+    return ok;
+  } catch (err) {
+    TELEMETRY_AVAILABLE = false;
+    // eslint-disable-next-line no-console
+    console.warn('Telemetry probe failed:', err);
+    return false;
+  }
+};
+
+/** Initialize the telemetry health check once on app start. */
+export const initTelemetryHealthCheck = async () => {
+  // run a background probe but don't block app startup
+  void probeTelemetry();
+};
+
+export const isTelemetryAvailable = () => TELEMETRY_ENABLED && TELEMETRY_AVAILABLE;
+
 export const logAutoLogout = async (details: Record<string, any>) => {
+  if (!TELEMETRY_ENABLED || !TELEMETRY_AVAILABLE) {
+    // Telemetry not enabled/available — no-op quietly
+    // eslint-disable-next-line no-console
+    console.debug('Telemetry not available: skipping auto-logout telemetry', details);
+    return;
+  }
+
   // 1. Retrieve the token from localStorage
   const token = localStorage.getItem('token'); // or 'jwt', 'authToken' depending on your key name
 
@@ -30,6 +79,12 @@ export const logAutoLogout = async (details: Record<string, any>) => {
 };
 
 export const logEvent = async (name: string, props?: Record<string, any>) => {
+  if (!TELEMETRY_ENABLED || !TELEMETRY_AVAILABLE) {
+    // eslint-disable-next-line no-console
+    console.debug('Telemetry not available: skipping event', { name, props });
+    return;
+  }
+
   const payload = {
     event: name,
     timestamp: new Date().toISOString(),

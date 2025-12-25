@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { refreshTokenAPI } from '@/services/api/auth';
 import { useContext } from 'react';
 import { UIContext } from '@/context/UIContext';
+import { AppEventStatus } from '@/types';
 
 interface IdleWarningModalProps {
   onStaySignedIn?: () => Promise<void>;
@@ -21,12 +22,12 @@ const IdleWarningModal: React.FC<IdleWarningModalProps> = ({ onStaySignedIn, aut
 
     window.addEventListener('idle_warning', show as EventListener);
     window.addEventListener('idle_logout', hide as EventListener);
-    window.addEventListener('token_refreshed', hide as EventListener);
+    window.addEventListener(AppEventStatus.TOKEN_REFRESHED, hide as EventListener);
 
     return () => {
       window.removeEventListener('idle_warning', show as EventListener);
       window.removeEventListener('idle_logout', hide as EventListener);
-      window.removeEventListener('token_refreshed', hide as EventListener);
+      window.removeEventListener(AppEventStatus.TOKEN_REFRESHED, hide as EventListener);
     };
   }, []);
 
@@ -81,9 +82,9 @@ const IdleWarningModal: React.FC<IdleWarningModalProps> = ({ onStaySignedIn, aut
           localStorage.setItem('token', result.accessToken);
           localStorage.setItem('refreshToken', result.refreshToken);
           localStorage.setItem('expiresIn', String(result.expiresIn));
-          try { window.dispatchEvent(new CustomEvent('token_refreshed', { detail: result })); } catch (e) { /* ignore */ }
+          try { window.dispatchEvent(new CustomEvent(AppEventStatus.TOKEN_REFRESHED, { detail: result })); } catch (e) { /* ignore */ }
           // Notify the timeout scheduler to reset
-          try { window.dispatchEvent(new Event('idle_reset')); } catch (e) { /* ignore */ }
+          try { window.dispatchEvent(new Event(AppEventStatus.IDLE_RESET)); } catch (e) { /* ignore */ }
           addToast('Session extended', 'success');
         } else {
           addToast('Could not refresh session. Please sign in again.', 'error');

@@ -94,7 +94,7 @@ const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onClose }) => {
             <div className="fixed inset-0 z-40 bg-black/40 sm:bg-transparent" onClick={onClose} />
 
             {/* Chat window — full-screen on very small screens, anchored on larger screens */}
-            <div onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={t('support.title')} className="fixed top-16 left-0 right-0 bottom-0 sm:inset-auto sm:bottom-6 sm:right-6 z-50 w-full sm:w-auto max-w-full sm:max-w-md md:max-w-lg sm:h-[70vh] bg-gray-900 border border-white/20 rounded-none sm:rounded-xl shadow-2xl flex flex-col animate-fade-in-up md:bottom-8 md:right-8 lg:bottom-10 lg:right-10">
+            <div onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label={t('support.title')} className="fixed top-0 left-0 right-0 bottom-0 sm:inset-auto sm:bottom-6 sm:right-6 z-50 w-full sm:w-auto max-w-full sm:max-w-md md:max-w-lg sm:h-[70vh] bg-gray-900 border border-white/20 rounded-none sm:rounded-xl shadow-2xl flex flex-col animate-fade-in-up md:bottom-8 md:right-8 lg:bottom-10 lg:right-10">
             {/* Header */}
             <div className="p-4 bg-white/5 rounded-t-xl flex justify-between items-center border-b border-white/10 shrink-0">
                 <h3 className="text-lg font-bold text-white">{t('support.title')}</h3>
@@ -136,13 +136,13 @@ const SupportChatWindow: React.FC<SupportChatWindowProps> = ({ onClose }) => {
                 <div ref={messagesEndRef} />
             </div>
 
-            {chatMode === SupportChatMode.AI && (
+            {/* {chatMode === SupportChatMode.AI && (
                 <div className="px-4 pb-2 text-center">
                     <button onClick={handleTransferToHuman} className="text-xs text-amber-400 hover:underline">
                         {t('support.human_agent_button')}
                     </button>
                 </div>
-            )}
+            )} */}
 
             {/* Input */}
             <div className="p-4 border-t border-white/10 shrink-0">
