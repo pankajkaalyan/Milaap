@@ -19,7 +19,7 @@ const WhatsAppWidget: React.FC<WhatsAppWidgetProps> = ({ onClick }) => {
   return (
     <button
       onClick={handleClick}
-      className="fixed bottom-6 left-6 z-30 w-16 h-16 bg-[#25D366] rounded-full text-white shadow-lg flex items-center justify-center transform hover:scale-110 transition-transform duration-300 ease-in-out cursor-pointer focus:outline-none focus:ring-4 focus:ring-[#128C7E]/50 animate-fade-in"
+      className="fixed bottom-0 md:bottom-4 left-0 md:left-4 z-30 w-16 h-16 bg-[#25D366] rounded-full text-white shadow-lg flex items-center justify-center transform hover:scale-110 transition-transform duration-300 ease-in-out cursor-pointer focus:outline-none focus:ring-4 focus:ring-[#128C7E]/50 animate-fade-in"
       aria-label="Open WhatsApp"
     >
       <WhatsAppIcon className="w-9 h-9" />

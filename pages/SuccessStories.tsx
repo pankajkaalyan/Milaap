@@ -13,31 +13,36 @@ const SuccessStories: React.FC = () => {
     const { t, user, allSuccessStories, setAllSuccessStories } = useAppContext();
     const navigate = useNavigate();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [showLoginPrompt, setShowLoginPrompt] = useState(false);
     const hasFetched = useRef(false);
+
+    // Only approved stories
     const approvedStories = useMemo(() => {
-        return allSuccessStories.filter(story => story.status.toLocaleLowerCase() === SuccessStoryStatus.APPROVED.toLocaleLowerCase());
+        return allSuccessStories.filter(
+            story => story.status.toLocaleLowerCase() === SuccessStoryStatus.APPROVED.toLocaleLowerCase()
+        );
     }, [allSuccessStories]);
 
     const handleShareStoryClick = () => {
         if (user) {
             setIsModalOpen(true);
         } else {
-            navigate('/login');
+            // Instead of immediate redirect, show a message
+            setShowLoginPrompt(true);
+            setTimeout(() => setShowLoginPrompt(false), 3000); // hide after 3s
         }
     };
 
     useEffect(() => {
-        // Guard to ensure the API runs only once
         if (hasFetched.current) return;
         hasFetched.current = true;
 
         fetchSuccessStoriesAPI()
             .then((storyData) => {
-                // console.log("Fetched success stories:", storyData);
                 setAllSuccessStories(storyData);
             })
             .catch((error) => {
-                // console.warn("Error fetching success stories on mount:", error);
+                console.warn("Error fetching success stories:", error);
             });
     }, []);
 
@@ -57,6 +62,9 @@ const SuccessStories: React.FC = () => {
                         {t('successStories.cta')}
                     </Button>
                 </div>
+                {showLoginPrompt && (
+                    <p className="text-red-500 mt-2">{t('successStories.loginPrompt') || "Please login to submit your story"}</p>
+                )}
             </div>
 
             <div className="mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

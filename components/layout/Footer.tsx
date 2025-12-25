@@ -2,9 +2,10 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAppContext } from '../../hooks/useAppContext';
 import AppLogo from '../icons/AppLogo';
+import { UserRole } from '@/types';
 
 const Footer: React.FC = () => {
-    const { t } = useAppContext();
+    const { user, t } = useAppContext();
     const year = new Date().getFullYear();
     return (
         <footer className="bg-black/20 backdrop-blur-sm text-gray-400">
@@ -37,9 +38,11 @@ const Footer: React.FC = () => {
                     <Link to="/contact" className="hover:text-white transition-colors cursor-pointer">
                         {t('footer.contact')}
                     </Link>
-                    <Link to="/success-stories" className="hover:text-white transition-colors cursor-pointer">
-                        {t('nav.success_stories')}
-                    </Link>
+                    {(user?.role === UserRole.CUSTOMER || user?.role === UserRole.ROLE_USER || user?.role === UserRole.ADMIN ) && (
+                        <Link to="/success-stories" className="hover:text-white transition-colors cursor-pointer">
+                            {t('nav.success_stories')}
+                        </Link>
+                    )}
                     {/* <Link to="/changelog" className="hover:text-white transition-colors cursor-pointer">
                         {t('nav.changelog')}
                     </Link> */}
