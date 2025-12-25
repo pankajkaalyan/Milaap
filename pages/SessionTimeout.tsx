@@ -33,8 +33,8 @@ const useSessionTimeout = () => {
                 // console.log("🧹 All Service Workers Unregistered");
             }
 
-            // 4️⃣ Redirect to login
-            window.location.href = "/login";
+            // 4️⃣ Redirect to login (use hash route compatible with HashRouter)
+            window.location.replace(`${window.location.origin}${window.location.pathname}#/login`);
 
             // 5️⃣ Hard reload from server (avoid stale PWA content)
             setTimeout(() => window.location.reload(), 200);

@@ -44,11 +44,11 @@ const useInactivityTimeout = (timeout = 10 * 60 * 1000, warningDuration = 60 * 1
             }
 
             // 4️⃣ Redirect to login (force reload to avoid cached content)
-            window.location.href = "/login";
+            window.location.replace(`${window.location.origin}${window.location.pathname}#/login`);
             window.location.reload();
 
         } catch (error) {
-            window.location.href = "/login";
+            window.location.replace(`${window.location.origin}${window.location.pathname}#/login`);
         }
     };
 

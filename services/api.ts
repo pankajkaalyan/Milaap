@@ -55,7 +55,8 @@ API.interceptors.response.use(
             // Avoid infinite loop: if request already marked _retry, then logout
             if (originalRequest && originalRequest._retry) {
                 await logoutCleanup();
-                window.location.replace('/login');
+                // Use a hash-aware redirect so HashRouter lands on the expected route
+                window.location.replace(`${window.location.origin}${window.location.pathname}#/login`);
                 return Promise.reject(error);
             }
 
@@ -82,7 +83,8 @@ API.interceptors.response.use(
                     .catch(async (err) => {
                         isRefreshing = false;
                         await logoutCleanup();
-                        window.location.replace('/login');
+                        // Use a hash-aware redirect so HashRouter lands on the expected route
+                        window.location.replace(`${window.location.origin}${window.location.pathname}#/login`);
                         throw err;
                     });
             }
