@@ -18,6 +18,7 @@ const Login: React.FC = () => {
   const navigate = useNavigate();
   const { login,addToast, t, trackEvent } = useAppContext();
   const [isSocialLoginLoading, setIsSocialLoginLoading] = useState<null | 'google' | 'facebook'>(null);
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   const { formData, errors, handleInputChange, handleSubmit } = useForm<LoginFormData>(
     { email: '', password: '' },
@@ -34,6 +35,8 @@ const Login: React.FC = () => {
       const isAdminLogin = data.email === 'admin@example.com' || data.email === 'moderator@example.com';
       const role = isAdminLogin ? UserRole.ADMIN : UserRole.CUSTOMER;
       const credentials = { username: data.email, password: data.password };
+      // Clear any previous inline error
+      setLoginError(null);
       loginAPI(credentials)
         .then(async (res) => {
           localStorage.setItem("token", res.accessToken);
@@ -42,17 +45,22 @@ const Login: React.FC = () => {
           localStorage.setItem("loginTime", Date.now().toString());
           login(credentials.username, role, undefined, res.accessToken);
           trackEvent('login_success', { email: data.email, role });
-          addToast('Login successful!', 'success');
-          // const result = await refreshTokenAPI();
-          // console.log('Token refreshed after login:', result);
-          // localStorage.setItem("token", result.accessToken);
-          // localStorage.setItem("refreshToken", result.refreshToken);
-          // localStorage.setItem("expiresIn", String(result.expiresIn));
-          // localStorage.setItem("loginTime", Date.now().toString());
+          addToast(t('login.success') || 'Login successful!', 'success');
+          // Clear inline error if any
+          setLoginError(null);
         })
         .catch((err) => {
-          // console.error('Login failed:', err);
-          addToast('Login failed. Please check your credentials and try again.', 'error');
+          // If API returned 401, show inline invalid credentials error per theme
+          const status = err?.response?.status;
+          if (status === 401) {
+            const msg = t('login.invalid_credentials') || 'Invalid email or password. Please try again.';
+            setLoginError(msg);
+            addToast(msg, 'error');
+          } else {
+            const msg = t('login.failed') || 'Login failed. Please check your credentials and try again.';
+            setLoginError(msg);
+            addToast(msg, 'error');
+          }
         });
     }
   );
@@ -114,7 +122,7 @@ const Login: React.FC = () => {
               label={t('login.email')}
               type="email"
               value={formData.email}
-              onChange={handleInputChange}
+              onChange={(e) => { setLoginError(null); handleInputChange(e); }}
               error={errors.email}
               placeholder="e.g., user@example.com"
             />
@@ -125,7 +133,7 @@ const Login: React.FC = () => {
                 label={t('login.password')}
                 type="password"
                 value={formData.password}
-                onChange={handleInputChange}
+                onChange={(e) => { setLoginError(null); handleInputChange(e); }}
                 error={errors.password}
                 placeholder="********"
               />
@@ -138,6 +146,15 @@ const Login: React.FC = () => {
             <div className="pt-2">
               <Button type="submit" disabled={isSocialLoginLoading !== null}>{t('login.cta')}</Button>
             </div>
+            {loginError && (
+              <div role="alert" aria-live="assertive" className="mt-4 max-w-md mx-auto bg-red-900/80 border border-red-700 text-red-50 rounded-md p-3 flex items-start gap-3 animate-fade-in">
+                <svg className="w-5 h-5 flex-shrink-0 text-red-200" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.487 0l6.518 11.6c.75 1.336-.213 2.99-1.744 2.99H3.483c-1.531 0-2.494-1.654-1.744-2.99l6.518-11.6zM11 13a1 1 0 10-2 0 1 1 0 002 0zm-1-6a1 1 0 00-.993.883L9 8v3a1 1 0 001.993.117L11 11V8a1 1 0 00-1-1z" clipRule="evenodd"/></svg>
+                <div className="flex-1">
+                  <p className="font-semibold">{t('login.invalid_credentials_title') || 'Login error'}</p>
+                  <p className="text-sm mt-1">{loginError}</p>
+                </div>
+              </div>
+            )}
           </form>
           {/* <p className="text-xs text-center text-gray-500 mt-4">
             Admin users: admin@example.com, moderator@example.com

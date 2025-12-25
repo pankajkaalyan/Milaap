@@ -59,6 +59,10 @@ export const hi = {
     cta: 'लॉग इन करें',
     no_account: 'खाता नहीं है?',
     social_intro: 'या इसके साथ जारी रखें',
+    invalid_credentials: 'अमान्य ईमेल या पासवर्ड। कृपया पुनः प्रयास करें।',
+    failed: 'लॉगिन विफल। कृपया अपनी प्रमाण-पत्र जाँचें और पुनः प्रयास करें।',
+    success: 'लॉगिन सफल!',
+    invalid_credentials_title: 'लॉगिन त्रुटि',
   },
   forgotPassword: {
     title: 'पासवर्ड भूल गए',

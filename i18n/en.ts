@@ -59,6 +59,10 @@ export const en = {
     cta: 'Login',
     no_account: "Don't have an an account?",
     social_intro: 'Or continue with',
+    invalid_credentials: 'Invalid email or password. Please try again.',
+    failed: 'Login failed. Please check your credentials and try again.',
+    success: 'Login successful!',
+    invalid_credentials_title: 'Login error',
   },
   forgotPassword: {
     title: 'Forgot Password',
