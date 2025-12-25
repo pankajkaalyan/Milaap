@@ -6,6 +6,8 @@ import FlagIcon from '../icons/FlagIcon';
 import CheckCircleIcon from '../icons/CheckCircleIcon';
 import XCircleIcon from '../icons/XCircleIcon';
 import StarIcon from '../icons/StarIcon';
+import { eventBus } from '@/utils/eventBus';
+import { AppEventStatus } from '@/types';
 
 const MessageIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>;
 const UserIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>;
@@ -53,6 +55,8 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose }) => {
 
     const handleNotificationClick = (notificationId: string, link: string) => {
         markNotificationAsRead(notificationId);
+        // Ensure hamburger/mobile menu (and other mobile/medium popups) close immediately on notification click
+        try { eventBus.emit(AppEventStatus.ROUTE_CHANGE, { isMobileOrMedium: window.innerWidth < 1024 }); } catch (e) { /* ignore */ }
         navigate(link);
         onClose();
     };
@@ -76,6 +80,8 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose }) => {
         if (interval > 1) return Math.floor(interval) + "m ago";
         return Math.floor(seconds) + "s ago";
     };
+
+    console.log("Notifications:", notifications);
 
     return (
         <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-gray-900 border border-gray-700 rounded-lg shadow-2xl z-20 animate-fade-in-up-fast overflow-hidden flex flex-col max-h-[70vh]">

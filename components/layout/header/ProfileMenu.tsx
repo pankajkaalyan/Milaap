@@ -3,6 +3,8 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../../hooks/useAppContext';
 import { UserRole } from '../../../types';
 import { logoutAPI } from '@/services/api/auth';
+import { eventBus } from '@/utils/eventBus';
+import { AppEventStatus } from '@/types';
 
 const ProfileMenu: React.FC = () => {
     const { user, logout, t } = useAppContext();
@@ -18,7 +20,17 @@ const ProfileMenu: React.FC = () => {
             }
         }
         document.addEventListener("mousedown", handleClickOutside);
-        return () => document.removeEventListener("mousedown", handleClickOutside);
+
+        // Close profile menu on route changes for mobile/medium devices
+        const routeHandler = ({ isMobileOrMedium }: { isMobileOrMedium: boolean }) => {
+            if (isMobileOrMedium) setIsOpen(false);
+        };
+        try { eventBus.on(AppEventStatus.ROUTE_CHANGE, routeHandler); } catch (e) { /* ignore */ }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+            try { eventBus.off(AppEventStatus.ROUTE_CHANGE, routeHandler); } catch (e) { /* ignore */ }
+        };
     }, [menuRef]);
 
     const handleLogout = () => {

@@ -7,15 +7,21 @@ import SupportWidget from '../support/SupportWidget';
 import SupportChatWindow from '../support/SupportChatWindow';
 import WhatsAppWidget from '../support/WhatsAppWidget';
 import { AnimatePresence, motion } from 'framer-motion';
+import { eventBus } from '@/utils/eventBus';
+import { AppEventStatus } from '@/types';
 
 const Layout: React.FC = () => {
   const { user } = useAppContext();
   const [isSupportChatOpen, setIsSupportChatOpen] = useState(false);
   const location = useLocation();
 
-  // Hide support chat on route changes
+  // Hide support chat on route changes (small + medium screens) and notify listeners
   useEffect(() => {
-    if (isSupportChatOpen) setIsSupportChatOpen(false);
+    // Treat viewport widths < 1024px (Tailwind's lg breakpoint) as mobile/medium
+    const isMobileOrMedium = window.innerWidth < 1024;
+    if (isSupportChatOpen && isMobileOrMedium) setIsSupportChatOpen(false);
+    // Emit an event so other components (profile menu, mobile menu, page modals) can close themselves on mobile/medium devices
+    try { eventBus.emit(AppEventStatus.ROUTE_CHANGE, { isMobileOrMedium }); } catch (e) { /* ignore */ }
   }, [location.pathname]);
 
   return (

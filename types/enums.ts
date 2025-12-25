@@ -144,4 +144,6 @@ export enum AppEventStatus {
   LOGOUT = 'LOGOUT',
   BLOCK_USER = 'BLOCK_USER',
   VERIFICATION_SUBMITTED = 'VERIFICATION_SUBMITTED',
+  // UI & routing events
+  ROUTE_CHANGE = 'ROUTE_CHANGE',
 }

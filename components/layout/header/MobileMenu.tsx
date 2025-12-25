@@ -3,6 +3,8 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAppContext } from '../../../hooks/useAppContext';
 import { UserRole } from '../../../types';
 import NavLinks from './NavLinks';
+import { eventBus } from '@/utils/eventBus';
+import { AppEventStatus } from '@/types';
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -18,6 +20,15 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
     onClose();
     navigate('/');
   };
+
+  // Close mobile menu when route changes on mobile/medium devices
+  React.useEffect(() => {
+    const routeHandler = ({ isMobileOrMedium }: { isMobileOrMedium: boolean }) => {
+      if (isMobileOrMedium) onClose();
+    };
+    try { eventBus.on(AppEventStatus.ROUTE_CHANGE, routeHandler); } catch (e) { /* ignore */ }
+    return () => { try { eventBus.off(AppEventStatus.ROUTE_CHANGE, routeHandler); } catch (e) { /* ignore */ } };
+  }, [onClose]);
 
   if (!isOpen) return null;
 

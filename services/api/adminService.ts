@@ -16,7 +16,7 @@ export const adminService = {
         return simulateRequest(db.adminUsers[adminIndex]);
     },
 
-    getAdminUsersList: async (pageNumber: number = 0, pageSize: number = 100) => {
+    getAdminUsersList: async (pageNumber: number = 0, pageSize: number = 10000) => {
         try {
             const response = await API.get(`/api/admin/users?page=${pageNumber}&size=${pageSize}&ts=${Date.now()}`);
             return response.data;

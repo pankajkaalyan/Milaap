@@ -1,6 +1,8 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import CloseIcon from '../icons/CloseIcon';
 import { ModalSize, ModalVariant } from '../../types';
+import { eventBus } from '@/utils/eventBus';
+import { AppEventStatus } from '@/types';
 
 interface ModalProps {
   isOpen: boolean;
@@ -13,6 +15,16 @@ interface ModalProps {
 }
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children, footer, size = ModalSize.LG, variant = ModalVariant.DEFAULT }) => {
+  // Close on route change for mobile/medium devices
+  useEffect(() => {
+    if (!isOpen) return;
+    const handler = ({ isMobileOrMedium }: { isMobileOrMedium: boolean }) => {
+      if (isMobileOrMedium) onClose();
+    };
+    try { eventBus.on(AppEventStatus.ROUTE_CHANGE, handler); } catch (e) { /* ignore */ }
+    return () => { try { eventBus.off(AppEventStatus.ROUTE_CHANGE, handler); } catch (e) { /* ignore */ } };
+  }, [isOpen, onClose]);
+
   if (!isOpen) return null;
 
   const sizeClasses: Record<ModalSize, string> = {
