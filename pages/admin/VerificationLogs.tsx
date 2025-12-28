@@ -40,7 +40,7 @@ const VerificationLogs: React.FC = () => {
             try {
                 const fresh = await getVerificationLogsRef.current();
                 console.log('Loaded verification logs on mount', fresh);
-                if (mounted && Array.isArray(fresh['items'])) setLogs(fresh['items']);
+                if (mounted && Array.isArray(fresh['items'])) setLogs(fresh['items'] as Array<VerificationLog>);
                 console.log('Verification logs set in state', logs);
             } catch (err) {
                 console.error('Failed to load verification logs on mount', err);
@@ -79,7 +79,7 @@ const VerificationLogs: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {logs.map(log => (
+                        {logs?.map(log => (
                             <tr key={log.id} className="border-b border-white/10 hover:bg-white/5">
                                 <td className="p-3">
                                     <div className="font-semibold">{log.fullName}</div>
