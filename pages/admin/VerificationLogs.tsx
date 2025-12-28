@@ -42,6 +42,7 @@ const VerificationLogs: React.FC = () => {
     const getVerificationLogsRef = React.useRef(getVerificationLogs);
     useEffect(() => {
         let mounted = true;
+        if (Array.isArray(logs) && logs.length > 0) return; // already loaded
         (async () => {
             try {
                 const fresh = await getVerificationLogsRef.current();
@@ -72,8 +73,6 @@ const VerificationLogs: React.FC = () => {
             default: return BadgeVariant.PRIMARY;
         }
     };
-
-    console.log('Rendering VerificationLogs with logs:', logs);
 
     return (
         <Card>

@@ -5,7 +5,7 @@ import { userService } from '../services/api/userService';
 import { moderationService } from '../services/api/moderationService';
 import { storyService } from '../services/api/storyService';
 import { adminService } from '../services/api/adminService';
-import { getVerificationReviewAPI, approveVerificationAPI, rejectVerificationAPI, getServiceRequestsAPI } from '../services/api/admin';
+import { getVerificationReviewAPI, approveVerificationAPI, rejectVerificationAPI, getServiceRequestsAPI, getUserReportsAPI } from '../services/api/admin';
 import { normalizeVerificationUser } from '../utils/utils';
 
 type TFunction = (key: string, options?: Record<string, string | number>) => string;
@@ -32,7 +32,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
                 adminService.getAdminUsers()
             ]);
             setAllUsers(usersData);
-            setReports(reportsData);
+            // setReports(reportsData);
             setStorySubmissions(storiesData.filter(s => s.status === SuccessStoryStatus.PENDING));
             setAdminUsers(adminUsersData);
         } catch (error) {
@@ -278,7 +278,6 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
     const getVerificationLogs = async () => {
         try {
             const serviceRequests = await getServiceRequestsAPI();
-            console.log('Fetched Service Requests:', serviceRequests);
             setVerificationLogs(serviceRequests['items'] as Array<VerificationLog>);
             // Accept either: an array of logs, or a paginated object with `items`
             if (Array.isArray(serviceRequests)) {
@@ -296,6 +295,27 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
         }
     };
 
+    const getReports = async () => {
+        try {
+            // Use admin API wrapper (paginated) for user reports
+            const data = await getUserReportsAPI();
+            console.log('Fetched reports data:', data);
+            if (Array.isArray(data)) {
+                setReports(data);
+            } else if (Array.isArray((data as any)?.items)) {
+                setReports((data as any).items);
+            } else {
+                console.warn('Unexpected reports shape, defaulting to empty array:', data);
+                setReports([]);
+            }
+            return data;
+        } catch (err) {
+            addToast("Failed to load reports.", "error");
+            console.error("getReports error:", err);
+            throw err;
+        }
+    };
+
     return {
         allUsers,
         verificationRequests,
@@ -303,6 +323,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
         storySubmissions,
         verificationLogs,
         getVerificationLogs,
+        getReports,
         adminUsers,
         isLoading,
         approveVerification,

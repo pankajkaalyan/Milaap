@@ -108,5 +108,18 @@ export const getServiceRequestsAPI = async (pageNumber: number = 0, pageSize: nu
     }
 }
 
+/**
+ * Fetch user reports (paginated)
+ * GET /api/admin/user-report?page=0&size=10
+ */
+export const getUserReportsAPI = async (pageNumber: number = 0, pageSize: number = 10000) => {
+    try {
+        const response = await API.get(`/api/admin/user-report?page=${pageNumber}&size=${pageSize}&ts=${Date.now()}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching user reports:", error);
+        throw error;
+    }
+}
 
 

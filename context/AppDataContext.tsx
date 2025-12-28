@@ -66,6 +66,7 @@ export interface AppDataContextType {
   storySubmissions: SuccessStory[];
   verificationLogs: VerificationLog[];
   getVerificationLogs: () => void;
+  getReports: () => void;
   adminUsers: AdminUser[];
   approveVerification: (userId: string | number) => void;
   rejectVerification: (userId: string | number) => void;

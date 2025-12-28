@@ -1,13 +1,29 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { ButtonVariant } from '../../types';
 
 const Reports: React.FC = () => {
-    const { t, reports, resolveReport, dismissReport, warnUser, suspendUserChat } = useAppContext();
+    const { t, reports, getReports, resolveReport, dismissReport, warnUser, suspendUserChat } = useAppContext();
 
-    const pendingReports = useMemo(() => reports.filter(r => r.status === 'Pending'), [reports]);
+    // Call getReports once on mount if we don't already have reports
+    const getReportsRef = React.useRef(getReports);
+    useEffect(() => {
+        let mounted = true;
+        console.log('Reports component mounted', reports);
+        if (Array.isArray(reports) && reports.length > 0) return; // already loaded
+        (async () => {
+            try {
+                await getReportsRef.current?.();
+            } catch (err) {
+                console.error('Failed to load reports:', err);
+            }
+        })();
+        return () => { mounted = false; };
+    }, []); // run only once on mount
+
+    const pendingReports = useMemo(() => reports.filter(r => r.status.toLowerCase() === 'pending'), [reports]);
 
     return (
         <Card>
