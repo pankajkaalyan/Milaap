@@ -5,7 +5,7 @@ import { userService } from '../services/api/userService';
 import { moderationService } from '../services/api/moderationService';
 import { storyService } from '../services/api/storyService';
 import { adminService } from '../services/api/adminService';
-import { getVerificationReviewAPI, approveVerificationAPI, rejectVerificationAPI } from '../services/api/admin';
+import { getVerificationReviewAPI, approveVerificationAPI, rejectVerificationAPI, getServiceRequestsAPI } from '../services/api/admin';
 import { normalizeVerificationUser } from '../utils/utils';
 
 type TFunction = (key: string, options?: Record<string, string | number>) => string;
@@ -275,12 +275,26 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
         addToast(t('toasts.user.updated', { name: userData.name }), 'success');
     };
 
+    
+    const getVerificationLogs = async () => {
+            try {
+                const serviceRequests = await getServiceRequestsAPI();
+                setVerificationLogs(serviceRequests);
+                return serviceRequests;
+            } catch (err) {
+                addToast("Failed to load Service Requests Data.", "error");
+                console.error("get Service Requests error:", err);
+                throw err;
+            }
+        };
+
     return {
         allUsers,
         verificationRequests,
         reports,
         storySubmissions,
         verificationLogs,
+        getVerificationLogs,
         adminUsers,
         isLoading,
         approveVerification,

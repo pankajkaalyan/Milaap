@@ -49,7 +49,7 @@ const SuccessStories: React.FC = () => {
     return (
         <>
             <SEO
-                title={`${t('nav.success_stories')} | Milaap`}
+                title={`${t('nav.success_stories')} | ANZ Hindu Matrimony`}
                 description={t('successStories.subtitle')}
             />
             <div className="text-center">

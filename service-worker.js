@@ -1,4 +1,4 @@
-const CACHE_NAME = 'milaap-v1';
+const CACHE_NAME = 'anz-hindu-matrimony-v1';
 const urlsToCache = [
   '/',
   '/index.html',

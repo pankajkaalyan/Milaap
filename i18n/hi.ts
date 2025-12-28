@@ -31,6 +31,7 @@ export const hi = {
     changelog: 'चैंजलॉग',
     interests: 'दिलचस्पियाँ',
     mutual_matches: 'आपसी मैच',
+    admin_servic_requests: 'सेवा अनुरोध',
   },
   home: {
     title: 'अपना आदर्श साथी खोजें',
@@ -369,6 +370,8 @@ export const hi = {
         status: 'स्थिति',
         timestamp: 'टाइमस्टैम्प',
         actions: 'कार्रवाइयाँ',
+        email: 'ईमेल',
+        message: 'संदेश',
       },
       retrigger: 'पुनः सक्रिय करें',
       live_feed: 'लाइव फ़ीड',

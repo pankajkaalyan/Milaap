@@ -6,30 +6,48 @@ import ToggleSwitch from '../../components/ui/ToggleSwitch';
 import Badge from '../../components/ui/Badge';
 
 const VerificationLogs: React.FC = () => {
-    const { t, verificationLogs: initialLogs, retriggerVerification } = useAppContext();
+    const { t, verificationLogs: initialLogs, retriggerVerification, getVerificationLogs } = useAppContext();
     const [logs, setLogs] = useState<VerificationLog[]>(initialLogs);
     const [isLive, setIsLive] = useState(true);
 
     // Simulate new log entries when live feed is on
     useEffect(() => {
-        if (isLive) {
-            const interval = setInterval(() => {
-                const randomUser = { id: `user-${Math.floor(Math.random()*50)+1}`, name: `User ${Math.floor(Math.random()*50)+1}`};
-                const newLog: VerificationLog = {
-                    id: `log-${Date.now()}`,
-                    userId: randomUser.id,
-                    userName: randomUser.name,
-                    type: Math.random() > 0.5 ? 'EMAIL' : 'OTP',
-                    status: ['Success', 'Failed', 'Pending'][Math.floor(Math.random() * 3)] as any,
-                    timestamp: new Date().toISOString(),
-                };
-                setLogs(prev => [newLog, ...prev].slice(0, 50)); // Keep the list size manageable
-            }, 8000);
+        // if (isLive) {
+        //     const interval = setInterval(() => {
+        //         const randomUser = { id: `user-${Math.floor(Math.random()*50)+1}`, name: `User ${Math.floor(Math.random()*50)+1}`};
+        //         const newLog: VerificationLog = {
+        //             id: `log-${Date.now()}`,
+        //             userId: randomUser.id,
+        //             userName: randomUser.name,
+        //             type: Math.random() > 0.5 ? 'EMAIL' : 'OTP',
+        //             status: ['Success', 'Failed', 'Pending'][Math.floor(Math.random() * 3)] as any,
+        //             timestamp: new Date().toISOString(),
+        //         };
+        //         setLogs(prev => [newLog, ...prev].slice(0, 50)); // Keep the list size manageable
+        //     }, 8000);
             
-            // Cleanup function to clear the interval
-            return () => clearInterval(interval);
-        }
+        //     // Cleanup function to clear the interval
+        //     return () => clearInterval(interval);
+        // }
     }, [isLive]);
+
+    // Load verification logs on mount (only in this component)
+    // Use a ref to avoid re-running the effect if the context function identity changes
+    const getVerificationLogsRef = React.useRef(getVerificationLogs);
+    useEffect(() => {
+        let mounted = true;
+        (async () => {
+            try {
+                const fresh = await getVerificationLogsRef.current();
+                console.log('Loaded verification logs on mount', fresh);
+                if (mounted && Array.isArray(fresh['items'])) setLogs(fresh['items']);
+                console.log('Verification logs set in state', logs);
+            } catch (err) {
+                console.error('Failed to load verification logs on mount', err);
+            }
+        })();
+        return () => { mounted = false; };
+    }, []); // intentionally empty: run only once on mount
     
     const getStatusVariant = (status: VerificationLog['status']): BadgeVariant => {
         switch (status) {
@@ -40,39 +58,49 @@ const VerificationLogs: React.FC = () => {
         }
     };
 
+
+
     return (
         <Card>
-            <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
-                <h1 className="text-3xl font-bold text-white">{t('admin.logs.title')}</h1>
+            {/* <div className="flex flex-col sm:flex-row justify-between sm:items-center mb-6 gap-4">
+                <h1 className="text-3xl font-bold text-white">{t('nav.admin_servic_requests')}</h1>
                 <ToggleSwitch id="live-feed" label={t('admin.logs.live_feed')} checked={isLive} onChange={setIsLive} />
-            </div>
+            </div> */}
 
-            <div className="overflow-x-auto">
+            <div className="overflow-x-auto rounded-lg overflow-hidden border border-white/5">
                 <table className="w-full text-left text-gray-300">
-                    <thead className="bg-white/10">
-                        <tr>
+                    <thead className="bg-white/10 sticky top-0 z-20">
+                        <tr className="text-sm uppercase tracking-wider text-gray-400">
                             <th className="p-3">{t('admin.logs.table.user')}</th>
-                            <th className="p-3">{t('admin.logs.table.type')}</th>
-                            <th className="p-3">{t('admin.logs.table.status')}</th>
+                            <th className="p-3">{t('admin.logs.table.email')}</th>
+                            <th className="p-3">{t('admin.logs.table.message')}</th>
                             <th className="p-3">{t('admin.logs.table.timestamp')}</th>
-                            <th className="p-3 text-right">{t('admin.logs.table.actions')}</th>
+                            {/* <th className="p-3 text-right">{t('admin.logs.table.actions')}</th> */}
                         </tr>
                     </thead>
                     <tbody>
                         {logs.map(log => (
-                            <tr key={log.id} className="border-b border-gray-700 hover:bg-white/5">
+                            <tr key={log.id} className="border-b border-white/10 hover:bg-white/5">
                                 <td className="p-3">
-                                    <div className="font-semibold">{log.userName}</div>
-                                    <div className="text-xs text-gray-400">ID: {log.userId}</div>
+                                    <div className="font-semibold">{log.fullName}</div>
+                                    {/* <div className="text-xs text-gray-400">ID: {log.userId}</div> */}
                                 </td>
-                                <td className="p-3">{t(`admin.logs.type.${log.type.toLowerCase()}` as any)}</td>
-                                <td className="p-3">
-                                    <Badge variant={getStatusVariant(log.status)}>
-                                        {t(`admin.logs.status.${log.status.toLowerCase()}` as any)}
-                                    </Badge>
+                                <td className="p-3">{log.email}</td>
+                                <td className="p-3 align-top">
+                                    <div className="flex flex-col">
+                                        {/* <div className="mb-2">
+                                            <Badge variant={getStatusVariant(log.status)} className="mr-2">
+                                                {t(`admin.logs.status.${(log.status || '').toLowerCase()}` as any) || log.status || '—'}
+                                            </Badge>
+                                        </div> */}
+                                        <div className="text-sm text-gray-200 break-words whitespace-pre-wrap break-all max-w-full" title={log.message || ''}>
+                                            {log.message || <span className="text-gray-400">{t('admin.logs.no_message') || 'No details provided'}</span>}
+                                        </div>
+                                        {log.userId && <div className="text-xs text-gray-400 mt-2">ID: {log.userId}</div>}
+                                    </div>
                                 </td>
-                                <td className="p-3">{new Date(log.timestamp).toLocaleString()}</td>
-                                <td className="p-3 text-right">
+                                <td className="p-3">{new Date(log.createdAt).toLocaleString()}</td>
+                                {/* <td className="p-3 text-right">
                                     {(log.status === 'Failed' || log.status === 'Pending') && (
                                         <button 
                                             onClick={() => retriggerVerification(log.id)}
@@ -81,7 +109,7 @@ const VerificationLogs: React.FC = () => {
                                             {t('admin.logs.retrigger')}
                                         </button>
                                     )}
-                                </td>
+                                </td> */}
                             </tr>
                         ))}
                     </tbody>

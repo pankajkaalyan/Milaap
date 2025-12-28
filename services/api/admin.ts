@@ -98,5 +98,15 @@ export const userDeleteApi = async (ids: (number | string)[]) => {
 };
 
 
+export const getServiceRequestsAPI = async (pageNumber: number = 0, pageSize: number = 10000) => {
+    try {
+        const response = await API.get(`api/admin/sr?page=${pageNumber}&size=${pageSize}&ts=${Date.now()}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching admin users:", error);
+        throw error;
+    }
+}
+
 
 

@@ -43,7 +43,7 @@ export const mockPendingStories: SuccessStory[] = [
         coupleNames: 'Rina & Sameer',
         weddingDate: '2024-05-01',
         imageUrl: 'https://images.pexels.com/photos/1691921/pexels-photo-1691921.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-        story: "We are so grateful to Milaap for helping us find each other. It was a match made in heaven and facilitated by technology. Thank you!",
+        story: "We are so grateful to ANZ Hindu Matrimony for helping us find each other. It was a match made in heaven and facilitated by technology. Thank you!",
         status: SuccessStoryStatus.PENDING,
     },
      {

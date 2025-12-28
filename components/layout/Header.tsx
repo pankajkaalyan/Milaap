@@ -41,7 +41,7 @@ const Header: React.FC = () => {
           <div className="flex-shrink-0">
             <NavLink to="/" className="flex items-center space-x-2 text-white">
               <AppLogo className="h-10 w-10" />
-              <span className="font-bold text-xl">Milaap</span>
+              <span className="font-bold text-xl">ANZ Hindu Matrimony</span>
             </NavLink>
           </div>
           

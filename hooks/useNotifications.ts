@@ -136,7 +136,7 @@ export const useNotifications = (user: User | null, t: TFunction, setInterests: 
         // return () => clearInterval(intervalId);
     }, [user, addNotification, t, setInterests]);
 
-    const markNotificationAsRead = async (notificationId: string) => {
+    const markNotificationAsRead = async (notificationId: string, role : UserRole) => {
         // Ensure the specific notification exists and is unread
         const target = notifications.find(n => n.id === notificationId);
         if (!target) {
@@ -157,7 +157,7 @@ export const useNotifications = (user: User | null, t: TFunction, setInterests: 
         });
 
         try {
-            await markAsReadNotificationAPI(notificationId);
+            await markAsReadNotificationAPI(notificationId, role);
         } catch (err) {
             console.error("Failed to mark notification read:", err);
             addToast("Failed to mark notification as read.", "error");
@@ -167,7 +167,7 @@ export const useNotifications = (user: User | null, t: TFunction, setInterests: 
         }
     };
 
-    const markAllNotificationsAsRead = async () => {
+    const markAllNotificationsAsRead = async (role: UserRole) => {
         // Quick check: if there are no unread notifications, no-op
         if (!notifications.some(n => !n.isRead)) {
             return; // No unread notifications
@@ -183,7 +183,7 @@ export const useNotifications = (user: User | null, t: TFunction, setInterests: 
         });
 
         try {
-            await markAllReadNotificationAPI();
+            await markAllReadNotificationAPI(role);
         } catch (err) {
             console.error("Failed to mark all notifications read:", err);
             addToast("Failed to mark all notifications as read.", "error");
@@ -193,9 +193,10 @@ export const useNotifications = (user: User | null, t: TFunction, setInterests: 
         }
     };
 
-    const getNotifications = async () => {
+    const getNotifications = async (role: UserRole) => {
+        if (!role) return [];
         try {
-            const notificationData = await getNotificationsAPI();
+            const notificationData = await getNotificationsAPI(role);
             setNotifications(notificationData);
             localStorage.setItem('notifications', JSON.stringify(notificationData));
             return notificationData;

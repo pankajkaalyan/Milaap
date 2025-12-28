@@ -17,7 +17,7 @@ const Footer: React.FC = () => {
                     {/* Logo */}
                     <div className="flex justify-center md:justify-start items-center space-x-2 mb-4 md:mb-0">
                         <AppLogo className="h-8 w-8 text-amber-500" />
-                        <span className="font-semibold text-white">Milaap</span>
+                        <span className="font-semibold text-white">ANZ Hindu Matrimony</span>
                     </div>
 
                     {/* Rights text - centered even on desktop */}

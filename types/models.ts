@@ -187,11 +187,16 @@ export interface AIKundliReport {
 
 export interface VerificationLog {
   id: string;
-  userId: string | number;
-  userName: string;
-  type: 'EMAIL' | 'OTP';
-  status: 'Success' | 'Failed' | 'Pending';
-  timestamp: string;
+  fullName?: string;
+  email?: string;
+  message?: string;
+  createdAt?: string;
+  type?: 'EMAIL' | 'OTP';
+  status?: 'Success' | 'Failed' | 'Pending';
+  timestamp?: string;
+  userId?: string | number;
+  userName?: string;
+  
 }
 
 export interface AdminUser {

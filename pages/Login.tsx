@@ -109,8 +109,8 @@ const Login: React.FC = () => {
   return (
     <>
       <SEO
-        title={`${t('nav.login')} | Milaap`}
-        description="Login to your Milaap account to connect with potential partners and continue your search for a life partner."
+        title={`${t('nav.login')} | ANZ Hindu Matrimony`}
+        description="Login to your ANZ Hindu Matrimony account to connect with potential partners and continue your search for a life partner."
       />
       <div className="max-w-md mx-auto">
         <Card className="animate-fade-in-scale">

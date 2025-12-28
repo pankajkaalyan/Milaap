@@ -21,9 +21,9 @@ import { useProfileActions } from '../hooks/actions/useProfileActions';
 export interface AppDataContextType {
   // from useNotifications
   notifications: Notification[];
-  markNotificationAsRead: (notificationId: string) => void;
-  markAllNotificationsAsRead: () => void;
-  getNotifications: () => void;
+  markNotificationAsRead: (notificationId: string, role: UserRole) => void;
+  markAllNotificationsAsRead: (role: UserRole) => void;
+  getNotifications: (role: UserRole) => void;
 
   
   // from useFavourites
@@ -65,6 +65,7 @@ export interface AppDataContextType {
   reports: Report[];
   storySubmissions: SuccessStory[];
   verificationLogs: VerificationLog[];
+  getVerificationLogs: () => void;
   adminUsers: AdminUser[];
   approveVerification: (userId: string | number) => void;
   rejectVerification: (userId: string | number) => void;

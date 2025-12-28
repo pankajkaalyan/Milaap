@@ -10,7 +10,7 @@ const WhatsAppWidget: React.FC<WhatsAppWidgetProps> = ({ onClick }) => {
     if (onClick) return onClick();
     // Read configured WhatsApp phone number from Vite env (international format, no +)
     const phone = (import.meta.env as any).VITE_WHATSAPP_NUMBER as string | undefined;
-    const message = 'Hi, I need help with Milaap';
+    const message = 'Hi, I need help with ANZ Hindu Matrimony';
     const encoded = encodeURIComponent(message);
     const url = phone ? `https://wa.me/${phone}?text=${encoded}` : `https://wa.me/?text=${encoded}`;
     window.open(url, '_blank', 'noopener,noreferrer');

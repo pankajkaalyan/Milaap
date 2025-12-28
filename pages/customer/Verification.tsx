@@ -117,9 +117,9 @@ const Verification: React.FC = () => {
                                 <Button onClick={handleSubmit} disabled={document.length === 0} variant={ButtonVariant.SECONDARY}>
                                     {t('verification.submit')}
                                 </Button>
-                                <Button onClick={handleAIVerify} disabled={document.length === 0}>
+                                {/* <Button onClick={handleAIVerify} disabled={document.length === 0}>
                                     {t('verification.verify_with_ai')}
-                                </Button>
+                                </Button> */}
                             </div>
                         )}
                     </div>

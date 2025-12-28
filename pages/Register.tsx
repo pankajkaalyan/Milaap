@@ -171,8 +171,8 @@ const Register: React.FC = () => {
     return (
         <>
             <SEO
-                title={`${t('nav.register')} | Milaap`}
-                description="Create your profile on Milaap for free. Join the most trusted Hindu matrimony service and start your search for a perfect life partner."
+                title={`${t('nav.register')} | ANZ Hindu Matrimony`}
+                description="Create your profile on ANZ Hindu Matrimony for free. Join the most trusted Hindu matrimony service and start your search for a perfect life partner."
             />
             <div className="max-w-2xl mx-auto">
                 <Card className="animate-fade-in-scale">

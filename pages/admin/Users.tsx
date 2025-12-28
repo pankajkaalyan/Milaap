@@ -120,7 +120,7 @@ const AdminUsers: React.FC = () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'milaap-users.csv';
+        a.download = 'anz-hindu-matrimony-users.csv';
         a.click();
         URL.revokeObjectURL(url);
     };

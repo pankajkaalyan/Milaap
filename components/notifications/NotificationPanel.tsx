@@ -51,11 +51,11 @@ interface NotificationPanelProps {
 }
 
 const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose }) => {
-    const { notifications, markNotificationAsRead, markAllNotificationsAsRead, t } = useAppContext();
+    const { user, notifications, markNotificationAsRead, markAllNotificationsAsRead, t } = useAppContext();
     const navigate = useNavigate();
 
     const handleNotificationClick = (notificationId: string, link: string) => {
-        markNotificationAsRead(notificationId);
+        markNotificationAsRead(notificationId, user?.role);
         // Ensure hamburger/mobile menu (and other mobile/medium popups) close immediately on notification click
         try { eventBus.emit(AppEventStatus.ROUTE_CHANGE, { isMobileOrMedium: window.innerWidth < 1024 }); } catch (e) { /* ignore */ }
         navigate(link);
@@ -64,7 +64,7 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ onClose }) => {
 
     const handleMarkAllAsRead = (e: React.MouseEvent) => {
         e.stopPropagation();
-        markAllNotificationsAsRead();
+        markAllNotificationsAsRead(user?.role);
     }
 
     const timeSince = (date: string) => {

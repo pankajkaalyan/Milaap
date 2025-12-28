@@ -36,7 +36,7 @@ const Home: React.FC = () => {
     return (
         <>
             <SEO
-                title={`${t('nav.home')} | Milaap`}
+                title={`${t('nav.home')} | ANZ Hindu Matrimony`}
                 description={t('home.subtitle')}
             />
             <div className="text-center">

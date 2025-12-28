@@ -1,3 +1,4 @@
+import { email } from "@/utils/validators";
 
 export const en = {
   nav: {
@@ -31,6 +32,7 @@ export const en = {
     changelog: 'Changelog',
     interests: 'Interests',
     mutual_matches: 'Mutual Matches',
+    admin_servic_requests: 'Service Requests',
   },
   home: {
     title: 'Find Your Perfect Partner',
@@ -373,6 +375,8 @@ export const en = {
         status: 'Status',
         timestamp: 'Timestamp',
         actions: 'Actions',
+        email: 'Email',
+        message: 'Message',
       },
       retrigger: 'Re-trigger',
       live_feed: 'Live Feed',
@@ -449,7 +453,7 @@ export const en = {
   },
   successStories: {
     title: "Journeys to 'Happily Ever After'",
-    subtitle: "Read the beautiful stories of couples who found their soulmate on Milaap.",
+    subtitle: "Read the beautiful stories of couples who found their soulmate on ANZ Hindu Matrimony.",
     cta: 'Share Your Story',
     read_more: 'Read More',
     submit: {
@@ -472,7 +476,7 @@ export const en = {
     },
   },
   footer: {
-    copyright: '© {year} Milaap. All rights reserved.',
+    copyright: '© {year} ANZ Hindu Matrimony. All rights reserved.',
     privacy: 'Privacy Policy',
     terms: 'Terms & Conditions',
     contact: 'Contact Us',

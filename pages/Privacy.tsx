@@ -12,7 +12,7 @@ const Privacy: React.FC = () => {
                 <div className="space-y-4 text-gray-300 leading-relaxed prose prose-invert max-w-none">
                     <p>Last updated: {new Date().toLocaleDateString()}</p>
                     <p>
-                        Your privacy is important to us. It is Milaap's policy to respect your privacy regarding any information we may collect from you across our website.
+                        Your privacy is important to us. It is ANZ Hindu Matrimony's policy to respect your privacy regarding any information we may collect from you across our website.
                     </p>
                     <h2 className="text-2xl font-semibold text-white pt-4">1. Information We Collect</h2>
                     <p>

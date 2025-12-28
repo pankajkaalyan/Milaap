@@ -20,7 +20,7 @@ const SuccessStoryDetail: React.FC = () => {
     return (
         <>
             <SEO 
-                title={`${story.coupleNames}'s Story | Milaap Success Stories`}
+                title={`${story.coupleNames}'s Story | ANZ Hindu Matrimony Success Stories`}
                 description={shortStory}
             />
             <div className="max-w-4xl mx-auto">

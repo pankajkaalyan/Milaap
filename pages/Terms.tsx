@@ -16,19 +16,19 @@ const Terms: React.FC = () => {
                     </p>
                     <h2 className="text-2xl font-semibold text-white pt-4">1. Use License</h2>
                     <p>
-                        Permission is granted to temporarily download one copy of the materials on Milaap's website for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title.
+                        Permission is granted to temporarily download one copy of the materials on ANZ Hindu Matrimony's website for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title.
                     </p>
                     <h2 className="text-2xl font-semibold text-white pt-4">2. Disclaimer</h2>
                     <p>
-                        The materials on Milaap's website are provided "as is". Milaap makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties.
+                        The materials on ANZ Hindu Matrimony's website are provided "as is". ANZ Hindu Matrimony makes no warranties, expressed or implied, and hereby disclaims and negates all other warranties.
                     </p>
                     <h2 className="text-2xl font-semibold text-white pt-4">3. Limitations</h2>
                     <p>
-                        In no event shall Milaap or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on Milaap's website.
+                        In no event shall ANZ Hindu Matrimony or its suppliers be liable for any damages (including, without limitation, damages for loss of data or profit, or due to business interruption) arising out of the use or inability to use the materials on ANZ Hindu Matrimony's website.
                     </p>
                      <h2 className="text-2xl font-semibold text-white pt-4">4. Governing Law</h2>
                     <p>
-                        Any claim relating to Milaap's website shall be governed by the laws of the website's home jurisdiction without regard to its conflict of law provisions.
+                        Any claim relating to ANZ Hindu Matrimony's website shall be governed by the laws of the website's home jurisdiction without regard to its conflict of law provisions.
                     </p>
                 </div>
             </Card>

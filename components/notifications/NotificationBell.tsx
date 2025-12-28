@@ -4,6 +4,7 @@ import NotificationPanel from './NotificationPanel';
 import Spinner from '../ui/Spinner';
 import { AppEventStatus, SpinnerSize } from '../../types';
 import { eventBus } from '../../utils/eventBus';
+import { use } from 'framer-motion/client';
 
 const BellIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -13,7 +14,7 @@ const BellIcon = () => (
 
 
 const NotificationBell: React.FC = () => {
-    const { notifications , getNotifications} = useAppContext();
+    const { user, notifications , getNotifications} = useAppContext();
     const [isOpen, setIsOpen] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -22,12 +23,12 @@ const NotificationBell: React.FC = () => {
     const isMountedRef = useRef(true);
     const [isFetching, setIsFetching] = useState(false);
 
-    const fetchNotificationsOnce = useCallback(async () => {
+    const fetchNotificationsOnce = useCallback(async (role) => {
         if (fetchedRef.current || isFetching) return;
         fetchedRef.current = true;
         setIsFetching(true);
         try {
-            await getNotifications();
+            await getNotifications(role);
         } catch (e) {
             // allow retry on failure
             fetchedRef.current = false;
@@ -63,14 +64,14 @@ const NotificationBell: React.FC = () => {
         // Only fetch if the notifications array is empty
         // This prevents re-fetching every time the panel is opened/closed
         if (notifications.length === 0) {
-            fetchNotificationsOnce();
+            fetchNotificationsOnce(user.role).catch(() => { /* ignore */ });
         }
     }, [notifications.length, fetchNotificationsOnce]);
 
     // When user logs in, refresh notifications
     useEffect(() => {
-        const onLogin = () => {
-            try { fetchNotificationsOnce(); } catch (e) { /* ignore */ }
+        const onLogin = ({role}) => {
+            try { fetchNotificationsOnce(role); } catch (e) { /* ignore */ }
         };
         eventBus.on(AppEventStatus.LOGIN_SUCCESS, onLogin);
         return () => eventBus.off(AppEventStatus.LOGIN_SUCCESS, onLogin);

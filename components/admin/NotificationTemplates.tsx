@@ -68,12 +68,12 @@ const NotificationTemplates: React.FC = () => {
                     <TemplateEditor
                         title={t('admin.comm.templates.new_message')}
                         placeholders={['{userName}', '{senderName}']}
-                        initialContent="Hi {userName},\n\nYou have received a new message from {senderName} on Milaap. Log in to view it.\n\nRegards,\nThe Milaap Team"
+                        initialContent="Hi {userName},\n\nYou have received a new message from {senderName} on ANZ Hindu Matrimony. Log in to view it.\n\nRegards,\nThe ANZ Hindu Matrimony Team"
                     />
                      <TemplateEditor
                         title={t('admin.comm.templates.weekly_digest')}
                         placeholders={['{userName}']}
-                        initialContent="Hi {userName},\n\nHere are your top recommended matches for the week. Log in to Milaap to connect with them!\n\nRegards,\nThe Milaap Team"
+                        initialContent="Hi {userName},\n\nHere are your top recommended matches for the week. Log in to ANZ Hindu Matrimony to connect with them!\n\nRegards,\nThe ANZ Hindu Matrimony Team"
                     />
                 </div>
             </div>
@@ -85,7 +85,7 @@ const NotificationTemplates: React.FC = () => {
                     <TemplateEditor
                         title={t('admin.comm.templates.new_message')}
                         placeholders={['{senderName}']}
-                        initialContent="You have a new message from {senderName} on Milaap. Reply STOP to unsubscribe."
+                        initialContent="You have a new message from {senderName} on ANZ Hindu Matrimony. Reply STOP to unsubscribe."
                     />
                 </div>
             </div>

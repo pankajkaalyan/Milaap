@@ -6,7 +6,7 @@ import { mockInterests as initialInterests } from '../../data/mockInterests';
 
 // --- LOCALSTORAGE DATABASE SIMULATION ---
 
-const DB_KEY = 'milaap_db';
+const DB_KEY = 'anz_hindu_matrimony_db';
 
 const initialUsers: User[] = initialMatchUsers.map(m => ({
     id: m.id,
