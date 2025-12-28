@@ -7,7 +7,13 @@ import Badge from '../../components/ui/Badge';
 
 const VerificationLogs: React.FC = () => {
     const { t, verificationLogs: initialLogs, retriggerVerification, getVerificationLogs } = useAppContext();
-    const [logs, setLogs] = useState<VerificationLog[]>(initialLogs);
+    // Ensure `logs` is always an array to avoid runtime `map` errors
+    const initialNormalizedLogs = Array.isArray(initialLogs)
+        ? initialLogs
+        : Array.isArray((initialLogs as any)?.items)
+            ? (initialLogs as any).items
+            : [];
+    const [logs, setLogs] = useState<VerificationLog[]>(initialNormalizedLogs);
     const [isLive, setIsLive] = useState(true);
 
     // Simulate new log entries when live feed is on
@@ -39,9 +45,18 @@ const VerificationLogs: React.FC = () => {
         (async () => {
             try {
                 const fresh = await getVerificationLogsRef.current();
-                console.log('Loaded verification logs on mount', fresh);
-                if (mounted && Array.isArray(fresh['items'])) setLogs(fresh['items'] as Array<VerificationLog>);
-                console.log('Verification logs set in state', logs);
+                if (!mounted) return;
+
+                // Accept either: an array of logs, or a paginated object with `items`
+                if (Array.isArray(fresh)) {
+                    setLogs(fresh as Array<VerificationLog>);
+                } else if (Array.isArray((fresh as any)?.items)) {
+                    setLogs((fresh as any).items as Array<VerificationLog>);
+                } else {
+                    // Fallback to empty array to ensure `logs` is always an array
+                    console.warn('Unexpected verification logs shape, defaulting to empty array:', fresh);
+                    setLogs([]);
+                }
             } catch (err) {
                 console.error('Failed to load verification logs on mount', err);
             }
@@ -58,7 +73,7 @@ const VerificationLogs: React.FC = () => {
         }
     };
 
-
+    console.log('Rendering VerificationLogs with logs:', logs);
 
     return (
         <Card>
@@ -79,7 +94,7 @@ const VerificationLogs: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {logs?.map(log => (
+                        {logs && Array.isArray(logs) && logs.map(log => (
                             <tr key={log.id} className="border-b border-white/10 hover:bg-white/5">
                                 <td className="p-3">
                                     <div className="font-semibold">{log.fullName}</div>

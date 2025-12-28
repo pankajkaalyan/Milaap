@@ -34,7 +34,6 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
             setAllUsers(usersData);
             setReports(reportsData);
             setStorySubmissions(storiesData.filter(s => s.status === SuccessStoryStatus.PENDING));
-            setVerificationLogs(logsData);
             setAdminUsers(adminUsersData);
         } catch (error) {
             addToast("Failed to load admin data.", "error");
@@ -128,7 +127,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
                 retryHandle = undefined;
             }
             window.removeEventListener(AppEventStatus.STORAGE, storageListener as EventListener);
-        }; 
+        };
     }, []);
 
     const approveVerification = async (userId: string | number) => {
@@ -275,18 +274,27 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
         addToast(t('toasts.user.updated', { name: userData.name }), 'success');
     };
 
-    
+
     const getVerificationLogs = async () => {
-            try {
-                const serviceRequests = await getServiceRequestsAPI();
-                setVerificationLogs(serviceRequests);
-                return serviceRequests;
-            } catch (err) {
-                addToast("Failed to load Service Requests Data.", "error");
-                console.error("get Service Requests error:", err);
-                throw err;
+        try {
+            const serviceRequests = await getServiceRequestsAPI();
+            console.log('Fetched Service Requests:', serviceRequests);
+            setVerificationLogs(serviceRequests['items'] as Array<VerificationLog>);
+            // Accept either: an array of logs, or a paginated object with `items`
+            if (Array.isArray(serviceRequests)) {
+                setVerificationLogs(serviceRequests as Array<VerificationLog>);
+            } else if (Array.isArray((serviceRequests as any)?.items)) {
+                setVerificationLogs((serviceRequests as any).items as Array<VerificationLog>);
+            } else {
+                console.warn('Unexpected verification logs shape:', serviceRequests);
             }
-        };
+            return serviceRequests;
+        } catch (err) {
+            addToast("Failed to load Service Requests Data.", "error");
+            console.error("get Service Requests error:", err);
+            throw err;
+        }
+    };
 
     return {
         allUsers,
