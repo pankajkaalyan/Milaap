@@ -122,6 +122,71 @@ export const getUserReportsAPI = async (pageNumber: number = 0, pageSize: number
     }
 }
 
+/**
+ * Warn a customer associated with a user report
+ * POST /api/admin/user-report/actions/{reportId}/warn-customer (no body)
+ */
+export const putWarnUserAPI = async (reportId: string | number) => {
+    try {
+        const response = await API.put(`/api/admin/user-report/actions/${reportId}/warn-customer?ts=${Date.now()}`);
+        return response.data;
+    } catch (error) {
+        console.error("Error warning customer for report:", error);
+        throw error;
+    }
+}
+
+
+/**
+ * Dismiss a user report
+ * PUT /api/admin/user-report/actions/{reportId}/dismiss-report (no body)
+ */
+export const putDismissReportAPI = async (reportId: string | number) => {
+    try {
+        const response = await API.put(
+            `/api/admin/user-report/actions/${reportId}/dismiss-report?ts=${Date.now()}`
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error dismissing report:", error);
+        throw error;
+    }
+};
+
+/**
+ * Suspend chat for a user report
+ * PUT /api/admin/user-report/actions/{reportId}/suspend-chat (no body)
+ */
+export const putSuspendChatAPI = async (reportId: string | number) => {
+    try {
+        const response = await API.put(
+            `/api/admin/user-report/actions/${reportId}/suspend-chat?ts=${Date.now()}`
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error suspending chat for report:", error);
+        throw error;
+    }
+};
+
+/**
+ * Suspend a customer associated with a user report
+ * PUT /api/admin/user-report/actions/{reportId}/suspend-customer (no body)
+ */
+export const putSuspendCustomerAPI = async (reportId: string | number) => {
+    try {
+        const response = await API.put(
+            `/api/admin/user-report/actions/${reportId}/suspend-customer?ts=${Date.now()}`
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Error suspending customer for report:", error);
+        throw error;
+    }
+};
+
+
+
 
 
 

@@ -337,6 +337,10 @@ export const en = {
         change_role_admin: 'Mark as Admin',
         change_role_customer: 'Mark as Customer',
       },
+      suspend_chat_confirm_title: 'Confirm Chat Suspension',
+      suspend_chat_confirm_message: 'Are you sure you want to suspend chat privileges for {name}?',
+      suspend_user_confirm_title: 'Confirm User Suspension',
+      suspend_user_confirm_message: 'Are you sure you want to suspend {name}\'s account?',
     },
     verifications: {
       title: 'Verification Requests',
@@ -546,6 +550,9 @@ export const en = {
     action: {
       warn_user: 'Warning sent to {name}.',
       suspend_chat: 'Chat has been suspended.',
+      suspend_user: 'User has been suspended.',
+      suspend_chat_failed: 'Failed to suspend chat. Please try again.',
+      suspend_user_failed: 'Failed to suspend user. Please try again.',
     },
     interest: {
       sent: 'Interest sent to {name}!',

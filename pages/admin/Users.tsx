@@ -235,6 +235,8 @@ const AdminUsers: React.FC = () => {
                 onAddUser={handleAddNewUser}
                 onUpdateUser={handleUpdateUser}
                 onDeleteConfirm={handleDeleteConfirm}
+                onSuspendChatConfirm={() => {}}
+                onSuspendUserConfirm={() => {}}
             />
         </>
     );

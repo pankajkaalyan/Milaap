@@ -5,8 +5,7 @@ import { userService } from '../services/api/userService';
 import { moderationService } from '../services/api/moderationService';
 import { storyService } from '../services/api/storyService';
 import { adminService } from '../services/api/adminService';
-import { getVerificationReviewAPI, approveVerificationAPI, rejectVerificationAPI, getServiceRequestsAPI, getUserReportsAPI } from '../services/api/admin';
-import { normalizeVerificationUser } from '../utils/utils';
+import { getVerificationReviewAPI, approveVerificationAPI, rejectVerificationAPI, getServiceRequestsAPI, getUserReportsAPI, putWarnUserAPI, putDismissReportAPI, putSuspendChatAPI, putSuspendCustomerAPI } from '../services/api/admin';
 
 type TFunction = (key: string, options?: Record<string, string | number>) => string;
 type AddToastFunction = (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -20,7 +19,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
     const [verificationLogs, setVerificationLogs] = useState<VerificationLog[]>([]);
     const [adminUsers, setAdminUsers] = useState<AdminUser[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-
+    
     const fetchData = async () => {
         try {
             setIsLoading(true);
@@ -178,18 +177,49 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
             throw error;
         }
     };
+    
 
-    const resolveReport = async (reportId: string) => {
-        const updatedReport = await moderationService.updateReportStatus(reportId, 'Resolved');
-        setReports(prev => prev.map(r => r.id === reportId ? updatedReport : r));
-        addToast(t('toasts.report.resolved'), 'success');
+    const resolveReport = async (userId: string | number) => {
+        try {
+            await putSuspendCustomerAPI(userId);
+            addToast(t('toasts.action.suspend_user'), 'success');
+            await getReports(); // refresh reports list
+        } catch (error) {
+            console.error('Failed to suspend user chat:', error);
+            addToast(
+                t('toasts.action.suspend_user_failed'),
+                'error'
+            );
+        }
+    };
+            
+    // const resolveReport = async (reportId: string) => {
+    //     const updatedReport = await moderationService.updateReportStatus(reportId, 'Resolved');
+    //     setReports(prev => prev.map(r => r.id === reportId ? updatedReport : r));
+    //     addToast(t('toasts.report.resolved'), 'success');
+    // };
+
+    // const dismissReport = async (reportId: string) => {
+    //     const updatedReport = await moderationService.updateReportStatus(reportId, 'Dismissed');
+    //     setReports(prev => prev.map(r => r.id === reportId ? updatedReport : r));
+    //     addToast(t('toasts.report.dismissed'), 'info');
+    // };
+
+    const dismissReport = async (reportId: string | number) => {
+        try {
+            // const dismissedReport = reports.find(r => r.id === reportId);
+            await putDismissReportAPI(reportId);
+            addToast(t('toasts.report.dismissed'), 'info');
+            await getReports(); // refresh reports list
+        } catch (error) {
+            console.error('Failed to dismiss report:', error);
+            addToast(
+                t('toasts.report.dismiss_failed'),
+                'error'
+            );
+        }
     };
 
-    const dismissReport = async (reportId: string) => {
-        const updatedReport = await moderationService.updateReportStatus(reportId, 'Dismissed');
-        setReports(prev => prev.map(r => r.id === reportId ? updatedReport : r));
-        addToast(t('toasts.report.dismissed'), 'info');
-    };
 
     const approveStory = async (storyId: number) => {
         const updatedStory = await storyService.updateStoryStatus(storyId, SuccessStoryStatus.APPROVED);
@@ -205,16 +235,43 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
         addNotification({ type: NotificationType.STORY_REJECTED, message: t('notifications.story_rejected'), link: '/success-stories', userId: 1 });
     };
 
-    const warnUser = (userId: string | number) => {
-        const userToWarn = allUsers.find(u => u.id === userId);
-        if (userToWarn) addToast(t('toasts.action.warn_user', { name: userToWarn.name }), 'info');
+    const warnUser = async (userId: string | number, reason?: string) => {
+        try {
+            const warnReport = reports.find(r => r.id === userId);
+            await putWarnUserAPI(userId);
+            addToast(
+                t('toasts.action.warn_user', { name: warnReport?.reportedUserName || '' }),
+                'info'
+            );
+            await getReports(); // refresh reports list
+        } catch (error) {
+            console.error('Failed to warn user:', error);
+            addToast(
+                t('toasts.action.warn_user_failed'),
+                'error'
+            );
+        }
     };
 
     const suspendUserChat = async (userId: string | number) => {
-        const updatedUser = await userService.updateProfile(userId, { chatSuspended: true });
-        setAllUsers(prev => prev.map(u => u.id === userId ? updatedUser : u));
-        addToast(t('toasts.action.suspend_chat'), 'success');
+        try {
+            await putSuspendChatAPI(userId);
+            addToast(t('toasts.action.suspend_chat'), 'success');
+            await getReports(); // refresh reports list
+        } catch (error) {
+            console.error('Failed to suspend user chat:', error);
+            addToast(
+                t('toasts.action.suspend_chat_failed'),
+                'error'
+            );
+        }
     };
+
+    // const suspendUserChat = async (userId: string | number) => {
+    //     const updatedUser = await userService.updateProfile(userId, { chatSuspended: true });
+    //     setAllUsers(prev => prev.map(u => u.id === userId ? updatedUser : u));
+    //     addToast(t('toasts.action.suspend_chat'), 'success');
+    // };
 
     const retriggerVerification = (logId: string) => {
         addToast(t('toasts.log.retriggered', { id: logId }), 'info');
@@ -342,6 +399,6 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
         bulkUpdateUserRole,
         addUser,
         updateUser,
-        initializeUsers: (users: User[]) => setAllUsers(users)
+        initializeUsers: (users: User[]) => setAllUsers(users),
     };
 };

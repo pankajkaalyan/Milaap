@@ -332,6 +332,10 @@ export const hi = {
         change_role_admin: 'एडमिन के रूप में चिह्नित करें',
         change_role_customer: 'ग्राहक के रूप में चिह्नित करें',
       },
+      suspend_chat_confirm_title: 'चैट निलंबन की पुष्टि करें',
+      suspend_chat_confirm_message: 'क्या आप वाकई {name} के चैट विशेषाधिकार निलंबित करना चाहते हैं?',
+      suspend_user_confirm_title: 'उपयोगकर्ता निलंबन की पुष्टि करें',
+      suspend_user_confirm_message: 'क्या आप वाकई {name} के खाते को निलंबित करना चाहते हैं?',
     },
     verifications: {
       title: 'सत्यापन अनुरोध',
@@ -361,7 +365,6 @@ export const hi = {
       resolve: 'हल के रूप में चिह्नित करें',
       warn: 'उपयोगकर्ता को चेतावनी दें',
       suspend_chat: 'चैट निलंबित करें',
-      suspend_user: 'उपयोगकर्ता निलंबित कर दिया गया है।',
     },
     logs: {
       title: 'सत्यापन लॉग',
@@ -541,6 +544,9 @@ export const hi = {
     action: {
       warn_user: '{name} को चेतावनी भेजी गई।',
       suspend_chat: 'चैट निलंबित कर दिया गया है।', 
+      suspend_user: 'उपयोगकर्ता निलंबित कर दिया गया है।',
+      suspend_chat_failed: 'चैट निलंबित करने में विफल। कृपया पुनः प्रयास करें।',
+      suspend_user_failed: 'उपयोगकर्ता को निलंबित करने में विफल। कृपया पुनः प्रयास करें।',
     },
     interest: {
       sent: '{name} को दिलचस्पी भेजी गई!',

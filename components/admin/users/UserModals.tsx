@@ -13,6 +13,8 @@ interface UserModalsProps {
   onAddUser: (name: string, email: string, role: UserRole) => void;
   onUpdateUser: (userId: string | number, userData: Partial<Pick<User, 'name' | 'role'>>) => void;
   onDeleteConfirm: (userIds: (string | number)[]) => void;
+  onSuspendChatConfirm: (reporterId: string | number) => void;
+  onSuspendUserConfirm?: (reporterId: string | number) => void;
 }
 
 const UserModals: React.FC<UserModalsProps> = ({
@@ -22,6 +24,8 @@ const UserModals: React.FC<UserModalsProps> = ({
   onAddUser,
   onUpdateUser,
   onDeleteConfirm,
+  onSuspendChatConfirm,
+  onSuspendUserConfirm,
 }) => {
   const { t } = useAppContext();
 
@@ -30,7 +34,7 @@ const UserModals: React.FC<UserModalsProps> = ({
   switch (activeModal) {
     case 'add':
       return (
-        <AddUserModal 
+        <AddUserModal
           isOpen={true}
           onClose={onClose}
           onAddUser={onAddUser}
@@ -38,7 +42,7 @@ const UserModals: React.FC<UserModalsProps> = ({
       );
     case 'edit':
       return (
-        <EditUserModal 
+        <EditUserModal
           isOpen={true}
           onClose={onClose}
           user={modalData.user || null}
@@ -50,7 +54,7 @@ const UserModals: React.FC<UserModalsProps> = ({
       const message = usersToDelete.length > 1
         ? t('admin.users.delete_confirm_bulk').replace('{count}', usersToDelete.length.toString())
         : t('admin.users.delete_confirm').replace('{name}', usersToDelete[0]?.name || 'this user');
-      
+
       return (
         <ConfirmationModal
           isOpen={true}
@@ -62,6 +66,39 @@ const UserModals: React.FC<UserModalsProps> = ({
         />
       );
     }
+    case 'suspendChat':
+      return (
+        <ConfirmationModal
+          isOpen={true}
+          onClose={onClose}
+          onConfirm={() =>
+            onSuspendChatConfirm(modalData.report?.id)
+          }
+          title={t('admin.users.suspend_chat_confirm_title')}
+          message={t('admin.users.suspend_chat_confirm_message').replace(
+            '{name}',
+            modalData.report?.reportedUserName || ''
+          )}
+          confirmButtonText={t('admin.actions.suspend_chat')}
+        />
+      );
+
+      case 'suspendUser':
+      return (
+        <ConfirmationModal
+          isOpen={true}
+          onClose={onClose}
+          onConfirm={() =>
+            onSuspendUserConfirm(modalData.report?.id)
+          }
+          title={t('admin.users.suspend_user_confirm_title')}
+          message={t('admin.users.suspend_user_confirm_message').replace(
+            '{name}',
+            modalData.report?.reportedUserName || ''
+          )}
+          confirmButtonText={t('admin.actions.suspend_user')}
+        />
+      );
     default:
       return null;
   }

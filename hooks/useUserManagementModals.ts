@@ -1,10 +1,11 @@
 import { useState, useCallback } from 'react';
-import { User } from '../types';
+import { User, Report } from '../types';
 
-export type AdminModalType = 'add' | 'edit' | 'delete' | null;
+export type AdminModalType = 'add' | 'edit' | 'delete' | 'suspendChat' | 'suspendUser' | null;
 export interface AdminModalData {
   user?: User;
   users?: User[];
+  report?: Report;
 }
 
 export const useUserManagementModals = () => {
@@ -15,15 +16,25 @@ export const useUserManagementModals = () => {
     setActiveModal('add');
     setModalData({});
   }, []);
-  
+
   const openEditModal = useCallback((user: User) => {
     setActiveModal('edit');
     setModalData({ user });
   }, []);
-  
+
   const openDeleteModal = useCallback((users: User[]) => {
     setActiveModal('delete');
     setModalData({ users });
+  }, []);
+
+  const openSuspendChatModal = useCallback((report : Report) => {
+    setActiveModal('suspendChat');
+    setModalData({report});
+  }, []);
+
+  const openSuspendUserModal = useCallback((report : Report) => {
+    setActiveModal('suspendUser');
+    setModalData({report});
   }, []);
 
   const closeModal = useCallback(() => {
@@ -38,5 +49,7 @@ export const useUserManagementModals = () => {
     openEditModal,
     openDeleteModal,
     closeModal,
+    openSuspendChatModal,
+    openSuspendUserModal
   };
 };
