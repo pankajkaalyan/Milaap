@@ -51,21 +51,22 @@ const Reports: React.FC = () => {
                                 "{report.details || 'No additional details provided.'}"
                             </blockquote>
                             <div className="flex flex-wrap justify-end gap-3 mt-4">
-                                {report.reason === 'Inappropriate Content/Behavior' && (
-                                    <>
+                                <Button onClick={() => dismissReport(report.id)} variant={ButtonVariant.SECONDARY} className="w-auto !py-1 !px-3 !text-sm !bg-gradient-to-r !from-green-600 !to-teal-600">
+                                    {t('admin.actions.dismiss')}
+                                </Button>
+                                {/* {report.reason === 'inappropriate' && (
+                                    <> */}
                                         <Button onClick={() => warnUser(report.reportedUserId)} className="w-auto !py-1 !px-3 !text-sm !bg-gradient-to-r !from-yellow-600 !to-orange-500">
                                             {t('admin.actions.warn')}
                                         </Button>
                                         <Button onClick={() => suspendUserChat(report.reportedUserId)} className="w-auto !py-1 !px-3 !text-sm !bg-gradient-to-r !from-red-600 !to-red-800">
                                             {t('admin.actions.suspend_chat')}
                                         </Button>
-                                    </>
-                                )}
-                                <Button onClick={() => dismissReport(report.id)} variant={ButtonVariant.SECONDARY} className="w-auto !py-1 !px-3 !text-sm">
-                                    {t('admin.actions.dismiss')}
-                                </Button>
-                                <Button onClick={() => resolveReport(report.id)} className="w-auto !py-1 !px-3 !text-sm !bg-gradient-to-r !from-green-600 !to-teal-600">
-                                    {t('admin.actions.resolve')}
+                                    {/* </>
+                                )} */}
+                                
+                                <Button onClick={() => resolveReport(report.id)} className="w-auto !py-1 !px-3 !text-sm !bg-gradient-to-r !from-red-700 !to-red-900">
+                                    {t('admin.actions.suspend_user')}
                                 </Button>
                             </div>
                         </div>

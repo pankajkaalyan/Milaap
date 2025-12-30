@@ -162,7 +162,7 @@ const ViewProfile: React.FC = () => {
                 activeModal={activeModal}
                 modalData={modalData}
                 onClose={closeModal}
-                targetUser={user}
+                targetUser={targetUserProfile}
             />
         </>
     );

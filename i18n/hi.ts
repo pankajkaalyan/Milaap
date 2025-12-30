@@ -361,6 +361,7 @@ export const hi = {
       resolve: 'हल के रूप में चिह्नित करें',
       warn: 'उपयोगकर्ता को चेतावनी दें',
       suspend_chat: 'चैट निलंबित करें',
+      suspend_user: 'उपयोगकर्ता निलंबित कर दिया गया है।',
     },
     logs: {
       title: 'सत्यापन लॉग',
@@ -539,7 +540,7 @@ export const hi = {
     },
     action: {
       warn_user: '{name} को चेतावनी भेजी गई।',
-      suspend_chat: 'चैट निलंबित कर दिया गया है।',
+      suspend_chat: 'चैट निलंबित कर दिया गया है।', 
     },
     interest: {
       sent: '{name} को दिलचस्पी भेजी गई!',

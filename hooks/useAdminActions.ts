@@ -33,7 +33,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
             ]);
             setAllUsers(usersData);
             // setReports(reportsData);
-            setStorySubmissions(storiesData.filter(s => s.status === SuccessStoryStatus.PENDING));
+            // setStorySubmissions(storiesData.filter(s => s.status === SuccessStoryStatus.PENDING));
             setAdminUsers(adminUsersData);
         } catch (error) {
             addToast("Failed to load admin data.", "error");

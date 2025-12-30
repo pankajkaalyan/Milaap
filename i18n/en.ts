@@ -366,6 +366,7 @@ export const en = {
       resolve: 'Mark as Resolved',
       warn: 'Warn User',
       suspend_chat: 'Suspend Chat',
+      suspend_user: 'Suspend User',
     },
     logs: {
       title: 'Verification Logs',

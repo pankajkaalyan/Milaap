@@ -89,7 +89,7 @@ export const unblockUserAPI = async (targetUserId) => {
 export const reportUserAPI = async ({ reportedId, reason, description }) => {
     try {
         const payload = {
-            reportedId,
+            userReportId: reportedId,
             reason,
             description,
         };
