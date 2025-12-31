@@ -15,7 +15,7 @@ const NotificationSettingsComponent: React.FC<NotificationSettingsProps> = ({ se
             <h2 className="text-2xl font-bold text-white mb-6">{t('nav.settings')}</h2>
 
             {/* PUSH */}
-            <div>
+            {/* <div>
                 <h3 className="text-xl font-bold text-white mb-2">{t('settings.push.title')}</h3>
                 <p className="text-gray-400 mb-4">{t('settings.push.desc')}</p>
                 <div className="space-y-4">
@@ -23,7 +23,7 @@ const NotificationSettingsComponent: React.FC<NotificationSettingsProps> = ({ se
                     <ToggleSwitch id="push-new-message" label={t('settings.push.new_message')} checked={settings.push.newMessage} onChange={(val) => onToggleChange('push', 'newMessage', val)} />
                     <ToggleSwitch id="push-profile-view" label={t('settings.push.profile_view')} checked={settings.push.profileView} onChange={(val) => onToggleChange('push', 'profileView', val)} />
                 </div>
-            </div>
+            </div> */}
 
             {/* EMAIL */}
             <div className="mt-8 pt-6 border-t border-white/10">

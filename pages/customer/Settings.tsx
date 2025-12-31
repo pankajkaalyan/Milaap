@@ -103,12 +103,12 @@ const Settings: React.FC = () => {
                     />
                 </Card> */}
 
-                <Card>
+                {/* <Card>
                     <NotificationSettingsComponent
                         settings={formState.notificationSettings}
                         onToggleChange={handleToggleChange}
                     />
-                </Card>
+                </Card> */}
 
                 <Card>
                     <BlockedUsers />

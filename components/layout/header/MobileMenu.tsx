@@ -43,9 +43,9 @@ const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
                 <NavLink to="/profile" className="w-full text-center px-3 py-2 rounded-md text-sm font-medium transition-colors hover:text-white hover:bg-white/10" onClick={onClose}>{t('nav.my_profile')}</NavLink>
                 <NavLink to="/settings" className="w-full text-center px-3 py-2 rounded-md text-sm font-medium transition-colors hover:text-white hover:bg-white/10" onClick={onClose}>{t('nav.settings')}</NavLink>
                 <NavLink to="/verification" className="w-full text-center px-3 py-2 rounded-md text-sm font-medium transition-colors hover:text-white hover:bg-white/10" onClick={onClose}>{t('nav.verification')}</NavLink>
-                <NavLink to="/membership" className="w-full text-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-yellow-500 to-orange-500 rounded-md hover:opacity-90 transition-opacity cursor-pointer" onClick={onClose}>
+                {/* <NavLink to="/membership" className="w-full text-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-yellow-500 to-orange-500 rounded-md hover:opacity-90 transition-opacity cursor-pointer" onClick={onClose}>
                   {t('nav.upgrade')}
-                </NavLink>
+                </NavLink> */}
                 <button onClick={handleLogout} className="w-full text-center px-4 py-2 text-sm font-medium text-white bg-white/10 rounded-md hover:bg-white/20 transition-colors cursor-pointer">
                   {t('nav.logout')}
                 </button>
