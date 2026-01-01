@@ -94,6 +94,36 @@ const StorySubmissions: React.FC = () => {
         </button>
     );
 
+    const StoryImage = ({ story }) => {
+        const [imgError, setImgError] = useState(false);
+
+        const showInitials = imgError || !story?.imageUrl;
+
+        const initials = story?.coupleNames
+            ?.split(' ')
+            .map(name => name[0])
+            .join('')
+            .toUpperCase();
+
+        return (
+            <>
+                {!showInitials ? (
+                    <img
+                        src={story.imageUrl}
+                        alt={story.coupleNames}
+                        className="w-full h-48 object-cover rounded-t-lg"
+                        onError={() => setImgError(true)}
+                    />
+                ) : (
+                    <div className="w-full h-48 rounded-t-lg bg-gray-300 flex items-center justify-center text-6xl font-bold text-gray-700">
+                        {initials}
+                    </div>
+                )}
+            </>
+        );
+    };
+
+
     return (
         <Card>
             <h1 className="text-3xl font-bold text-white mb-4">{t('admin.stories.title')}</h1>
@@ -108,7 +138,9 @@ const StorySubmissions: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     {filteredStories.map(story => (
                         <div key={story.id} className="bg-white/5 rounded-lg border border-white/10 overflow-hidden flex flex-col">
-                            <img src={story.imageUrl} alt={story.coupleNames} className="w-full h-48 object-cover" />
+                            {/* <img src={story.imageUrl} alt={story.coupleNames} className="w-full h-48 object-cover" /> */}
+                            <StoryImage story={story} />
+
                             <div className="p-4 flex flex-col flex-grow">
                                 <div className="flex justify-between items-start">
                                     <div>

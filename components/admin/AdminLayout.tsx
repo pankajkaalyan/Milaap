@@ -45,7 +45,7 @@ const AdminLayout: React.FC = () => {
                              <VerificationIcon />
                             <span>{t('nav.admin_verification')}</span>
                         </NavLink>
-                         <NavLink to="/admin/verification-logs" className={getNavLinkClasses}>
+                         <NavLink to="/admin/service-requests" className={getNavLinkClasses}>
                              <LogsIcon />
                             <span>{t('nav.admin_servic_requests')}</span>
                         </NavLink>

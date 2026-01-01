@@ -235,7 +235,7 @@ const AppRouter: React.FC = () => {
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="user-management" element={<AdminUsers />} />
             <Route path="verification-requests" element={<VerificationRequests />} />
-            <Route path="verification-logs" element={<VerificationLogs />} />
+            <Route path="service-requests" element={<VerificationLogs />} />
             <Route path="reports" element={<Reports />} />
             <Route path="story-submissions" element={<AdminStorySubmissions />} />
              <Route 
