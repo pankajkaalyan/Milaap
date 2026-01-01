@@ -1,4 +1,5 @@
 import { email } from "@/utils/validators";
+import { fail } from "assert";
 
 export const en = {
   nav: {
@@ -71,6 +72,7 @@ export const en = {
     subtitle: 'Enter your email and we will send you a reset link.',
     cta: 'Send Reset Link',
     success: 'If an account exists, a reset link has been sent to your email.',
+    failure: 'Failed to send reset link. Please try again later.',
   },
   resetPassword: {
     title: 'Reset Your Password',
@@ -78,6 +80,7 @@ export const en = {
     confirm_password: 'Confirm New Password',
     cta: 'Reset Password',
     success: 'Password updated successfully! Please log in.',
+    failure: 'Failed to reset password. The link may be invalid or expired.',
   },
   register: {
     title: 'Create Your Profile',

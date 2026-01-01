@@ -31,7 +31,7 @@ const ResetPassword = () => {
                 addToast(t('resetPassword.success'), 'success');
             } catch (err) {
                 // console.error('Forgot password failed:', err);
-                addToast(t('forgotPassword.failure'), 'error');
+                addToast(t('resetPassword.failure'), 'error');
             }
             
             navigate('/login');
