@@ -43,6 +43,7 @@ import Communication from '../pages/admin/Communication';
 import Reporting from '../pages/admin/Reporting';
 import SuccessStoryDetail from '../pages/SuccessStoryDetail';
 import ChangePassword from '@/pages/ChangePassword';
+import ActivateProfile from '@/pages/ActivateProfile';
 
 interface PrivateRouteProps {
   children: React.ReactElement;
@@ -80,6 +81,7 @@ const AppRouter: React.FC = () => {
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
+          <Route path="/activate/:token" element={<ActivateProfile />} />
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="forgot-password" element={<ForgotPassword />} />

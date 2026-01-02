@@ -232,6 +232,23 @@ export const updatePasswordAPI = async (
     }
 };
 
+export const activateProfileAPI = async (token: string) => {
+    try {
+        const response = await API.post(
+            `/api/auth/activate`, { token }
+        );
+        return response.data;
+    } catch (error: any) {
+        console.error(
+            "Error activating profile:",
+            error.response?.data || error
+        );
+        throw error;
+    }
+};
+
+
+
 
 
 

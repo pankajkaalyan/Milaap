@@ -738,6 +738,14 @@ export const en = {
     cta: "Update Password",
     success: "Password updated successfully!",
     failure: "Failed to update password."
+  },
+  activateProfile: {
+    title: "Activating Profile",
+    activatedTitle: "Profile Activated",
+    processing: "Please wait while we activate your profile...",
+    success: "Your profile has been activated successfully",
+    alreadyActivated: "Profile is already activated. Please login.",
+    failure: "Profile activation failed or link expired",
+    login_cta: "Go to Login"
   }
-
 };
