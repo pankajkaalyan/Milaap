@@ -57,7 +57,7 @@ const Login: React.FC = () => {
             setLoginError(msg);
             addToast(msg, 'error');
           } else {
-            const msg = t('login.failed') || 'Login failed. Please check your credentials and try again.';
+            const msg = err.response?.data?.errorMessage || 'Login failed. Please check your credentials and try again.';
             setLoginError(msg);
             addToast(msg, 'error');
           }

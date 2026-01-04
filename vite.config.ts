@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
 
     return {
         plugins: [react()],
-
+        base: '/',
         define: {
             'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
             'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY),
@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => {
         server: {
             port: 5173,
             host: "localhost",
-
+            historyApiFallback: true,
             proxy: {
                 "/api": {
                     target: env.VITE_API_URL,

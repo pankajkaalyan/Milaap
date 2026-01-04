@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAppContext } from '../hooks/useAppContext';
 import { UserRole, UserProfile, RegisterFormData, ButtonVariant } from '../types';
@@ -15,10 +15,15 @@ import Step5Uploads from '../components/auth/register/Step5Uploads';
 import { useMultiStepForm } from '../hooks/useMultiStepForm';
 import SEO from '../components/ui/SEO';
 import { registerAPI } from '@/services/api/register';
+import RegistrationModal from '@/components/ui/RegistrationModal';
 
 const Register: React.FC = () => {
     const { login, addToast, t, trackEvent } = useAppContext();
     const navigate = useNavigate();
+    const [showActivationPopup, setShowActivationPopup] = useState(false);
+    const [registrationError, setRegistrationError] = React.useState<string | null>(null);
+
+
 
     const steps = [
         t('register.steps.account'),
@@ -121,19 +126,20 @@ const Register: React.FC = () => {
 
             registerAPI(userProfile).then(() => {
                 // console.log('User registered successfully');
-                login(formData.email, UserRole.CUSTOMER, userProfile);
+                // login(formData.email, UserRole.CUSTOMER, userProfile);
                 trackEvent('registration_success', { email: formData.email });
                 addToast('Registration successful! Welcome!', 'success');
-                navigate('/dashboard');
+                // navigate('/dashboard');
+                setShowActivationPopup(true);
             }).catch((error) => {
                 // console.log("Registration failed:", error?.response?.data);
 
                 const apiError = error?.response?.data?.errorMessage || "Registration failed";
-                addToast(apiError, "error");
+                // addToast(apiError, "error");
 
                 // Normalize to lowercase
                 const msg = apiError.toLowerCase();
-
+                setRegistrationError(apiError);
                 // Update specific UI field errors if backend says duplicate email or mobile
                 setErrors(prev => ({
                     ...prev,
@@ -152,16 +158,22 @@ const Register: React.FC = () => {
         }
     };
 
+    const handleInputChangeWithClear = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setRegistrationError(null);
+        handleInputChange(e);
+    };
+
+
     const renderStepContent = () => {
         switch (currentStep) {
             case 0:
-                return <Step1Account formData={formData} errors={errors} handleInputChange={handleInputChange} t={t} />;
+                return <Step1Account formData={formData} errors={errors} handleInputChange={handleInputChangeWithClear} t={t} />;
             case 1:
-                return <Step2Personal formData={formData} errors={errors} handleInputChange={handleInputChange} handleDropdownChange={handleDropdownChange} t={t} />;
+                return <Step2Personal formData={formData} errors={errors} handleInputChange={handleInputChangeWithClear} handleDropdownChange={handleDropdownChange} t={t} />;
             case 2:
-                return <Step3Caste formData={formData} errors={errors} handleInputChange={handleInputChange} handleDropdownChange={handleDropdownChange} t={t} />;
+                return <Step3Caste formData={formData} errors={errors} handleInputChange={handleInputChangeWithClear} handleDropdownChange={handleDropdownChange} t={t} />;
             case 3:
-                return <Step4Family formData={formData} errors={errors} handleInputChange={handleInputChange} handleDropdownChange={handleDropdownChange} t={t} />;
+                return <Step4Family formData={formData} errors={errors} handleInputChange={handleInputChangeWithClear} handleDropdownChange={handleDropdownChange} t={t} />;
             // case 4:
             //     return <Step5Uploads formData={formData} errors={errors} handleFileChange={handleFileChange} t={t} />;
             default: return null;
@@ -200,11 +212,25 @@ const Register: React.FC = () => {
                             )}
                         </div>
                     </form>
+                    {registrationError && (
+                        <div className="mt-6 p-4 rounded-md border border-red-500/40 bg-red-900/20 text-red-400 text-sm">
+                            {registrationError}
+                        </div>
+                    )}
                     <p className="mt-6 text-center text-sm text-gray-400">
                         {t('register.have_account')} <Link to="/login" className="font-medium text-amber-400 hover:text-amber-300 cursor-pointer">{t('nav.login')}</Link>
                     </p>
                 </Card>
             </div>
+            <RegistrationModal
+                isOpen={showActivationPopup}
+                onClose={() => {
+                    setShowActivationPopup(false);
+                    navigate('/login');
+                }}
+                title="Profile Activation Required"
+                description="An activation link has been sent to your email ID. Please login and activate your profile."
+            />
         </>
     );
 };
