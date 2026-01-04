@@ -186,6 +186,87 @@ export const putSuspendCustomerAPI = async (reportId: string | number) => {
 };
 
 
+/**
+ * Get all pending chat reports for admin moderation
+ * GET /api/admin/chat-reports/pending
+ */
+export const getPendingChatReportsAPI = async () => {
+  try {
+    const response = await API.get(
+      `/api/admin/chat-reports/pending?ts=${Date.now()}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching pending chat reports:', error);
+    throw error;
+  }
+};
+
+
+/**
+ * Get chat report details by report ID for admin moderation
+ * GET /api/admin/chat-reports/{reportId}
+ */
+export const getChatReportByIdAPI = async (
+  reportId: string | number
+) => {
+  try {
+    const response = await API.get(
+      `/api/admin/chat-reports/${reportId}?ts=${Date.now()}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching chat report by ID:', error);
+    throw error;
+  }
+};
+
+
+/**
+ * Warn a user associated with a chat report
+ * PUT /api/admin/chat-reports/warn
+ */
+export const putWarnUserForChatReportAPI = async (payload: {
+  chatReportId: string | number;
+  userId: string | number;
+}) => {
+  try {
+    const response = await API.put(
+      `/api/admin/chat-reports/warn?ts=${Date.now()}`,
+      payload
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error warning user for chat report:', error);
+    throw error;
+  }
+};
+
+
+/**
+ * Suspend a chat associated with a chat report
+ * PUT /api/admin/chat-reports/suspend-chat
+ */
+export const putSuspendChatForChatReportAPI = async (payload: {
+  chatReportId: string | number;
+  userId: string | number;
+}) => {
+  try {
+    const response = await API.put(
+      `/api/admin/chat-reports/suspend-chat?ts=${Date.now()}`,
+      payload
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error suspending chat for chat report:', error);
+    throw error;
+  }
+};
+
+
+
+
+
 
 
 

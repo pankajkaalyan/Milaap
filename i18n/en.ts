@@ -747,5 +747,17 @@ export const en = {
     alreadyActivated: "Profile is already activated. Please login.",
     failure: "Profile activation failed or link expired",
     login_cta: "Go to Login"
+  },
+  report: {
+    messages: {
+      title: "Report Messages",
+      selected_count: "Selected messages",
+      reason_placeholder: "Please provide a reason for reporting",
+      submit: "Submit Report",
+      success: "Your report has been submitted successfully.",
+      error: "Failed to submit report. Please try again.",
+      limit_error: "You can report up to 10 messages only.",
+      empty_error: "Please enter a reason before submitting."
+    }
   }
 };

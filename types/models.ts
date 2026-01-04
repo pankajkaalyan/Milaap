@@ -120,6 +120,7 @@ export interface Message {
   timestamp: string;
   status: MessageStatus;
   receiverId?: number | string;
+  messageId?: number;
 }
 
 export interface Conversation {
@@ -138,6 +139,32 @@ export interface AdminConversation {
   participants: [Match, Match];
   messages: Message[];
   isFlagged?: boolean;
+  reportedByUserName?: string;
+  reportedByUserId?: string | number;
+  reportedUserId?: string | number;
+  reportedUserName?: string;
+}
+
+export interface AdminChatReport {
+  chatId: string;
+  createdAt: string;
+  messages: AdminMessage[];
+  reason: string;
+  reportId: string | number;
+  reportedByUserId: string | number;
+  reportedByUserName?: string;
+  reportedUserId: string | number;
+  reportedUserName?: string;
+  status: 'Pending' | 'Resolved' | 'Dismissed';
+}
+
+export interface AdminMessage {
+  id: string;
+  senderId: string;
+  content: string;
+  sentAt: string;
+  senderName: string;
+  senderPhoto?: string;
 }
 
 export interface SuccessStory {
