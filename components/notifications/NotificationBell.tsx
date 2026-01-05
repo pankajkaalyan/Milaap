@@ -2,7 +2,7 @@ import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { useAppContext } from '../../hooks/useAppContext';
 import NotificationPanel from './NotificationPanel';
 import Spinner from '../ui/Spinner';
-import { AppEventStatus, SpinnerSize } from '../../types';
+import { AppEventStatus, SpinnerSize, UserRole } from '../../types';
 import { eventBus } from '../../utils/eventBus';
 import { use } from 'framer-motion/client';
 
@@ -14,7 +14,7 @@ const BellIcon = () => (
 
 
 const NotificationBell: React.FC = () => {
-    const { user, notifications , getNotifications} = useAppContext();
+    const { user, notifications, getNotifications } = useAppContext();
     const [isOpen, setIsOpen] = useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -23,17 +23,39 @@ const NotificationBell: React.FC = () => {
     const isMountedRef = useRef(true);
     const [isFetching, setIsFetching] = useState(false);
 
-    const fetchNotificationsOnce = useCallback(async (role) => {
-        if (fetchedRef.current || isFetching) return;
+    const fetchNotificationsOnce = useCallback(async (role: UserRole) => {
+        // 1. Guard: Check if already fetching, already fetched, or missing credentials
+        if (fetchedRef.current || isFetching || !localStorage.getItem('token') || !role) return;
+
         fetchedRef.current = true;
         setIsFetching(true);
+
+        const maxRetries = 3;
+        const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
+
+        const attemptFetch = async (attempt: number): Promise<void> => {
+            try {
+                await getNotifications(role);
+            } catch (e) {
+                if (attempt < maxRetries && isMountedRef.current) {
+                    console.warn(`Fetch failed. Retry ${attempt}/${maxRetries}...`);
+
+                    // Wait before retrying (e.g., 2 seconds)
+                    await delay(2000);
+                    return attemptFetch(attempt + 1);
+                } else {
+                    // All retries failed or component unmounted
+                    fetchedRef.current = false;
+                }
+            }
+        };
+
         try {
-            await getNotifications(role);
-        } catch (e) {
-            // allow retry on failure
-            fetchedRef.current = false;
+            await attemptFetch(1);
         } finally {
-            if (isMountedRef.current) setIsFetching(false);
+            if (isMountedRef.current) {
+                setIsFetching(false);
+            }
         }
     }, [getNotifications, isFetching]);
 
@@ -70,7 +92,7 @@ const NotificationBell: React.FC = () => {
 
     // When user logs in, refresh notifications
     useEffect(() => {
-        const onLogin = ({role}) => {
+        const onLogin = ({ role }) => {
             try { fetchNotificationsOnce(role); } catch (e) { /* ignore */ }
         };
         eventBus.on(AppEventStatus.LOGIN_SUCCESS, onLogin);
