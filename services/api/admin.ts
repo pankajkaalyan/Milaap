@@ -2,24 +2,24 @@ import { User, UserRole } from "@/types";
 import { API } from "../api";
 
 export const getAdminUsersList = async (pageNumber: number = 0, pageSize: number = 10000) => {
-    try {
-        const response = await API.get(`/api/admin/users?page=${pageNumber}&size=${pageSize}&ts=${Date.now()}`);
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching admin users:", error);
-        throw error;
-    }
+  try {
+    const response = await API.get(`/api/admin/users?page=${pageNumber}&size=${pageSize}&ts=${Date.now()}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching admin users:", error);
+    throw error;
+  }
 }
 
 export const getVerificationReviewAPI = async () => {
-    try {
-        // Include a timestamp to avoid caching issues
-        const response = await API.get(`/api/admin/verification/review?ts=${Date.now()}`);
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching pending verifications:", error);
-        throw error;
-    }
+  try {
+    // Include a timestamp to avoid caching issues
+    const response = await API.get(`/api/admin/verification/review?ts=${Date.now()}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching pending verifications:", error);
+    throw error;
+  }
 }
 
 /**
@@ -27,14 +27,14 @@ export const getVerificationReviewAPI = async () => {
  * POST /api/admin/verification/review/approve
  */
 export const approveVerificationAPI = async (userId: string | number, note?: string) => {
-    try {
-        const payload = { id: userId, status: "VERIFIED", comment: note };
-        const response = await API.patch(`/api/admin/verification/review/approve`, payload);
-        return response.data;
-    } catch (error) {
-        console.error("Error approving verification:", error);
-        throw error;
-    }
+  try {
+    const payload = { id: userId, status: "VERIFIED", comment: note };
+    const response = await API.patch(`/api/admin/verification/review/approve`, payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error approving verification:", error);
+    throw error;
+  }
 }
 
 /**
@@ -42,70 +42,70 @@ export const approveVerificationAPI = async (userId: string | number, note?: str
  * POST /api/admin/verification/review/reject
  */
 export const rejectVerificationAPI = async (userId: string | number, reason?: string) => {
-    try {
-        const payload = { id: userId, status: "REJECTED", comments: reason };
-        const response = await API.patch(`/api/admin/verification/review/reject`, payload);
-        return response.data;
-    } catch (error) {
-        console.error("Error rejecting verification:", error);
-        throw error;
-    }
+  try {
+    const payload = { id: userId, status: "REJECTED", comments: reason };
+    const response = await API.patch(`/api/admin/verification/review/reject`, payload);
+    return response.data;
+  } catch (error) {
+    console.error("Error rejecting verification:", error);
+    throw error;
+  }
 }
 
-export const updateUserApi = async (userId: string | number, payload: Partial<User> ) => {
-    try {
-        const payloadData = {
-            id: payload.id,
-            fullName: payload.name,
-            email: payload.email,
-            role: payload.role === UserRole.ADMIN ? UserRole.ROLE_ADMIN : UserRole.ROLE_USER
-        };
-        const response = await API.put("/api/admin/users", payloadData);
-        return response.data;
-    } catch (error) {
-        console.error("Error updating user:", error);
-        throw error;
-    }
+export const updateUserApi = async (userId: string | number, payload: Partial<User>) => {
+  try {
+    const payloadData = {
+      id: payload.id,
+      fullName: payload.name,
+      email: payload.email,
+      role: payload.role === UserRole.ADMIN ? UserRole.ROLE_ADMIN : UserRole.ROLE_USER
+    };
+    const response = await API.put("/api/admin/users", payloadData);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw error;
+  }
 }
 
 export const roleChangeApi = async (ids: (number | string)[], role: UserRole) => {
-    try {
-        const payload = { 
-            ids, 
-            role: role === UserRole.ADMIN ? UserRole.ROLE_ADMIN : UserRole.ROLE_USER 
-        };
-        const response = await API.put("/api/admin/users/change-role", payload);
-        return response.data;
+  try {
+    const payload = {
+      ids,
+      role: role === UserRole.ADMIN ? UserRole.ROLE_ADMIN : UserRole.ROLE_USER
+    };
+    const response = await API.put("/api/admin/users/change-role", payload);
+    return response.data;
 
-    } catch (error) {
-        console.error("Error updating role:", error);
-        throw error;
-    }
+  } catch (error) {
+    console.error("Error updating role:", error);
+    throw error;
+  }
 };
 
 export const userDeleteApi = async (ids: (number | string)[]) => {
-    try {
-        const response = await API.delete("/api/admin/users", {
-            data: { ids }   // ✅ DELETE body must be inside `data`
-        });
+  try {
+    const response = await API.delete("/api/admin/users", {
+      data: { ids }   // ✅ DELETE body must be inside `data`
+    });
 
-        return response.data;
+    return response.data;
 
-    } catch (error) {
-        console.error("Error deleting users:", error);
-        throw error;
-    }
+  } catch (error) {
+    console.error("Error deleting users:", error);
+    throw error;
+  }
 };
 
 
 export const getServiceRequestsAPI = async (pageNumber: number = 0, pageSize: number = 10000) => {
-    try {
-        const response = await API.get(`api/admin/sr?page=${pageNumber}&size=${pageSize}&ts=${Date.now()}`);
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching admin users:", error);
-        throw error;
-    }
+  try {
+    const response = await API.get(`api/admin/sr?page=${pageNumber}&size=${pageSize}&ts=${Date.now()}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching admin users:", error);
+    throw error;
+  }
 }
 
 /**
@@ -113,13 +113,13 @@ export const getServiceRequestsAPI = async (pageNumber: number = 0, pageSize: nu
  * GET /api/admin/user-report?page=0&size=10
  */
 export const getUserReportsAPI = async (pageNumber: number = 0, pageSize: number = 10000) => {
-    try {
-        const response = await API.get(`/api/admin/user-report?page=${pageNumber}&size=${pageSize}&ts=${Date.now()}`);
-        return response.data;
-    } catch (error) {
-        console.error("Error fetching user reports:", error);
-        throw error;
-    }
+  try {
+    const response = await API.get(`/api/admin/user-report?page=${pageNumber}&size=${pageSize}&ts=${Date.now()}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user reports:", error);
+    throw error;
+  }
 }
 
 /**
@@ -127,13 +127,13 @@ export const getUserReportsAPI = async (pageNumber: number = 0, pageSize: number
  * POST /api/admin/user-report/actions/{reportId}/warn-customer (no body)
  */
 export const putWarnUserAPI = async (reportId: string | number) => {
-    try {
-        const response = await API.put(`/api/admin/user-report/actions/${reportId}/warn-customer?ts=${Date.now()}`);
-        return response.data;
-    } catch (error) {
-        console.error("Error warning customer for report:", error);
-        throw error;
-    }
+  try {
+    const response = await API.put(`/api/admin/user-report/actions/${reportId}/warn-customer?ts=${Date.now()}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error warning customer for report:", error);
+    throw error;
+  }
 }
 
 
@@ -142,15 +142,15 @@ export const putWarnUserAPI = async (reportId: string | number) => {
  * PUT /api/admin/user-report/actions/{reportId}/dismiss-report (no body)
  */
 export const putDismissReportAPI = async (reportId: string | number) => {
-    try {
-        const response = await API.put(
-            `/api/admin/user-report/actions/${reportId}/dismiss-report?ts=${Date.now()}`
-        );
-        return response.data;
-    } catch (error) {
-        console.error("Error dismissing report:", error);
-        throw error;
-    }
+  try {
+    const response = await API.put(
+      `/api/admin/user-report/actions/${reportId}/dismiss-report?ts=${Date.now()}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error dismissing report:", error);
+    throw error;
+  }
 };
 
 /**
@@ -158,15 +158,15 @@ export const putDismissReportAPI = async (reportId: string | number) => {
  * PUT /api/admin/user-report/actions/{reportId}/suspend-chat (no body)
  */
 export const putSuspendChatAPI = async (reportId: string | number) => {
-    try {
-        const response = await API.put(
-            `/api/admin/user-report/actions/${reportId}/suspend-chat?ts=${Date.now()}`
-        );
-        return response.data;
-    } catch (error) {
-        console.error("Error suspending chat for report:", error);
-        throw error;
-    }
+  try {
+    const response = await API.put(
+      `/api/admin/user-report/actions/${reportId}/suspend-chat?ts=${Date.now()}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error suspending chat for report:", error);
+    throw error;
+  }
 };
 
 /**
@@ -174,15 +174,15 @@ export const putSuspendChatAPI = async (reportId: string | number) => {
  * PUT /api/admin/user-report/actions/{reportId}/suspend-customer (no body)
  */
 export const putSuspendCustomerAPI = async (reportId: string | number) => {
-    try {
-        const response = await API.put(
-            `/api/admin/user-report/actions/${reportId}/suspend-customer?ts=${Date.now()}`
-        );
-        return response.data;
-    } catch (error) {
-        console.error("Error suspending customer for report:", error);
-        throw error;
-    }
+  try {
+    const response = await API.put(
+      `/api/admin/user-report/actions/${reportId}/suspend-customer?ts=${Date.now()}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error suspending customer for report:", error);
+    throw error;
+  }
 };
 
 
@@ -278,6 +278,32 @@ export const getAdminDashboardAPI = async () => {
     throw error;
   }
 };
+
+
+/**
+ * Report a chat
+ * POST /api/admin/chat-reports/report
+ */
+export const postReportingAPI = async (payload: {
+  reportType: string,
+  startDate: string,
+  endDate: string,
+}) => {
+  try {
+    const response = await API.post(
+      `/api/admin/excel?ts=${Date.now()}`,
+      payload,
+      {
+        responseType: "arraybuffer", // 🔥 REQUIRED
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error reporting chat:', error);
+    throw error;
+  }
+};
+
 
 
 

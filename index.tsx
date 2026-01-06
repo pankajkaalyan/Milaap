@@ -8,6 +8,14 @@ if (!rootElement) {
     throw new Error("Could not find root element to mount to");
 }
 
+window.addEventListener('error', (e) => {
+  console.error('🔥 GLOBAL ERROR:', e.message, e.filename, e.lineno);
+});
+
+window.addEventListener('unhandledrejection', (e) => {
+  console.error('🔥 UNHANDLED PROMISE:', e.reason);
+});
+
 const root = ReactDOM.createRoot(rootElement);
 root.render(
     <React.StrictMode>

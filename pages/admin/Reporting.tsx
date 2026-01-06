@@ -4,6 +4,7 @@ import { useAppContext } from '../../hooks/useAppContext';
 import Input from '../../components/ui/Input';
 import Button from '../../components/ui/Button';
 import Dropdown from '../../components/ui/Dropdown';
+import { postReportingAPI } from '@/services/api/admin';
 
 const Reporting: React.FC = () => {
     const { t, addToast } = useAppContext();
@@ -14,9 +15,49 @@ const Reporting: React.FC = () => {
     const [endDate, setEndDate] = useState(today);
     const [exportFormat, setExportFormat] = useState('csv');
 
+
+    const handleReporting = async () => {
+        try {
+            const payload = {
+                reportType: reportType,
+                startDate: startDate,
+                endDate: endDate,
+            };
+            console.log('Reporting payload:', payload);
+            const response = await postReportingAPI(payload);
+
+            const blob = new Blob([response], {
+                type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            });
+
+            const url = URL.createObjectURL(blob);
+
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `${reportType}_report_${startDate}_to_${endDate}.xlsx`;
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            URL.revokeObjectURL(url);
+
+
+
+            // ✅ Success handling
+            console.log('Chat reported successfully:', response);
+            addToast(t('toasts.report.generated').replace('{reportName}', reportType), 'success');
+
+        } catch (error) {
+            // ❌ Error handling
+            console.error('Failed to report chat:', error);
+            addToast('Reprt generating failed', 'error');
+        }
+    };
     const handleExport = (e: React.FormEvent) => {
         e.preventDefault();
-        
+        handleReporting();
+        return;
         // Mock data generation
         let csvContent = "data:text/csv;charset=utf-8,";
         let reportName = '';
@@ -34,7 +75,7 @@ const Reporting: React.FC = () => {
             csvContent += "2024-07-27,68,9500,350\n";
             csvContent += "2024-07-28,75,12543,432\n";
         }
-        
+
         const encodedUri = encodeURI(csvContent);
         const link = document.createElement("a");
         link.setAttribute("href", encodedUri);
@@ -45,6 +86,8 @@ const Reporting: React.FC = () => {
 
         addToast(t('toast.report.generated').replace('{reportName}', reportName), 'success');
     };
+
+
 
     return (
         <Card>
@@ -59,7 +102,7 @@ const Reporting: React.FC = () => {
                     onChange={setReportType}
                     options={[
                         { value: 'demographics', label: t('admin.reporting.type.demographics') },
-                        { value: 'engagement', label: t('admin.reporting.type.engagement') }
+                        { value: 'engagements', label: t('admin.reporting.type.engagement') }
                     ]}
                 />
 
@@ -71,16 +114,16 @@ const Reporting: React.FC = () => {
                     </div>
                 </div>
 
-                <Dropdown
+                {/* <Dropdown
                     id="exportFormat"
                     label={t('admin.reporting.export_format')}
                     value={exportFormat}
                     onChange={setExportFormat}
                     options={[
-                        { value: 'csv', label: 'CSV' },
-                        { value: 'pdf', label: 'PDF (coming soon)' }
+                        { value: 'XL', label: 'EXCEL' },
+                        // { value: 'pdf', label: 'PDF (coming soon)' }
                     ]}
-                />
+                /> */}
 
                 <div className="pt-2">
                     <Button type="submit">{t('admin.reporting.cta')}</Button>
@@ -91,3 +134,5 @@ const Reporting: React.FC = () => {
 };
 
 export default Reporting;
+
+

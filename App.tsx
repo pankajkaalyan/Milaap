@@ -17,18 +17,26 @@ import { initTelemetryHealthCheck } from './utils/telemetry';
 
 const LoaderBridge = () => {
   const { showLoader, hideLoader } = useLoader();
-  registerLoader(showLoader, hideLoader);
+
+  useEffect(() => {
+    registerLoader(showLoader, hideLoader);
+  }, [showLoader, hideLoader]);
+
   return null;
 };
+
 
 function App() {
   // useSessionTimeout();
   useInactivityTimeout();
   // Kick off telemetry health check (non-blocking)
-  initTelemetryHealthCheck();
+  useEffect(() => {
+    initTelemetryHealthCheck();
+  }, []);
 
 
 
+  // return <div>App Loaded</div>;
   // We render IdleWarningModal inside providers so we can use toasts and other context
   return (
     <LoaderProvider>

@@ -534,7 +534,7 @@ export const en = {
     report: {
       resolved: 'Report has been marked as resolved.',
       dismissed: 'Report has been dismissed.',
-      generated: 'Report "{reportName}" has been generated and download has started.',
+      generated: 'Report "{reportName}" has been generated and downloaded.',
     },
     story: {
       submitted: 'Thank you! Your story has been submitted for review.',
