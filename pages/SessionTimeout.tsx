@@ -37,7 +37,7 @@ const useSessionTimeout = () => {
             window.location.replace(`${window.location.origin}${window.location.pathname}#/login`);
 
             // 5️⃣ Hard reload from server (avoid stale PWA content)
-            setTimeout(() => window.location.reload(), 200);
+            // setTimeout(() => window.location.reload(), 200);
         };
 
         const interval = setInterval(checkSession, 60000); // Check every 1 min
