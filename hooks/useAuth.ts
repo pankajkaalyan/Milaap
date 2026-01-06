@@ -202,12 +202,12 @@ export const useAuth = () => {
 
             // 6️⃣ Small delay to ensure cleanup is complete
             setTimeout(() => {
-                window.location.reload();
+                // window.location.reload();
             }, 200);
 
         } catch (error) {
             console.error("❌ Error during logout cleanup:", error);
-            window.location.reload();
+            // window.location.reload();
         }
     };
 

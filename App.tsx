@@ -24,16 +24,9 @@ const LoaderBridge = () => {
 function App() {
   // useSessionTimeout();
   useInactivityTimeout();
-
   // Kick off telemetry health check (non-blocking)
   initTelemetryHealthCheck();
 
-  useEffect(() => {
-    fetch('/health', { cache: 'no-store' })
-      .catch(() => {
-        document.body.innerHTML = '<h2>Application is unavailable</h2>';
-      });
-  }, []);
 
 
   // We render IdleWarningModal inside providers so we can use toasts and other context

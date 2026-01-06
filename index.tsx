@@ -24,7 +24,7 @@ if ('serviceWorker' in navigator) {
                 if (refreshing) return;
                 refreshing = true;
                 // console.log('Reloading app after SW update...');
-                window.location.reload();
+                // window.location.reload();
             });
         }).catch(registrationError => {
             // console.log('SW registration failed: ', registrationError);
