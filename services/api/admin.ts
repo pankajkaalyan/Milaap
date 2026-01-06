@@ -263,6 +263,23 @@ export const putSuspendChatForChatReportAPI = async (payload: {
   }
 };
 
+/**
+ * Get admin dashboard data
+ * GET /api/admin/dashboard
+ */
+export const getAdminDashboardAPI = async () => {
+  try {
+    const response = await API.get(
+      `/api/admin/dashboard?ts=${Date.now()}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching admin dashboard data:', error);
+    throw error;
+  }
+};
+
+
 
 
 

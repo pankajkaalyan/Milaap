@@ -55,7 +55,6 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, roles }) => {
   if(!user) { 
     user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null;
   }
-  // console.log('PrivateRoute - user:', user);
   if (!user || !roles.includes(user.role)) {
     return <Navigate to="/login" replace />;
   }
@@ -248,14 +247,14 @@ const AppRouter: React.FC = () => {
                 </SuperAdminRoute>
               } 
             />
-            <Route 
+            {/* <Route 
               path="access-control" 
               element={
                 <SuperAdminRoute>
                   <AccessControl />
                 </SuperAdminRoute>
               } 
-            />
+            /> */}
             <Route 
               path="reporting" 
               element={

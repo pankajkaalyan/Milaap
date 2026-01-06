@@ -69,12 +69,12 @@ const AdminLayout: React.FC = () => {
                                 <span>{t('nav.admin_reporting')}</span>
                             </NavLink>
                         )}
-                        {isSuperAdmin && (
+                        {/* {isSuperAdmin && (
                             <NavLink to="/admin/access-control" className={getNavLinkClasses}>
                                 <ShieldIcon />
                                 <span>{t('nav.admin_access_control')}</span>
                             </NavLink>
-                        )}
+                        )} */}
                     </nav>
                 </div>
             </aside>

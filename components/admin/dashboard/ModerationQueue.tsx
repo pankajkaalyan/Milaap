@@ -2,30 +2,34 @@ import React from 'react';
 import { useAppContext } from '../../../hooks/useAppContext';
 import ModerationCard from '../ModerationCard';
 import { ModerationCardIcon } from '../../../types';
+import { AdminDashboardData } from '@/pages/admin/Dashboard';
 
-const ModerationQueue: React.FC = () => {
-    const { t, verificationRequests, reports, storySubmissions } = useAppContext();
 
-    const pendingReportsCount = reports.filter(r => r.status === 'Pending').length;
-    const pendingStoriesCount = storySubmissions.filter(s => s.status === 'Pending').length;
+interface ModerationQueueProps {
+  dashboardData: AdminDashboardData;
+}
+
+const ModerationQueue: React.FC<ModerationQueueProps> = ({ dashboardData }) => {
+    const { t } = useAppContext();
+
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <ModerationCard
                 title={t('admin.dashboard.pending_verifications')}
-                count={verificationRequests.length}
+                count={dashboardData.pendingVerification}
                 linkTo="/admin/verification-requests"
                 icon={ModerationCardIcon.VERIFICATION}
             />
             <ModerationCard
                 title={t('admin.dashboard.user_reports')}
-                count={pendingReportsCount}
+                count={dashboardData.newUserReports}
                 linkTo="/admin/reports"
                 icon={ModerationCardIcon.REPORT}
             />
             <ModerationCard
                 title={t('admin.dashboard.story_submissions')}
-                count={pendingStoriesCount}
+                count={dashboardData.pendingStories}
                 linkTo="/admin/story-submissions"
                 icon={ModerationCardIcon.STORY}
             />

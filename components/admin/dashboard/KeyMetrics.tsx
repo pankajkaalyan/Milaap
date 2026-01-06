@@ -1,39 +1,41 @@
 import React from 'react';
 import { useAppContext } from '../../../hooks/useAppContext';
-import { mockAnalyticsData } from '../../../data/mockAdminData';
 import MetricCard from '../MetricCard';
 import TrendingUpIcon from '../../icons/TrendingUpIcon';
 import UserPlusIcon from '../../icons/UserPlusIcon';
 import HeartHandshakeIcon from '../../icons/HeartHandshakeIcon';
 import PaperAirplaneIcon from '../../icons/PaperAirplaneIcon';
+import { AdminDashboardData } from '@/pages/admin/Dashboard';
 
-const KeyMetrics: React.FC = () => {
+interface KeyMetricsProps {
+  dashboardData: AdminDashboardData;
+}
+const KeyMetrics: React.FC<KeyMetricsProps> = ({ dashboardData }) => {
     const { t } = useAppContext();
-    const { keyMetrics } = mockAnalyticsData;
-
+    
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <MetricCard
                 title={t('admin.dashboard.metric.new_registrations')}
-                value={keyMetrics.newRegistrations.toLocaleString()}
+                value={dashboardData.newRegistrations.toLocaleString()}
                 icon={<UserPlusIcon />}
                 color="text-blue-400"
             />
             <MetricCard
                 title={t('admin.dashboard.metric.active_users')}
-                value={keyMetrics.activeUsers.toLocaleString()}
+                value={dashboardData.activeUsers.toLocaleString()}
                 icon={<TrendingUpIcon />}
                 color="text-green-400"
             />
             <MetricCard
                 title={t('admin.dashboard.metric.matches_made')}
-                value={keyMetrics.matchesMade.toLocaleString()}
+                value={dashboardData.matchesMade.toLocaleString()}
                 icon={<HeartHandshakeIcon />}
                 color="text-pink-400"
             />
             <MetricCard
                 title={t('admin.dashboard.metric.messages_sent')}
-                value={keyMetrics.messagesSent.toLocaleString()}
+                value={dashboardData.messagesSent.toLocaleString()}
                 icon={<PaperAirplaneIcon />}
                 color="text-purple-400"
             />
