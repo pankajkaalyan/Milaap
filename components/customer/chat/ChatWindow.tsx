@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { Conversation, Match, MessageType } from '../../../types';
 import MessageBubble from './MessageBubble';
 import ChatInput from './ChatInput';
@@ -18,7 +18,7 @@ interface ChatWindowProps {
 }
 
 const ChatWindow: React.FC<ChatWindowProps> = ({ conversation, user, onSendMessage, isTyping }) => {
-  const { addToast,t } = useAppContext();
+  const { addToast, t } = useAppContext();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isCalling, setIsCalling] = useState(false);
   const [callType, setCallType] = useState<'video' | 'voice' | null>(null);
@@ -39,6 +39,31 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversation, user, onSendMessa
   }
 
   const [imgError, setImgError] = useState(false)
+
+  const chatBlockReason = useMemo(() => {
+    if (conversation.blockedByYou) return 'blockedByYou';
+    if (conversation.blockedYou) return 'blockedYou';
+    if (conversation.isChatSuspended) return 'isChatSuspended';
+    if (conversation.reportedByYou) return 'reportedByYou';
+    if (conversation.reportedYou) return 'reportedYou';
+    return null;
+  }, [
+    conversation.blockedByYou,
+    conversation.blockedYou,
+    conversation.isChatSuspended,
+    conversation.reportedByYou,
+    conversation.reportedYou
+  ]);
+
+  const blockMessages: Record<string, string> = {
+    blockedByYou: 'You have blocked this user. Unblock to start chatting.',
+    blockedYou: 'You cannot send messages because this user has blocked you.',
+    isChatSuspended: 'Chat is temporarily suspended due to policy violations. Please contact admin via contact us page.',
+    reportedByYou: 'You reported this user. Messaging is disabled.',
+    reportedYou: 'You were reported by this user. Messaging is disabled.'
+  };
+
+
 
   const initials = user.userName
     ?.split(' ')
@@ -66,7 +91,6 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversation, user, onSendMessa
 
 
 
-  // console.log('Rendering ChatWindow for conversation:', conversation);
   const submitReport = async (reportReason) => {
     if (!reportReason.trim()) {
       alert("Please provide a reason");
@@ -138,8 +162,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversation, user, onSendMessa
         <div className="flex items-center space-x-4 text-gray-400">
           {selectedMessages.length > 0 && (
             <button
-              className="bg-red-600 hover:bg-red-700 
-    text-white px-5 py-2 rounded-full shadow-lg"
+              className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-full shadow-lg"
               onClick={() => setIsReportOpen(true)}
             >
               Report ({selectedMessages.length})
@@ -151,39 +174,49 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ conversation, user, onSendMessa
       </div>
 
       <div className="flex-1 p-4 overflow-y-auto space-y-4">
-        {conversation.messages.map((msg) => (
-          <div key={msg.id + 'grp'} className="relative group pl-8">
-            <input key={msg.id + 'msg'}
-              type="checkbox"
-              checked={selectedMessages.includes(msg.messageId as number)}
-              onChange={() => toggleMessage(msg.messageId as number)}
-              className={`absolute ${msg.senderId === 'me' ? 'left-1' : 'left-1'} top-1/2 -translate-y-1/2 w-6 h-6 cursor-pointer z-10 transition-opacity ${selectedMessages.includes(msg.id as number)}
+        {chatBlockReason ? (
+          <div className="p-4 border border-white/10 rounded-lg bg-white/5 text-center">
+            <p className="text-sm font-semibold text-gray-300">
+              {blockMessages[chatBlockReason]}
+            </p>
+          </div>
+        ) : <>
+          {conversation.messages.map((msg) => (
+            <div key={msg.id + 'grp'} className="relative group pl-8">
+              <input key={msg.id + 'msg'}
+                type="checkbox"
+                checked={selectedMessages.includes(msg.messageId as number)}
+                onChange={() => toggleMessage(msg.messageId as number)}
+                className={`absolute ${msg.senderId === 'me' ? 'left-1' : 'left-1'} top-1/2 -translate-y-1/2 w-6 h-6 cursor-pointer z-10 transition-opacity ${selectedMessages.includes(msg.id as number)}
                 ? 'opacity-100'
                 : 'opacity-0 group-hover:opacity-100'
                 }`}
-            />
-            <MessageBubble key={msg.id} message={msg} />
-          </div>
-
-        ))}
-        {isTyping && (
-          <div className="flex items-center space-x-2">
-            <img src={user.profilePic} alt={user.userName} className="w-8 h-8 rounded-full object-cover" />
-            <div className="bg-gray-700 text-white p-3 rounded-lg rounded-bl-none text-sm">
-              <span className="typing-indicator">
-                <span></span><span></span><span></span>
-              </span>
+              />
+              <MessageBubble key={msg.id} message={msg} />
             </div>
-          </div>
-        )}
-        <div ref={messagesEndRef} />
+
+          ))}
+          {isTyping && (
+            <div className="flex items-center space-x-2">
+              <img src={user.profilePic} alt={user.userName} className="w-8 h-8 rounded-full object-cover" />
+              <div className="bg-gray-700 text-white p-3 rounded-lg rounded-bl-none text-sm">
+                <span className="typing-indicator">
+                  <span></span><span></span><span></span>
+                </span>
+              </div>
+            </div>
+          )}
+          <div ref={messagesEndRef} />
+        </>}
       </div>
 
-      <div className="p-4 border-t border-white/10 shrink-0">
-        <ChatInput onSendMessage={onSendMessage} />
-      </div>
+      {!chatBlockReason && (
+        <div className="p-4 border-t border-white/10 shrink-0">
+          <ChatInput onSendMessage={onSendMessage} />
+        </div>
+      )}
 
-      {isCalling && callType && (
+      {isCalling && callType && !chatBlockReason && (
         <CallingModal user={user} onClose={() => setIsCalling(false)} />
       )}
 

@@ -132,6 +132,11 @@ export interface Conversation {
   lastMessage?: string;
   unreadCount?: number;
   roomId?: string;
+  blockedByYou?: boolean;
+  blockedYou?: boolean;
+  isChatSuspended?: boolean;
+  reportedByYou?: boolean;
+  reportedYou?: boolean;
 }
 
 export interface AdminConversation {

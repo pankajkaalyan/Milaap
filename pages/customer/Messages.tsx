@@ -122,8 +122,7 @@ const Messages: React.FC = () => {
             return;
         }
 
-        console.log("Message received:", msg);
-
+        
         // setChat(prev => [...prev, msg]);  // safe append
         updateConversation(msg);
 
@@ -147,13 +146,11 @@ const Messages: React.FC = () => {
             onMessageReceived   // stable function
         );
 
-        console.log("Subscribed to /user/queue/messages");
-
+    
     }, [onMessageReceived]);
 
     // ---------------- ON CONNECTED ----------------
     const onConnected = useCallback(() => {
-        console.log("Connected to WebSocket server");
         subscribeOnce();   // subscribe exactly once
     }, [subscribeOnce]);
 
@@ -201,7 +198,6 @@ const Messages: React.FC = () => {
     // ---------------- SEND MESSAGE ----------------
     const sendMessageToFriend = useCallback(
         (content, type) => {
-            console.log("Sending message:", { content, type });
             if (!userId) return alert("Receiver required");
             if (!stompClient.current?.connected)
                 return alert("Not connected");
@@ -228,7 +224,6 @@ const Messages: React.FC = () => {
         const chatMessage = transformMessage(newMessage, user?.id || user?.profile?.id);
 
         setConversations(prevConversations => {
-            console.log("prevConversations:", prevConversations);
             return prevConversations.map(convo => {
                 if (convo.userId == userId) {
                     return { ...convo, messages: [...convo.messages, chatMessage] };
@@ -299,11 +294,10 @@ const Messages: React.FC = () => {
                     )
                 : [],
         }));
-
         setConversations(normalized);
     }
-
-
+    
+    
     //Chat Integration Code End here
     const selectedConversation = conversations.find(c => c.userId === selectedConversationId);
     const selectedUser = conversations.find(u => u.userId === selectedConversationId);
@@ -349,6 +343,11 @@ const Messages: React.FC = () => {
 
         const roomId = selectedConversation.roomId;
         if (messagesLoadedRef.current[roomId]) return;
+
+        if (selectedConversation.blockedByYou || selectedConversation.blockedYou || selectedConversation.isChatSuspended || selectedConversation.reportedByYou || selectedConversation.reportedYou) {
+            console.log("Chat is blocked or suspended, skipping message load.");
+            return;
+        }
 
         messagesLoadedRef.current[roomId] = true;
 
@@ -450,12 +449,18 @@ const Messages: React.FC = () => {
                         <h1 className="text-xl font-bold text-white p-4 border-b border-white/10 shrink-0">
                             {t("messages.title")}
                         </h1>
+                        {user?.profile?.chatSuspended ? (
+                            <div className="p-4 bg-red-600/20 border border-red-600/30 text-red-300 text-sm text-center rounded-md">
+                                Your chat access has been temporarily suspended. Please contact admin via the Contact Us page for assistance.
+                            </div>
+                        ) : (
+                            <ConversationList
+                                conversations={conversations}
+                                selectedConversationId={selectedConversationId}
+                                onSelectConversation={handleSelectConversation}
+                            />
+                        )}
 
-                        <ConversationList
-                            conversations={conversations}
-                            selectedConversationId={selectedConversationId}
-                            onSelectConversation={handleSelectConversation}
-                        />
                     </Card>
                 </div>
 
