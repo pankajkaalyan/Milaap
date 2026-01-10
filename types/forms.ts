@@ -48,6 +48,8 @@ export interface RegisterFormData {
   familyValues: 'Traditional' | 'Moderate' | 'Liberal';
   photos: File[];
   video: File;
+  linkedin: string;
+  socialMedia: string; // Facebook / Instagram / TikTok (any one)
 }
 
 export interface ContactFormData {

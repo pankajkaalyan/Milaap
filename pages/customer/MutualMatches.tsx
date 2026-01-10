@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
 import Card from '../../components/ui/Card';
-import ProfileCard from '../../components/customer/ProfileCard';
+import { MutualMatchProfileCard } from '../../components/customer/ProfileCard';
 import { getMutualMatchesAPI } from '@/services/api/mutualMatches';
 import { transformUserResponse } from '../../transform/transformMutualUser';
 import { eventBus } from '@/utils/eventBus';
@@ -57,7 +57,7 @@ const MutualMatches: React.FC = () => {
             {mutualMatchesData.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {mutualMatchesData.map(match => (
-                        <ProfileCard
+                        <MutualMatchProfileCard
                             key={match.id}
                             match={match}
                             isFavourite={match.isFavourite}

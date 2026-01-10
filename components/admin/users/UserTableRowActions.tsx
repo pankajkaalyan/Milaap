@@ -1,114 +1,124 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useLayoutEffect, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { User } from '../../../types';
-import DotsVerticalIcon from '../../icons/DotsVerticalIcon';
-import { useAppContext } from '../../../hooks/useAppContext';
 
-interface UserTableRowActionsProps {
-  user: User;
-  onEdit: (user: User) => void;
-  onDelete: (user: User) => void;
+type ActionVariant = 'default' | 'danger';
+
+interface ActionConfig {
+  key: string;
+  label: string;
+  onClick: (user: User) => void;
+  visible?: boolean | ((user: User) => boolean);
+  disabled?: boolean;
+  variant?: ActionVariant;
 }
 
-const UserTableRowActions: React.FC<UserTableRowActionsProps> = ({ user, onEdit, onDelete }) => {
-  const { t } = useAppContext();
-  const [isOpen, setIsOpen] = useState(false);
+interface Props {
+  user: User;
+  actions: ActionConfig[];
+}
+
+const DROPDOWN_HEIGHT = 160;
+const DROPDOWN_WIDTH = 160;
+
+const ThreeDotsIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+    <circle cx="12" cy="5" r="2" />
+    <circle cx="12" cy="12" r="2" />
+    <circle cx="12" cy="19" r="2" />
+  </svg>
+);
+
+const UserTableRowActions: React.FC<Props> = ({ user, actions }) => {
+  const [open, setOpen] = useState(false);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
+
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const [position, setPosition] = useState<{ top: number; left: number } | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const calculatePosition = useCallback(() => {
-    if (buttonRef.current) {
+  // Position dropdown
+  useLayoutEffect(() => {
+    if (open && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      const menuHeight = 80; // Approximate height for 2 items + padding
-      const menuWidth = 160; // w-40
+      const spaceBelow = window.innerHeight - rect.bottom;
 
-      let top = rect.bottom + window.scrollY + 4; // 4px margin below
-      if (window.innerHeight - rect.bottom < menuHeight && rect.top > menuHeight) {
-        // Not enough space below, open upwards
-        top = rect.top + window.scrollY - menuHeight - 4; // 4px margin above
-      }
-      
-      let left = rect.right + window.scrollX - menuWidth;
+      const top = spaceBelow < DROPDOWN_HEIGHT
+        ? rect.top + window.scrollY - DROPDOWN_HEIGHT
+        : rect.bottom + window.scrollY;
 
-      setPosition({ top, left });
+      const left = rect.left + window.scrollX + rect.width - DROPDOWN_WIDTH;
+
+      setDropdownPos({ top, left });
     }
-  }, []);
-  
-  const toggleOpen = () => {
-    if (!isOpen) {
-      calculatePosition();
-    }
-    setIsOpen(prev => !prev);
-  };
+  }, [open]);
 
+  // Close on outside click
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        isOpen &&
-        buttonRef.current && !buttonRef.current.contains(event.target as Node) &&
-        menuRef.current && !menuRef.current.contains(event.target as Node)
-      ) {
-        setIsOpen(false);
+    const handler = (e: MouseEvent) => {
+      if (!buttonRef.current?.contains(e.target as Node) && !dropdownRef.current?.contains(e.target as Node)) {
+        setOpen(false);
       }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isOpen]);
+    if (open) document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
 
-  useEffect(() => {
-    if (isOpen) {
-      calculatePosition(); // Recalculate on open
-      const handleScrollOrResize = () => setIsOpen(false); // Close on scroll/resize is simpler and safer
-      window.addEventListener('resize', handleScrollOrResize);
-      window.addEventListener('scroll', handleScrollOrResize, true);
-      return () => {
-        window.removeEventListener('resize', handleScrollOrResize);
-        window.removeEventListener('scroll', handleScrollOrResize, true);
-      };
-    }
-  }, [isOpen, calculatePosition]);
-
-  const Menu = (
-    <div
-      ref={menuRef}
-      style={position ? {
-        position: 'absolute',
-        top: `${position.top}px`,
-        left: `${position.left}px`,
-      } : { visibility: 'hidden' }} // Hide until position is calculated
-      className="w-40 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-50 animate-fade-in-up-fast"
-    >
-      <ul className="py-1">
-        <li>
-          <button
-            onClick={() => { onEdit(user); setIsOpen(false); }}
-            className="w-full text-left px-4 py-2 text-sm text-gray-200 hover:bg-gray-700"
-          >
-            {t('admin.users.table.edit')}
-          </button>
-        </li>
-        <li>
-          <button
-            onClick={() => { onDelete(user); setIsOpen(false); }}
-            className="w-full text-left px-4 py-2 text-sm text-red-400 hover:bg-gray-700"
-          >
-            {t('admin.users.table.delete')}
-          </button>
-        </li>
-      </ul>
-    </div>
+  // Only show visible actions
+  const visibleActions = actions.filter(
+    (a) => a.visible === undefined || (typeof a.visible === 'function' ? a.visible(user) : a.visible)
   );
 
+  if (visibleActions.length === 0) return <td />;
+
   return (
-    <>
-      <button ref={buttonRef} onClick={toggleOpen} className="p-1 rounded-full hover:bg-white/20 text-gray-300 transition-colors focus:outline-none focus:ring-2 focus:ring-pink-500">
-        <DotsVerticalIcon />
-      </button>
-      {isOpen && createPortal(Menu, document.body)}
-    </>
+    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+      <div className="inline-block relative">
+        <button
+          ref={buttonRef}
+          onClick={() => setOpen((p) => !p)}
+          className="p-2 rounded hover:bg-gray-700 focus:ring-2 focus:ring-pink-400 transition"
+        >
+          <ThreeDotsIcon />
+        </button>
+
+        {open &&
+          createPortal(
+            <div
+              ref={dropdownRef}
+              style={{
+                position: 'absolute',
+                top: dropdownPos.top,
+                left: dropdownPos.left,
+                width: DROPDOWN_WIDTH,
+                zIndex: 9999,
+              }}
+              className="bg-gray-800 border border-gray-700 rounded shadow-lg py-1"
+            >
+              {visibleActions.map((action) => (
+                <button
+                  key={action.key}
+                  disabled={action.disabled}
+                  onClick={() => {
+                    action.onClick(user);
+                    setOpen(false);
+                  }}
+                  className={`w-full px-4 py-2 text-left text-sm transition-colors
+                    ${action.disabled
+                      ? 'text-gray-500 cursor-not-allowed'
+                      : action.variant === 'danger'
+                        ? 'text-red-400 hover:bg-gray-700'
+                        : 'text-pink-400 hover:bg-gray-700'
+                    }
+                  `}
+                >
+                  {action.label}
+                </button>
+              ))}
+            </div>,
+            document.body
+          )}
+      </div>
+    </td>
   );
 };
 

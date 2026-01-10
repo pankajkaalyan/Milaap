@@ -1,4 +1,5 @@
 import { fail } from "assert";
+import { link } from "fs";
 
 export const hi = {
   nav: {
@@ -319,6 +320,7 @@ export const hi = {
         last: 'अंतिम',
         edit: 'संपादित करें',
         delete: 'हटाएं',
+        status: 'स्थिति',
       },
       delete_confirm_title: 'हटाने की पुष्टि करें',
       delete_confirm: 'क्या आप वाकई {name} को स्थायी रूप से हटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।',
@@ -723,6 +725,8 @@ export const hi = {
     date_in_future: '{fieldName} भविष्य में नहीं हो सकता।',
     alpha_only: '{fieldName} में केवल अक्षर और स्थान हो सकते हैं।',
     alpha_comma_only: '{fieldName} में केवल अक्षर, स्थान और अल्पविराम हो सकते हैं।',
+    linkedin_invalid: 'कृपया एक मान्य LinkedIn प्रोफ़ाइल URL दर्ज करें।',
+    social_media_profile: 'कृपया एक मान्य सोशल मीडिया प्रोफ़ाइल URL दर्ज करें।',
   },
   changePassword: {
     title: 'पासवर्ड बदलें',

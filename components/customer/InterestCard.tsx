@@ -11,11 +11,11 @@ interface InterestCardProps {
     type: InterestTab;
     onAccept: () => void;
     onDecline: () => void;
+    useLink?: boolean; // default false
 }
 
-const InterestCard: React.FC<InterestCardProps> = ({ interest, type, onAccept, onDecline }) => {
+const InterestCard: React.FC<InterestCardProps> = ({ interest, type, onAccept, onDecline, useLink = false }) => {
     const { t } = useAppContext();
-    // Keep status in state so updates trigger re-renders
     const [status, setStatus] = useState<InterestStatus>(interest.status);
     const [imgError, setImgError] = useState(false);
 
@@ -24,14 +24,13 @@ const InterestCard: React.FC<InterestCardProps> = ({ interest, type, onAccept, o
         setStatus(interest.status);
     }, [interest.status]);
 
-    // Subscribe to events and update local status via setter to trigger re-render
+    // Subscribe to events and update local status
     useEffect(() => {
         const handler = (data: { targetUserId: number; newStatus: InterestStatus }) => {
             if (data.targetUserId === interest.profile.id) {
                 setStatus(prev => (prev !== data.newStatus ? data.newStatus : prev));
             }
         };
-
         eventBus.on(AppEventStatus.ACCEPTED, handler);
         eventBus.on(AppEventStatus.DECLINED, handler);
         return () => {
@@ -52,25 +51,20 @@ const InterestCard: React.FC<InterestCardProps> = ({ interest, type, onAccept, o
         }
     };
 
-
-    // Extract initials
-    const getInitials = (fullName) => {
+    const getInitials = (fullName: string) => {
         if (!fullName) return "";
         const parts = fullName.trim().split(" ");
-
-        if (parts.length === 1) {
-            return parts[0].substring(0, 2).toUpperCase();
-        }
-
+        if (parts.length === 1) return parts[0].substring(0, 2).toUpperCase();
         return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     };
     const initials = getInitials(interest.profile.fullName);
     const showInitials = imgError || !interest.profile?.photos?.[0];
 
-    return (
-        <div className="bg-white/10 rounded-lg p-4 flex flex-col sm:flex-row items-center gap-4 transition-all hover:bg-white/20">
-            <Link to={`/profile/${interest.profile.id}`}>
-                {/* <img src={interest.profile.photos || `https://picsum.photos/400/300?random=${interest.profile.id}`} alt={interest.profile.fullName} className="w-20 h-20 rounded-full object-cover border-2 border-amber-500" /> */}
+    const CardContent = (
+        <div
+            className={`bg-white/10 rounded-lg p-4 flex flex-col sm:flex-row items-center gap-4 transition-all hover:bg-white/20 ${useLink ? 'cursor-pointer' : ''}`}
+        >
+            <div className="flex-shrink-0">
                 {!showInitials ? (
                     <img
                         src={interest.profile.photos?.[0]}
@@ -83,28 +77,30 @@ const InterestCard: React.FC<InterestCardProps> = ({ interest, type, onAccept, o
                         {initials}
                     </div>
                 )}
-            </Link>
+            </div>
 
             <div className="flex-1 text-center sm:text-left">
-                <Link to={`/profile/${interest.profile.id}`} className="hover:underline">
-                    <h3 className="text-xl font-bold text-white">{interest.profile.fullName}, {interest.profile.age}</h3>
-                </Link>
+                <h3 className={`text-xl font-bold text-white ${useLink ? 'hover:underline' : ''}`}>
+                    {interest.profile.fullName}, {interest.profile.age}
+                </h3>
                 <p className="text-gray-300 text-sm">{interest.profile.profession}</p>
                 <p className="text-gray-400 text-xs">{interest.profile.city} &bull; {interest.profile.caste}</p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-3">
-                {type.toLocaleLowerCase() === InterestTab.RECEIVED.toLocaleLowerCase() && status.toLocaleLowerCase() === InterestStatus.PENDING.toLocaleLowerCase() && (
+                {type.toLowerCase() === InterestTab.RECEIVED.toLowerCase() && status.toLowerCase() === InterestStatus.PENDING.toLowerCase() && (
                     <>
                         <Button onClick={onDecline} className="w-full sm:w-auto !py-2 !px-4 !text-sm !bg-gradient-to-r !from-red-600 !to-orange-600">{t('interests.decline')}</Button>
                         <Button onClick={onAccept} className="w-full sm:w-auto !py-2 !px-4 !text-sm !bg-gradient-to-r !from-green-600 !to-teal-600">{t('interests.accept')}</Button>
                     </>
                 )}
-                {type.toLocaleLowerCase() === InterestTab.RECEIVED.toLocaleLowerCase() && status.toLocaleLowerCase() !== InterestStatus.PENDING.toLocaleLowerCase() && getStatusBadge()}
-                {type.toLocaleLowerCase() === InterestTab.SENT.toLocaleLowerCase() && getStatusBadge()}
+                {type.toLowerCase() === InterestTab.RECEIVED.toLowerCase() && status.toLowerCase() !== InterestStatus.PENDING.toLowerCase() && getStatusBadge()}
+                {type.toLowerCase() === InterestTab.SENT.toLowerCase() && getStatusBadge()}
             </div>
         </div>
     );
+
+    return useLink ? <Link to={`/profile/${interest.profile.id}`}>{CardContent}</Link> : CardContent;
 };
 
 export default InterestCard;

@@ -74,7 +74,7 @@ export interface UserProfile {
   partnerPreferences?: PartnerPreferences;
   profileVisibility?: 'all' | 'premium';
   contactVisibility?: 'accepted' | 'premium';
-  status?: 'active' | 'deactivated';
+  status?: 'active' | 'deactivated' | 'pending' | 'suspended' | 'deleted' | 'approved' | 'rejected';
   location?: string;
   interestShown?: InterestShown;
   isFavourite?: boolean;
@@ -82,6 +82,8 @@ export interface UserProfile {
   isVerified?: boolean;
   age?: number;
   joiningDate?: string;
+  linkedin?: string;
+  socialMedia?: string; // Facebook / Instagram / TikTok (any one)
 }
 
 export interface User {
@@ -94,6 +96,9 @@ export interface User {
   adminRole?: AdminRole;
   age?: number;
   interestShownList?: InterestShown[];
+  linkedin?: string;
+  socialMedia?: string; // Facebook / Instagram / TikTok (any one)
+  status?: 'active' | 'deactivated' | 'pending' | 'suspended' | 'deleted' | 'approved' | 'rejected';
 }
 
 export interface ToastMessage {

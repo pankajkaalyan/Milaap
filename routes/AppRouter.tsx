@@ -44,6 +44,7 @@ import Reporting from '../pages/admin/Reporting';
 import SuccessStoryDetail from '../pages/SuccessStoryDetail';
 import ChangePassword from '@/pages/ChangePassword';
 import ActivateProfile from '@/pages/ActivateProfile';
+import AdminRegistrationRequests from '@/pages/admin/AdminRegistrationRequests';
 
 interface PrivateRouteProps {
   children: React.ReactElement;
@@ -235,6 +236,7 @@ const AppRouter: React.FC = () => {
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="user-management" element={<AdminUsers />} />
+            <Route path="registration-requests" element={<AdminRegistrationRequests />} />
             <Route path="verification-requests" element={<VerificationRequests />} />
             <Route path="service-requests" element={<VerificationLogs />} />
             <Route path="reports" element={<Reports />} />

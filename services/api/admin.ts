@@ -304,6 +304,52 @@ export const postReportingAPI = async (payload: {
   }
 };
 
+export const getRegistrationRequestsApi = async (
+  pageNumber: number = 0,
+  pageSize: number = 10000
+) => {
+  try {
+    const response = await API.get(
+      `/api/admin/users/pending-on-admin?page=${pageNumber}&size=${pageSize}&ts=${Date.now()}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching registration requests:', error);
+    throw error;
+  }
+};
+
+export const approveRegistrationApi = async (
+  userId: string | number
+) => {
+  try {
+    const response = await API.put(
+      `/api/admin/users/pending-on-admin/approve/${userId}?ts=${Date.now()}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error approving registration request:', error);
+    throw error;
+  }
+};
+
+
+export const rejectRegistrationApi = async (
+  userId: string | number
+) => {
+  try {
+    const response = await API.put(
+      `/api/admin/users/pending-on-admin/reject/${userId}?ts=${Date.now()}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error rejecting registration request:', error);
+    throw error;
+  }
+};
+
+
+
 
 
 

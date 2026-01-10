@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
-import ProfileCard from '../../components/customer/ProfileCard';
+import { ProfileCard } from '../../components/customer/ProfileCard';
 import Input from '../../components/ui/Input';
 import Card from '../../components/ui/Card';
 import Slider from '../../components/ui/Slider';

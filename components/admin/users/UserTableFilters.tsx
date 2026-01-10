@@ -1,45 +1,76 @@
 import React from 'react';
-import Input from '../../ui/Input';
-import Dropdown from '../../ui/Dropdown';
-import { UserRole } from '../../../types';
-import { useAppContext } from '../../../hooks/useAppContext';
+import { UserRole } from '@/types';
 
 interface UserTableFiltersProps {
+  /** Search */
   searchTerm: string;
   onSearchChange: (value: string) => void;
-  roleFilter: 'ALL' | UserRole;
-  onRoleChange: (value: 'ALL' | UserRole) => void;
+
+  /** Role filter (optional) */
+  roleFilter?: 'ALL' | UserRole;
+  onRoleChange?: (value: 'ALL' | UserRole) => void;
+
+  /** Controls visibility of role dropdown (hidden by default) */
+  showRoleFilter?: boolean;
 }
 
-const UserTableFilters: React.FC<UserTableFiltersProps> = ({ searchTerm, onSearchChange, roleFilter, onRoleChange }) => {
-  const { t } = useAppContext();
-
+const UserTableFilters: React.FC<UserTableFiltersProps> = ({
+  searchTerm,
+  onSearchChange,
+  roleFilter = 'ALL',
+  onRoleChange,
+  showRoleFilter = false,
+}) => {
   return (
-    <div className="flex flex-col md:flex-row gap-4 mb-4">
-      <div className="flex-grow">
-        <Input
-          id="search"
-          label=""
+    <div className="flex flex-wrap items-center gap-4 mb-4">
+      {/* 🔍 Search */}
+      <div className="flex-1 min-w-[220px]">
+        <input
           type="text"
-          placeholder={t('admin.users.search')}
+          placeholder="Search users..."
           value={searchTerm}
-          hideinfo="true"
           onChange={(e) => onSearchChange(e.target.value)}
+          className="
+            w-full px-3 py-2 text-sm
+            text-gray-300
+            border border-gray-700 rounded-md
+            bg-white/5
+            placeholder-gray-500
+            focus:outline-none
+            focus:ring-2 focus:ring-pink-400
+          "
         />
       </div>
-      <div className="w-full md:w-auto">
-        <Dropdown
-          id="roleFilter"
-          ariaLabel={t('admin.users.filter.role')}
-          value={roleFilter}
-          onChange={(value) => onRoleChange(value as 'ALL' | UserRole)}
-          options={[
-            { value: 'ALL', label: t('admin.users.filter.all') },
-            { value: UserRole.ADMIN, label: 'Admin' },
-            { value: UserRole.CUSTOMER, label: 'Customer' },
-          ]}
-        />
-      </div>
+
+      {/* 🎭 Role Filter */}
+      {showRoleFilter && onRoleChange && (
+        <div className="min-w-[180px]">
+          <select
+            value={roleFilter}
+            onChange={(e) =>
+              onRoleChange(e.target.value as 'ALL' | UserRole)
+            }
+            className="
+              w-full px-3 py-2 text-sm
+              text-gray-300
+              border border-gray-700 rounded-md
+              bg-white/5
+              focus:outline-none
+              focus:ring-2 focus:ring-pink-400
+            "
+          >
+            <option value="ALL" className="bg-gray-900 text-gray-300">
+              All Roles
+            </option>
+            <option value={UserRole.ADMIN} className="bg-gray-900 text-gray-300">
+              Admin
+            </option>
+            <option value={UserRole.CUSTOMER} className="bg-gray-900 text-gray-300">
+              Customer
+            </option>
+          </select>
+        </div>
+      )}
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
-import ProfileCard from '../../components/customer/ProfileCard';
+import { ProfileCard } from '../../components/customer/ProfileCard';
 import { mockUsers } from '../../data/mockUsers';
 import { MembershipPlan } from '../../types';
 import Card from '../../components/ui/Card';

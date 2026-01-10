@@ -1,5 +1,6 @@
 import { email } from "@/utils/validators";
 import { fail } from "assert";
+import { stat } from "fs";
 
 export const en = {
   nav: {
@@ -18,6 +19,7 @@ export const en = {
     success_stories: 'Success Stories',
     dashboard: 'Dashboard',
     admin_users: 'Manage Users',
+    registration_requests: 'Registration Requests',
     login: 'Login',
     logout: 'Logout',
     register: 'Register',
@@ -98,6 +100,8 @@ export const en = {
     subcaste: 'Sub-caste',
     profession: 'Profession',
     education: 'Highest Education',
+    linkedin: 'LinkedIn Profile',
+    socialMedia: 'Social Media Profile (Facebook / Instagram / TikTok)',
     steps: {
       account: 'Account Details',
       personal: 'Personal Info',
@@ -324,6 +328,7 @@ export const en = {
         last: 'Last',
         edit: 'Edit',
         delete: 'Delete',
+        status: 'Status',
       },
       delete_confirm_title: 'Confirm Deletion',
       delete_confirm: 'Are you sure you want to permanently delete {name}? This action cannot be undone.',
@@ -729,6 +734,8 @@ export const en = {
     date_in_future: '{fieldName} cannot be in the future.',
     alpha_only: '{fieldName} can only contain letters and spaces.',
     alpha_comma_only: '{fieldName} can only contain letters, spaces, and commas.',
+    linkedin_invalid: '{fieldName} is not a valid LinkedIn profile URL.',
+    social_media_profile: '{fieldName} is not a valid social media profile URL.',
   },
   changePassword: {
     title: "Change Password",

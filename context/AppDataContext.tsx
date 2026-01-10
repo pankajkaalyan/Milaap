@@ -84,7 +84,7 @@ export interface AppDataContextType {
   addBulkUsers: (users: ImportedUser[]) => void;
   bulkUpdateUserRole: (userIds: (string | number)[], role: UserRole) => void;
   addUser: (name: string, email: string, role: UserRole) => void;
-  updateUser: (userId: string | number, userData: Partial<Pick<User, 'name' | 'role'>>) => void;
+  updateUser: (userId: string | number, userData: Partial<Pick<User, 'name' | 'role' | 'status'>>) => void;
   initializeUsers: (users: User[]) => void;
 }
 

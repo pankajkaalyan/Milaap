@@ -62,8 +62,38 @@ export const alphaCommaOnly = <T,>(t: TFunction, fieldName: string): ValidatorFu
 };
 
 export const fileRequired = <T,>(t: TFunction): ValidatorFunction<T> => (value) => {
-     if (!value || (Array.isArray(value) && value.length === 0)) {
+    if (!value || (Array.isArray(value) && value.length === 0)) {
         return t('validation.file_required');
+    }
+    return null;
+};
+
+export const linkedinProfile = <T,>(
+    t: TFunction,
+    fieldName: string
+): ValidatorFunction<T> => (value) => {
+    if (
+        value &&
+        !/^https?:\/\/(www\.)?linkedin\.com\/(in|company)\/[a-zA-Z0-9-_%]+\/?$/i.test(
+            value as string
+        )
+    ) {
+        return t('validation.linkedin_invalid', { fieldName });
+    }
+    return null;
+};
+
+export const socialMediaProfile = <T,>(
+    t: TFunction,
+    fieldName: string
+): ValidatorFunction<T> => (value) => {
+    if (
+        value &&
+        !/^(https?:\/\/)?(www\.)?(facebook\.com|instagram\.com|tiktok\.com)\/.+$/i.test(
+            value as string
+        )
+    ) {
+        return t('validation.social_media_profile', { fieldName });
     }
     return null;
 };

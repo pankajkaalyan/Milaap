@@ -1,16 +1,18 @@
 import React, { useEffect, useRef } from 'react';
-import { ImportedUser, User, UserRole } from '../../types';
+import { BadgeVariant, ImportedUser, User, UserRole } from '../../types';
 import { useAppContext } from '../../hooks/useAppContext';
 import Card from '../../components/ui/Card';
 import { useAdminTable } from '../../hooks/useAdminTable';
 import UserTableActions from '../../components/admin/users/UserTableActions';
 import UserTableFilters from '../../components/admin/users/UserTableFilters';
 import BulkActionsMenu from '../../components/admin/users/BulkActionsMenu';
-import UserTable from '../../components/admin/users/UserTable';
+import UserTable, { ColumnConfig } from '../../components/admin/users/UserTable';
 import Pagination from '../../components/ui/Pagination';
 import { useUserManagementModals } from '../../hooks/useUserManagementModals';
 import UserModals from '../../components/admin/users/UserModals';
 import { getAdminUsersList, roleChangeApi, updateUserApi, userDeleteApi } from '@/services/api/admin';
+import getVerificationBadge from '@/components/admin/users/GetVerificationBadge';
+import Badge from '@/components/ui/Badge';
 
 const AdminUsers: React.FC = () => {
     const { allUsers, deleteUsers, addBulkUsers, bulkUpdateUserRole, addUser, updateUser, initializeUsers } = useAppContext();
@@ -185,6 +187,69 @@ const AdminUsers: React.FC = () => {
             });
     }, []);
 
+    const userTableColumns: ColumnConfig[] = [
+        { key: 'name', label: 'Name', sortable: true },           // simple sortable column
+        { key: 'email', label: 'Email', sortable: true },
+        {
+            key: 'role',
+            label: 'Role',
+            sortable: true,
+            render: (user: User) => (
+                <Badge
+                    variant={user.role === UserRole.ADMIN ? BadgeVariant.PRIMARY : BadgeVariant.INFO}
+                >
+                    {user.role}
+                </Badge>
+            ),
+        },
+        // {
+        //     key: 'linkedin',
+        //     label: 'LinkedIn',
+        //     render: (user: User) =>
+        //         user.linkedin ? (
+        //             <a
+        //                 href={user.linkedin}
+        //                 target="_blank"
+        //                 rel="noopener noreferrer"
+        //                 className="text-blue-500 hover:underline"
+        //             >
+        //                 Open
+        //             </a>
+        //         ) : (
+        //             <span className="text-gray-500 italic">—</span>
+        //         ),
+        // },
+        // {
+        //     key: 'socialMedia',
+        //     label: 'Social Media',
+        //     render: (user: User) =>
+        //         user.socialMedia ? (
+        //             <a
+        //                 href={user.socialMedia}
+        //                 target="_blank"
+        //                 rel="noopener noreferrer"
+        //                 className="text-blue-500 hover:underline"
+        //             >
+        //                 Open
+        //             </a>
+        //         ) : (
+        //             <span className="text-gray-500 italic">—</span>
+        //         ),
+        // },
+        {
+            key: 'status',
+            label: 'Status',
+            sortable: true,
+            render: (user: User) => getVerificationBadge(user.status),
+        },
+        {
+            key: 'createdAt',
+            label: 'Joining Date',
+            sortable: true,
+            render: (user: User) => new Date(user.createdAt).toLocaleDateString(),
+        },
+    ];
+
     return (
         <>
             <Card>
@@ -198,9 +263,10 @@ const AdminUsers: React.FC = () => {
 
                 <UserTableFilters
                     searchTerm={searchTerm}
-                    onSearchChange={(value) => { setSearchTerm(value); setCurrentPage(1); }}
+                    onSearchChange={setSearchTerm}
                     roleFilter={roleFilter}
-                    onRoleChange={(value) => { setRoleFilter(value as 'ALL' | UserRole); setCurrentPage(1); }}
+                    onRoleChange={setRoleFilter}
+                    showRoleFilter
                 />
 
                 <BulkActionsMenu
@@ -218,7 +284,15 @@ const AdminUsers: React.FC = () => {
                     onSort={requestSort}
                     onEdit={openEditModal}
                     onDelete={(user) => openDeleteModal([user])}
+                    onApprove={(user) => {
+                        handleUpdateUser(user.id, { profile: { status: 'approved' } });
+                    }}
+                    onReject={(user) => {
+                        // You can implement modal like RejectConfirmModal
+                    }}
+                    columns={userTableColumns} // <-- this makes table configurable
                 />
+
 
                 <Pagination
                     currentPage={currentPage}
@@ -235,8 +309,8 @@ const AdminUsers: React.FC = () => {
                 onAddUser={handleAddNewUser}
                 onUpdateUser={handleUpdateUser}
                 onDeleteConfirm={handleDeleteConfirm}
-                onSuspendChatConfirm={() => {}}
-                onSuspendUserConfirm={() => {}}
+                onSuspendChatConfirm={() => { }}
+                onSuspendUserConfirm={() => { }}
             />
         </>
     );

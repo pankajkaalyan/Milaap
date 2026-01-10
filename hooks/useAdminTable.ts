@@ -16,7 +16,7 @@ export const useAdminTable = (initialUsers: User[]) => {
     // console.log('Initial users:', initialUsers);
     return initialUsers.filter(user => {
         // console.log('Checking user:', user);
-        const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        const matchesSearch = user.name?.toLowerCase().includes(searchTerm?.toLowerCase()) ||
                             user.email.toLowerCase().includes(searchTerm.toLowerCase());
         const matchesRole = roleFilter === 'ALL' || user.role === roleFilter;
         return matchesSearch && matchesRole;

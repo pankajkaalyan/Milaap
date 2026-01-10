@@ -324,7 +324,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
         addToast(t('toasts.user.added', { name }), 'success');
     };
 
-    const updateUser = async (userId: string | number, userData: Partial<Pick<User, 'name' | 'role'>>) => {
+    const updateUser = async (userId: string | number, userData: Partial<Pick<User, 'name' | 'role' | 'status'>>) => {
         // const updatedUser = await userService.updateUser(userId, userData);
         // console.log('Data ', userData);
         setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, ...userData } : u));

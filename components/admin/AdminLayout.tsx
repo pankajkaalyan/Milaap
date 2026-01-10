@@ -36,11 +36,18 @@ const AdminLayout: React.FC = () => {
                             <span>{t('nav.admin_dashboard')}</span>
                         </NavLink>
                         {isSuperAdmin && (
+                            <NavLink to="/admin/registration-requests" className={getNavLinkClasses}>
+                                <UsersIcon />
+                                <span>{t('nav.registration_requests')}</span>
+                            </NavLink>
+                        )}
+                        {isSuperAdmin && (
                             <NavLink to="/admin/user-management" className={getNavLinkClasses}>
                                 <UsersIcon />
                                 <span>{t('nav.admin_users')}</span>
                             </NavLink>
                         )}
+                    
                         <NavLink to="/admin/verification-requests" className={getNavLinkClasses}>
                              <VerificationIcon />
                             <span>{t('nav.admin_verification')}</span>

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
-import ProfileCard from '../../components/customer/ProfileCard';
+import { ProfileCard } from '../../components/customer/ProfileCard';
 import Card from '../../components/ui/Card';
 import PageHeader from '../../components/ui/PageHeader';
 

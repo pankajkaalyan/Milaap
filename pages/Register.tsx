@@ -6,7 +6,7 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Stepper from '../components/ui/Stepper';
 import { useForm } from '../hooks/useForm';
-import { required, email, minLength, isNumber, dateNotInFuture, alphaOnly } from '../utils/validators';
+import { required, email, minLength, isNumber, dateNotInFuture, alphaOnly, linkedinProfile, socialMediaProfile } from '../utils/validators';
 import Step1Account from '../components/auth/register/Step1Account';
 import Step2Personal from '../components/auth/register/Step2Personal';
 import Step3Caste from '../components/auth/register/Step3Cast';
@@ -37,7 +37,7 @@ const Register: React.FC = () => {
 
     const { formData, errors, handleInputChange, setFieldValue, validate, setErrors } = useForm<RegisterFormData>(
         {
-            name: '', email: '', password: '', dateOfBirth: '', timeOfBirth: '', gender: '', mobileNumber: null,
+            name: '', email: '', password: '', linkedin: '', socialMedia: '', dateOfBirth: '', timeOfBirth: '', gender: '', mobileNumber: null,
             height: '', profession: '', education: '', caste: '', subCaste: '', rashi: '', nakshatra: '',
             gotra: '', mangalDosha: 'No', fatherName: '', motherName: '',
             siblings: '', familyValues: 'Moderate', photos: [], video: null
@@ -46,6 +46,8 @@ const Register: React.FC = () => {
             name: [required(t, t('register.name')), alphaOnly(t, t('register.name'))],
             email: [required(t, t('login.email')), email(t)],
             password: [required(t, t('login.password')), minLength(t, 6)],
+            linkedin: [required(t, t('register.linkedin')), linkedinProfile(t, t('register.linkedin'))],
+            socialMedia: [required(t, t('register.socialMedia')), socialMediaProfile(t, t('register.socialMedia'))],
             dateOfBirth: [required(t, t('register.dob')), dateNotInFuture(t, t('register.dob'))],
             gender: [required(t, t('profile.gender'))],
             mobileNumber: [required(t, t('register.height')), isNumber(t, t('register.height'))],
@@ -69,7 +71,7 @@ const Register: React.FC = () => {
     const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
         const fieldsPerStep: (keyof RegisterFormData)[][] = [
-            ['name', 'email', 'password'],
+            ['name', 'email', 'password', 'linkedin', 'socialMedia'],
             ['dateOfBirth', 'timeOfBirth', 'gender', 'height', 'profession', 'education', 'mobileNumber'],
             ['caste', 'subCaste', 'gotra', 'mangalDosha', 'rashi', 'nakshatra'],
             ['fatherName', 'motherName', 'siblings', 'familyValues'],
@@ -122,6 +124,8 @@ const Register: React.FC = () => {
                 joiningDate: new Date().toISOString().split('T')[0],
                 isVerified: false,
                 chatSuspended: false,
+                linkedin: formData.linkedin,
+                socialMedia: formData.socialMedia
             };
 
             registerAPI(userProfile).then(() => {

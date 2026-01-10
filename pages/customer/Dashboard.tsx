@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
-import ProfileCard from '../../components/customer/ProfileCard';
+import { ProfileCard } from '../../components/customer/ProfileCard';
 import AIMatchSuggestions from '../../components/customer/AIMatchSuggestions';
 import { getDashboardDataAPI } from '@/services/api/dashboard';
 import { Match } from '@/types/models';

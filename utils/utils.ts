@@ -13,3 +13,6 @@ export function normalizeVerificationUser<T extends Record<string, any>>(u: T) {
     createdAt: u.submittedAt ?? u.createdAt,
   } as any;
 }
+
+
+
