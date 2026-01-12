@@ -55,7 +55,6 @@ export function transformUserResponse(data: ConnectionResponse, interests: Inter
     location: profile['city'] ||  '',
     caste: profile.caste || '',
     subCaste: profile.subCaste || '',
-    compatibilityScore: 0,
     highestEducation: profile.highestEducation || '',
     gender: profile.gender,
     about: profile.about || '',
