@@ -84,6 +84,7 @@ export interface UserProfile {
   joiningDate?: string;
   linkedin?: string;
   socialMedia?: string; // Facebook / Instagram / TikTok (any one)
+  compatibilityScore?: number;
 }
 
 export interface User {
@@ -99,6 +100,7 @@ export interface User {
   linkedin?: string;
   socialMedia?: string; // Facebook / Instagram / TikTok (any one)
   status?: 'active' | 'deactivated' | 'pending' | 'suspended' | 'deleted' | 'approved' | 'rejected';
+  mobileNumber?: string;
 }
 
 export interface ToastMessage {

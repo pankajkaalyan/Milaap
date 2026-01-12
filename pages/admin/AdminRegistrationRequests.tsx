@@ -59,7 +59,7 @@ const AdminRegistrationRequests: React.FC = () => {
     }, []);
     const getRegistrationRequests = async () => {
         try {
-            const data = await getRegistrationRequestsApi();    
+            const data = await getRegistrationRequestsApi();
             if (Array.isArray(data.items)) {
                 initializeUsers(
                     data.items.map((item) => ({
@@ -68,9 +68,10 @@ const AdminRegistrationRequests: React.FC = () => {
                         email: item.email,
                         role: UserRole.CUSTOMER,
                         createdAt: item.createdAt,
-                        status: item.status,
+                        status: 'pending',
                         linkedin: item.linkedin,
                         socialMedia: item.socialMedia,
+                        mobileNumber: item.mobileNumber,
                     }))
                 );
             }
@@ -127,6 +128,12 @@ const AdminRegistrationRequests: React.FC = () => {
     const userTableColumns: ColumnConfig[] = [
         { key: 'name', label: 'Name', sortable: true },           // simple sortable column
         { key: 'email', label: 'Email', sortable: true },
+        {
+            key: 'mobileNumber',
+            label: 'Mobile',
+            sortable: true,
+            render: (user) => user.mobileNumber || <span className="text-gray-500 italic">—</span>,
+        },
         // {
         //     key: 'role',
         //     label: 'Role',

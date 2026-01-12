@@ -15,9 +15,9 @@ type SortableKeys =
   | 'role'
   | 'createdAt'
   | 'status'
-  | 'linkedin'     // add this
-  | 'socialMedia'; // add this
-
+  | 'linkedin'
+  | 'socialMedia'
+  | 'mobileNumber'; // Added mobileNumber key
 
 export interface ColumnConfig {
   key: SortableKeys;
@@ -37,7 +37,7 @@ interface UserTableProps {
   onDelete?: (user: User) => void;
   onApprove?: (user: User) => void;
   onReject?: (user: User) => void;
-  columns?: ColumnConfig[]; // configurable columns
+  columns?: ColumnConfig[];
   rowActions?: {
     key: string;
     label: string;
@@ -45,9 +45,7 @@ interface UserTableProps {
     variant?: 'danger' | 'default';
     visible?: boolean | ((user: User) => boolean);
   }[];
-
 }
-
 
 const UserTable: React.FC<UserTableProps> = ({
   users,
@@ -61,7 +59,7 @@ const UserTable: React.FC<UserTableProps> = ({
   onApprove,
   onReject,
   columns,
-  rowActions
+  rowActions,
 }) => {
   const { t } = useAppContext();
   const [rejectUser, setRejectUser] = useState<User | null>(null);
@@ -70,9 +68,11 @@ const UserTable: React.FC<UserTableProps> = ({
     if (!sortConfig || sortConfig.key !== key) {
       return <SortUpDownIcon className="h-4 w-4" />;
     }
-    return sortConfig.direction === 'ascending'
-      ? <ArrowUpIcon className="h-4 w-4" />
-      : <ArrowDownIcon className="h-4 w-4" />;
+    return sortConfig.direction === 'ascending' ? (
+      <ArrowUpIcon className="h-4 w-4" />
+    ) : (
+      <ArrowDownIcon className="h-4 w-4" />
+    );
   };
 
   const TableHeader: React.FC<{ column: ColumnConfig }> = ({ column }) => {
@@ -116,10 +116,16 @@ const UserTable: React.FC<UserTableProps> = ({
       <span className="text-gray-500 italic">—</span>
     );
 
-  // Default columns if none provided
+  // Default columns configuration
   const defaultColumns: ColumnConfig[] = [
     { key: 'name', label: t('admin.users.table.name'), sortable: true },
     { key: 'email', label: t('admin.users.table.email'), sortable: true },
+    {
+      key: 'mobileNumber',
+      label: 'Mobile',
+      sortable: true,
+      render: (user) => user.mobileNumber || <span className="text-gray-500 italic">—</span>,
+    },
     {
       key: 'role',
       label: t('admin.users.table.role'),
@@ -201,14 +207,23 @@ const UserTable: React.FC<UserTableProps> = ({
                   </td>
                 ))}
 
+                {/* Note: UserTableRowActions must wrap its content in a <td> 
+                   to avoid the "<div> cannot appear as a child of <tr>" warning.
+                */}
                 <UserTableRowActions
                   user={user}
-                  actions={rowActions || [
-                    { key: 'edit', label: 'Edit', onClick: onEdit! },
-                    { key: 'delete', label: 'Delete', onClick: onDelete!, variant: 'danger' },
-                  ]}
+                  actions={
+                    rowActions || [
+                      { key: 'edit', label: 'Edit', onClick: onEdit! },
+                      {
+                        key: 'delete',
+                        label: 'Delete',
+                        onClick: onDelete!,
+                        variant: 'danger',
+                      },
+                    ]
+                  }
                 />
-
               </tr>
             ))}
           </tbody>

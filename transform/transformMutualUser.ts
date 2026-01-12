@@ -74,6 +74,7 @@ export function transformUserResponse(data: ConnectionResponse, interests: Inter
     interestShown: findIntrest(interests, user.interestShownList),
     isFavourite: profile.isFavourite || false,
     isBlocked: profile.isBlocked || false,
+    compatibilityScore: profile.compatibilityScore || 0,
   };
 }
 
