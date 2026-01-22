@@ -69,31 +69,62 @@ export const fileRequired = <T,>(t: TFunction): ValidatorFunction<T> => (value) 
 };
 
 export const linkedinProfile = <T,>(
-    t: TFunction,
-    fieldName: string
+  t: TFunction,
+  fieldName: string
 ): ValidatorFunction<T> => (value) => {
-    if (
-        value &&
-        !/^https?:\/\/(www\.)?linkedin\.com\/(in|company)\/[a-zA-Z0-9-_%]+\/?$/i.test(
-            value as string
-        )
-    ) {
-        return t('validation.linkedin_invalid', { fieldName });
+  if (!value) return null;
+
+  try {
+    const url = new URL(value as string);
+
+    const isLinkedIn =
+      url.hostname === 'linkedin.com' ||
+      url.hostname.endsWith('.linkedin.com');
+
+    if (!isLinkedIn) {
+      return t('validation.linkedin_invalid', { fieldName });
     }
+
     return null;
+  } catch {
+    return t('validation.linkedin_invalid', { fieldName });
+  }
 };
 
+
 export const socialMediaProfile = <T,>(
-    t: TFunction,
-    fieldName: string
+  t: TFunction,
+  fieldName: string
 ): ValidatorFunction<T> => (value) => {
-    if (
-        value &&
-        !/^(https?:\/\/)?(www\.)?(facebook\.com|instagram\.com|tiktok\.com)\/.+$/i.test(
-            value as string
-        )
-    ) {
-        return t('validation.social_media_profile', { fieldName });
+  if (!value) return null;
+
+  try {
+    const url = new URL(value as string);
+
+    const allowedDomains = [
+      'facebook.com',
+      'instagram.com',
+      'tiktok.com',
+      'linkedin.com',
+      'x.com',
+      'twitter.com',
+      'youtube.com',
+      'snapchat.com',
+      'threads.net'
+    ];
+
+    const isAllowed = allowedDomains.some(
+      domain =>
+        url.hostname === domain || url.hostname.endsWith(`.${domain}`)
+    );
+
+    if (!isAllowed) {
+      return t('validation.social_media_profile', { fieldName });
     }
+
     return null;
+  } catch {
+    return t('validation.social_media_profile', { fieldName });
+  }
 };
+

@@ -65,7 +65,7 @@ const Search: React.FC = () => {
                     <p className="text-gray-300 mb-8">{t('search.subtitle')}</p>
                 </div>
                 <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div className="md:col-span-2 lg:col-span-3">
+                    {/* <div className="md:col-span-2 lg:col-span-3">
                         <ToggleSwitch
                             id="near-me-search"
                             label={t('geolocation.find_near_me')}
@@ -91,7 +91,7 @@ const Search: React.FC = () => {
                                 unit={t('geolocation.km')}
                             />
                         </div>
-                    )}
+                    )} */}
 
                     <div className="flex gap-2">
                         <Input id="minAge" label="Min Age" type="number" placeholder="25" value={filters.minAge} onChange={handleParamChange} error={errors.minAge} />

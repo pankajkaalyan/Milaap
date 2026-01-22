@@ -128,17 +128,17 @@ const InternalProfileCard: React.FC<InternalCardProps> = ({ match, isFavourite, 
                 <h3 className="text-xl font-bold text-white flex flex-col sm:flex-row sm:justify-between gap-2">
                     {(match.name || match.age) && (
                         <span className="text-white text-lg sm:text-xl">
-                            {match.name}{match.age ? `, ${match.age}` : ''}
+                            {match.name}{match.age && useLink ? `, ${match.age}` : ''}
                         </span>
                     )}
 
                     <div className="flex flex-col items-start sm:items-end gap-2">
-                        {match.compatibilityScore !== undefined && (
+                        {useLink && match.compatibilityScore !== undefined && (
                             <div className={`px-3 py-1 text-xs font-semibold rounded-full ${getScoreColor(match.compatibilityScore)} backdrop-blur-sm whitespace-nowrap`}>
                                 {match.compatibilityScore}% {t('dashboard.compatibility_score')}
                             </div>
                         )}
-                        {match.verificationStatus?.toLowerCase() === 'verified' && (
+                        {useLink && match.verificationStatus?.toLowerCase() === 'verified' && (
                             <div className="flex items-center gap-1">
                                 <VerifiedBadge />
                             </div>

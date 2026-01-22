@@ -59,7 +59,7 @@ const Matches: React.FC = () => {
                 <Card>
                     <h2 className="text-xl font-bold text-white mb-4">{t('matches.filter.title')}</h2>
                     <div className="space-y-4">
-                        <ToggleSwitch
+                        {/* <ToggleSwitch
                             id="near-me-matches"
                             label={t('geolocation.find_near_me')}
                             checked={isNearMe}
@@ -81,7 +81,7 @@ const Matches: React.FC = () => {
                                 step={10}
                                 unit={t('geolocation.km')}
                             />
-                        )}
+                        )} */}
 
                         <div className="flex gap-2">
                             <Input id="minAge" label="Min Age" type="number" placeholder="25" value={filters.minAge} onChange={handleFilterInputChange} error={errors.minAge} />
