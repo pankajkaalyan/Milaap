@@ -72,7 +72,6 @@ const Step1Account: React.FC<Step1Props> = ({
                 onChange={handleInputChange}
                 error={errors.socialMedia}
                 placeholder="Facebook / Instagram / TikTok profile link"
-                required
             />
         </div>
     );

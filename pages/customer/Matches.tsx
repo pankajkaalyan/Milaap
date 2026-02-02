@@ -10,12 +10,12 @@ import { Match } from '@/types/models';
 import { getDashboardDataAPI } from '@/services/api/dashboard';
 
 const Matches: React.FC = () => {
-    const { t, favourites, toggleFavourite, user, trackEvent } = useAppContext();
+    const { t, favourites, toggleFavourite, user, trackEvent, addToast } = useAppContext();
     const [recommendedMatches, setRecommendedMatches] = useState<Match[]>([]);
 
     const {
         filters, setFilters, isNearMe, radius, setRadius, handleNearMeToggle, filteredMatches
-    } = useMatchesFilter(user);
+    } = useMatchesFilter(user, addToast, t);
 
     const hasFetchedDashboardRef = useRef({});
     const hasTrackedRef = useRef({});

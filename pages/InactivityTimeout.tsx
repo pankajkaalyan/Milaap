@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { AppEventStatus } from '@/types';
+import { storageManager } from '@/utils/storageManager';
 
 /**
  * useInactivityTimeout
@@ -18,17 +19,17 @@ const useInactivityTimeout = (timeout = 10 * 60 * 1000, warningDuration = 60 * 1
             try {
                 // lazy import to avoid circular deps
                 const { logAutoLogout } = await import('@/utils/telemetry');
-                const storedUser = localStorage.getItem('user');
+                const storedUser = storageManager.getJSON<{id?: string | number}>('user', 'local');
                 let userId = null;
-                try { userId = storedUser ? JSON.parse(storedUser).id : null; } catch (e) { userId = null; }
+                try { userId = storedUser ? storedUser.id : null; } catch (e) { userId = null; }
                 logAutoLogout({ reason: 'idle_timeout', userId, path: window.location.pathname });
             } catch (e) {
                 /* ignore telemetry errors */
             }
 
             // 1️⃣ Clear all storage
-            localStorage.clear();
-            sessionStorage.clear();
+            storageManager.clear('local');
+            storageManager.clear('session');
 
             // 2️⃣ Clear PWA caches
             if ("caches" in window) {
@@ -73,7 +74,7 @@ const useInactivityTimeout = (timeout = 10 * 60 * 1000, warningDuration = 60 * 1
             stopTimers();
 
             // Only schedule if there's an auth token
-            const token = localStorage.getItem('token');
+            const token = storageManager.getItem('token', 'local');
             if (!token) return;
 
             // Schedule warning if applicable

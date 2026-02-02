@@ -3,6 +3,7 @@ import { User, UserRole, UserProfile, MembershipPlan, AdminRole, NotificationSet
 import { fetchCurrentUserAPI } from '@/services/api/profile';
 import { eventBus } from '@/utils/eventBus';
 import { refreshTokenAPI } from '@/services/api/auth';
+import { storageManager } from '@/utils/storageManager';
 
 const defaultNotificationSettings: NotificationSettings = {
     push: { newMatch: true, newMessage: true, profileView: false },
@@ -20,15 +21,23 @@ export const useAuth = () => {
     // Load from localStorage ONCE (when component mounts)
     // ---------------------------------------------------
     useEffect(() => {
-        const storedUser = localStorage.getItem("user");
-        const storedToken = localStorage.getItem("token");
-        const storedExpiry = localStorage.getItem("expiresIn");
+        const storedUser = storageManager.getJSON<User>("user", "local");
+        const storedToken = storageManager.getItem("token", "local");
+        const storedExpiry = storageManager.getItem("expiresIn", "local");
 
         // console.log("⏳ Loaded from localStorage", { storedUser, storedToken, storedExpiry });
 
-        if (storedUser) setUser(JSON.parse(storedUser));
+        if (storedUser) setUser(storedUser);
         if (storedToken) setToken(storedToken);
         if (storedExpiry) setExpiresIn(Number(storedExpiry));
+
+        // Cleanup: Clear timer on unmount
+        return () => {
+            if (refreshTimer.current) {
+                clearTimeout(refreshTimer.current);
+                refreshTimer.current = null;
+            }
+        };
     }, []);   // <- EMPTY dependency → runs only ONCE
 
 
@@ -54,9 +63,9 @@ export const useAuth = () => {
                     setToken(result.accessToken);
                     setExpiresIn(result.expiresIn);
 
-                    localStorage.setItem('token', result.accessToken);
-                    localStorage.setItem('refreshToken', result.refreshToken);
-                    localStorage.setItem('expiresIn', String(result.expiresIn));
+                    storageManager.setItem('token', result.accessToken, 'local');
+                    storageManager.setItem('refreshToken', result.refreshToken, 'local');
+                    storageManager.setItem('expiresIn', String(result.expiresIn), 'local');
                 })
                 .catch(() => logout());
             return;
@@ -78,9 +87,9 @@ export const useAuth = () => {
                 setToken(result.accessToken);
                 setExpiresIn(result.expiresIn);
 
-                localStorage.setItem('token', result.accessToken);
-                localStorage.setItem('refreshToken', result.refreshToken);
-                localStorage.setItem('expiresIn', String(result.expiresIn));
+                storageManager.setItem('token', result.accessToken, 'local');
+                storageManager.setItem('refreshToken', result.refreshToken, 'local');
+                storageManager.setItem('expiresIn', String(result.expiresIn), 'local');
             } catch (err) {
                 logout();
             }
@@ -146,16 +155,16 @@ export const useAuth = () => {
             };
 
             setUser(newUser);
-            localStorage.setItem("user", JSON.stringify(newUser));
+            storageManager.setJSON("user", newUser, "local");
 
             if (userToken) {
                 setToken(userToken);
-                localStorage.setItem("token", userToken);
+                storageManager.setItem("token", userToken, "local");
             }
 
             if (data.tokenExpiresIn) {
                 setExpiresIn(data.tokenExpiresIn);
-                localStorage.setItem("expiresIn", String(data.tokenExpiresIn));
+                storageManager.setItem("expiresIn", String(data.tokenExpiresIn), "local");
             }
 
             eventBus.emit(AppEventStatus.LOGIN_SUCCESS, { role: newUser.role, userId: newUser.id });
@@ -176,10 +185,10 @@ export const useAuth = () => {
             setExpiresIn(null);
 
             // 2️⃣ Clear Local & Session Storage
-            localStorage.removeItem("user");
-            localStorage.removeItem("token");
-            localStorage.removeItem("expiresIn");
-            sessionStorage.clear();
+            storageManager.removeItem("user", "local");
+            storageManager.removeItem("token", "local");
+            storageManager.removeItem("expiresIn", "local");
+            storageManager.clear("session");
 
             // 3️⃣ Emit logout event
             eventBus.emit(AppEventStatus.LOGOUT);

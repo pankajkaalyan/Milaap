@@ -3,6 +3,7 @@ import { useAppContext } from '../../hooks/useAppContext';
 import Card from '../../components/ui/Card';
 import { User } from '../../types';
 import VerificationReviewModal from '../../components/admin/VerificationReviewModal';
+import ProfileLink from '../../components/ui/ProfileLink';
 
 const VerificationRequests: React.FC = () => {
     const { t, verificationRequests, refreshVerificationRequests } = useAppContext();
@@ -16,7 +17,7 @@ const VerificationRequests: React.FC = () => {
     React.useEffect(() => {
         if (!verificationRequests || verificationRequests.length === 0) {
             // best effort; ignore errors here — notifications/toasts are handled in the hook
-            refreshVerificationRequests().catch(() => {});
+            refreshVerificationRequests().catch(() => { });
         }
     }, []);
 
@@ -24,7 +25,7 @@ const VerificationRequests: React.FC = () => {
         <>
             <Card>
                 <h1 className="text-3xl font-bold text-white mb-6">{t('admin.verifications.title')}</h1>
-                
+
                 {verificationRequests.length > 0 ? (
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-gray-300">
@@ -39,13 +40,15 @@ const VerificationRequests: React.FC = () => {
                                 {verificationRequests.map(user => (
                                     <tr key={user.id} className="border-b border-gray-700 hover:bg-white/5">
                                         <td className="p-3">
-                                            <div className="font-semibold">{user.name || user.email}</div>
-                                            <div className="text-sm text-gray-400">{user.email}</div>
+                                            <ProfileLink userId={user.userId} userName={user.name} className="font-semibold text-gray-200 underline underline-offset-2 hover:text-amber-400 transition">
+                                                {user.name}
+                                            </ProfileLink>
+                                            <span className="text-sm text-gray-400">{' '}({user.email})</span>
                                         </td>
                                         <td className="p-3">{new Date(user.createdAt).toLocaleDateString()}</td>
                                         <td className="p-3 text-right">
-                                            <button 
-                                                onClick={() => handleReview(user)} 
+                                            <button
+                                                onClick={() => handleReview(user)}
                                                 className="px-3 py-1 text-sm font-semibold text-white bg-pink-600 rounded-md hover:bg-pink-700 transition-colors cursor-pointer"
                                             >
                                                 {t('admin.verifications.review')}

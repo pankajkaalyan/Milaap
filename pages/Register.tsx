@@ -6,7 +6,7 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Stepper from '../components/ui/Stepper';
 import { useForm } from '../hooks/useForm';
-import { required, email, minLength, isNumber, dateNotInFuture, alphaOnly, linkedinProfile, socialMediaProfile } from '../utils/validators';
+import { required, email, minLength, isNumber, dateNotInFuture, alphaOnly, linkedinProfile, socialMediaProfile, ageBetween16And100 } from '../utils/validators';
 import Step1Account from '../components/auth/register/Step1Account';
 import Step2Personal from '../components/auth/register/Step2Personal';
 import Step3Caste from '../components/auth/register/Step3Cast';
@@ -37,20 +37,22 @@ const Register: React.FC = () => {
 
     const { formData, errors, handleInputChange, setFieldValue, validate, setErrors } = useForm<RegisterFormData>(
         {
-            name: '', email: '', password: '', linkedin: '', socialMedia: '', dateOfBirth: '', timeOfBirth: '', gender: '', mobileNumber: null,
+            name: '', email: '', password: '', linkedin: '', socialMedia: '', dateOfBirth: '', timeOfBirth: '', gender: '', mobileNumber: null, countryCode: '+61',
             height: '', profession: '', education: '', caste: '', subCaste: '', rashi: '', nakshatra: '',
             gotra: '', mangalDosha: 'No', fatherName: '', motherName: '',
-            siblings: '', familyValues: 'Moderate', photos: [], video: null
+            siblings: '', familyValues: 'Moderate', photos: [], video: null,
+            contactPerson: 'self', parentsEmail: '', parentsMobileNumber: '', parentsCountryCode: '+61'
         },
         {
             name: [required(t, t('register.name')), alphaOnly(t, t('register.name'))],
             email: [required(t, t('login.email')), email(t)],
             password: [required(t, t('login.password')), minLength(t, 6)],
             linkedin: [required(t, t('register.linkedin')), linkedinProfile(t, t('register.linkedin'))],
-            socialMedia: [required(t, t('register.socialMedia')), socialMediaProfile(t, t('register.socialMedia'))],
-            dateOfBirth: [required(t, t('register.dob')), dateNotInFuture(t, t('register.dob'))],
+            socialMedia: [socialMediaProfile(t, t('register.socialMedia'))],
+            dateOfBirth: [required(t, t('register.dob')), dateNotInFuture(t, t('register.dob')), ageBetween16And100(t, t('register.dob'))],
             gender: [required(t, t('profile.gender'))],
-            mobileNumber: [required(t, t('register.height')), isNumber(t, t('register.height'))],
+            mobileNumber: [required(t, t('register.mobile')), isNumber(t, t('register.mobile'))],
+            countryCode: [required(t, t('register.countryCode'))],
             timeOfBirth: required(t, t('register.tob')),
             height: [required(t, t('register.height')), isNumber(t, t('register.height'))],
             caste: [required(t, t('register.caste')), alphaOnly(t, t('register.caste'))],
@@ -72,9 +74,9 @@ const Register: React.FC = () => {
         e.preventDefault();
         const fieldsPerStep: (keyof RegisterFormData)[][] = [
             ['name', 'email', 'password', 'linkedin', 'socialMedia'],
-            ['dateOfBirth', 'timeOfBirth', 'gender', 'height', 'profession', 'education', 'mobileNumber'],
+            ['dateOfBirth', 'timeOfBirth', 'gender', 'height', 'profession', 'education', 'mobileNumber', 'countryCode'],
             ['caste', 'subCaste', 'gotra', 'mangalDosha', 'rashi', 'nakshatra'],
-            ['fatherName', 'motherName', 'siblings', 'familyValues'],
+            ['fatherName', 'motherName', 'siblings', 'familyValues', 'contactPerson', 'parentsEmail', 'parentsMobileNumber', 'parentsCountryCode'],
             // ["photos", "video"] // No validation needed for uploads on "Next"
         ];
         if (validate(fieldsPerStep[currentStep])) {
@@ -98,7 +100,7 @@ const Register: React.FC = () => {
                 dob: formData.dateOfBirth,
                 timeOfBirth: formData.timeOfBirth,
                 gender: formData.gender,
-                contactNumber: formData.mobileNumber ? Number(formData.mobileNumber) : null,
+                contactNumber: formData.mobileNumber ? `${formData.countryCode}-${formData.mobileNumber}` : null,
                 heightInCm: formData.height ? Number(formData.height) : 0,
                 profession: formData.profession,
                 highestEducation: formData.education,
@@ -125,7 +127,10 @@ const Register: React.FC = () => {
                 isVerified: false,
                 chatSuspended: false,
                 linkedin: formData.linkedin,
-                socialMedia: formData.socialMedia
+                socialMedia: formData.socialMedia,
+                parentsEmail: formData.parentsEmail ? formData.parentsEmail : null,
+                parentsMobileNumber: formData.parentsMobileNumber ? `${formData.parentsCountryCode}-${formData.parentsMobileNumber}` : null,
+                contactPerson: formData.contactPerson.toUpperCase() as 'SELF' | 'PARENT',
             };
 
             registerAPI(userProfile).then(() => {
@@ -233,7 +238,7 @@ const Register: React.FC = () => {
                     navigate('/login');
                 }}
                 title="Profile Activation Required"
-                description="An activation link has been sent to your email ID. Please login and activate your profile."
+                description="An activation link has been sent to your registered email address. Please check your inbox, and also your spam or junk folder if you don’t see it. Use the link to log in and activate your profile."
             />
         </>
     );

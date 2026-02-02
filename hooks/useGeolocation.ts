@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useAppContext } from './useAppContext';
 
 interface GeolocationState {
   loading: boolean;
@@ -10,8 +9,7 @@ interface GeolocationState {
   } | null;
 }
 
-export const useGeolocation = () => {
-  const { addToast, t } = useAppContext();
+export const useGeolocation = (addToast?: (message: string, type: string) => void, t?: (key: string) => string) => {
   const [state, setState] = useState<GeolocationState>({
     loading: false,
     error: null,
@@ -20,7 +18,7 @@ export const useGeolocation = () => {
 
   const getLocation = () => {
     if (!navigator.geolocation) {
-       addToast("Geolocation is not supported by your browser.", "error");
+       if (addToast) addToast("Geolocation is not supported by your browser.", "error");
        setState({ loading: false, error: { code: 99, message: "Geolocation not supported" }, data: null });
        return;
     }
@@ -39,11 +37,11 @@ export const useGeolocation = () => {
         });
       },
       (error) => {
-        let message = t('toast.geolocation.error');
+        let message = t ? t('toast.geolocation.error') : 'Geolocation error occurred';
         if (error.code === error.PERMISSION_DENIED) {
-            message = t('toast.geolocation.permission_denied');
+            message = t ? t('toast.geolocation.permission_denied') : 'Permission denied for geolocation';
         }
-        addToast(message, "error");
+        if (addToast) addToast(message, "error");
         setState({
           loading: false,
           error,

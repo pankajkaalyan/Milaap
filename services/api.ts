@@ -1,6 +1,7 @@
 import axios from "axios";
 import { showGlobalLoader, hideGlobalLoader } from "../utils/loaderBus";
 import { AppEventStatus } from '../types';
+import { storageManager } from "../utils/storageManager";
 
 /* ------------------------------------------------
    🚀 BASE API INSTANCE
@@ -21,7 +22,7 @@ API.interceptors.request.use(
     (config) => {
         showGlobalLoader(); // 👈 SHOW
 
-        const token = localStorage.getItem("token");
+        const token = storageManager.getItem("token", "local");
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -67,11 +68,14 @@ API.interceptors.response.use(
                 const { refreshTokenAPI } = await import('./api/auth');
                 refreshPromise = refreshTokenAPI()
                     .then(result => {
-                        if (!result?.accessToken) throw new Error('No access token in refresh response');
+                        if (!result?.accessToken) {
+                            console.error('refreshTokenAPI returned unexpected result:', result);
+                            throw new Error('No access token in refresh response');
+                        }
 
-                        localStorage.setItem('token', result.accessToken);
-                        localStorage.setItem('refreshToken', result.refreshToken);
-                        localStorage.setItem('expiresIn', String(result.expiresIn));
+                        storageManager.setItem('token', result.accessToken, 'local');
+                        storageManager.setItem('refreshToken', result.refreshToken, 'local');
+                        storageManager.setItem('expiresIn', String(result.expiresIn), 'local');
                         // Notify other parts of the app about the refresh
                         try {
                             window.dispatchEvent(new CustomEvent(AppEventStatus.TOKEN_REFRESHED, { detail: result }));
@@ -92,10 +96,25 @@ API.interceptors.response.use(
 
             try {
                 const result = await refreshPromise;
+                // If refresh did not produce a result, bail out safely
+                if (!result || !result.accessToken) {
+                    // Ensure we clear auth and redirect to login
+                    await logoutCleanup();
+                    window.location.replace(`${window.location.origin}${window.location.pathname}#/login`);
+                    return Promise.reject(new Error('No access token after refresh'));
+                }
+
                 // mark original request as retried
+                const accessToken = result?.accessToken;
+                if (!accessToken) {
+                    await logoutCleanup();
+                    window.location.replace(`${window.location.origin}${window.location.pathname}#/login`);
+                    return Promise.reject(new Error('No access token after refresh'));
+                }
+
                 originalRequest._retry = true;
                 originalRequest.headers = originalRequest.headers || {};
-                originalRequest.headers.Authorization = `Bearer ${result.accessToken}`;
+                originalRequest.headers.Authorization = `Bearer ${accessToken}`;
                 return API(originalRequest);
             } catch (err) {
                 return Promise.reject(err);
@@ -112,8 +131,8 @@ API.interceptors.response.use(
 async function logoutCleanup() {
     try {
         // Clear storage
-        localStorage.clear();
-        sessionStorage.clear();
+        storageManager.clear('local');
+        storageManager.clear('session');
 
         // Clear caches
         if ("caches" in window) {

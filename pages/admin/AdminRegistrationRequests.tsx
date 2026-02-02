@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BadgeVariant, User, UserRole } from '../../types';
 import { useAppContext } from '../../hooks/useAppContext';
 import Card from '../../components/ui/Card';
@@ -8,7 +8,8 @@ import Pagination from '../../components/ui/Pagination';
 import UserTableFilters from '../../components/admin/users/UserTableFilters';
 import BulkActionsMenu from '../../components/admin/users/BulkActionsMenu';
 import { useUserManagementModals } from '../../hooks/useUserManagementModals';
-import UserModals from '../../components/admin/users/UserModals';
+import InfoWithTooltip from '../../components/ui/InfoWithTooltip';
+import ProfileLink from '../../components/ui/ProfileLink';
 import {
     getRegistrationRequestsApi,
     approveRegistrationApi,
@@ -16,6 +17,9 @@ import {
 } from '@/services/api/admin';
 import getVerificationBadge from '@/components/admin/users/GetVerificationBadge';
 import Badge from '@/components/ui/Badge';
+import { Link } from 'react-router-dom';
+import RejectConfirmModal from '@/components/admin/users/RejectConfirmModal';
+import { s } from 'framer-motion/client';
 
 
 const AdminRegistrationRequests: React.FC = () => {
@@ -51,6 +55,7 @@ const AdminRegistrationRequests: React.FC = () => {
         closeModal,
     } = useUserManagementModals();
 
+    const [rejectUser, setRejectUser] = useState<User | null>(null);
     // -------------------------
     // ✨ FETCH REGISTRATION REQUESTS
     // -------------------------
@@ -64,14 +69,15 @@ const AdminRegistrationRequests: React.FC = () => {
                 initializeUsers(
                     data.items.map((item) => ({
                         id: item.id,
-                        name: item.name,
+                        name: item.name || item.fullName || 'Unknown User',
                         email: item.email,
-                        role: UserRole.CUSTOMER,
+                        role: item.role === UserRole.ROLE_ADMIN ? UserRole.ADMIN : UserRole.CUSTOMER,
                         createdAt: item.createdAt,
-                        status: 'pending',
+                        status: item.status,
                         linkedin: item.linkedin,
                         socialMedia: item.socialMedia,
                         mobileNumber: item.mobileNumber,
+                        contactPerson: item.contactPerson,
                     }))
                 );
             }
@@ -126,14 +132,47 @@ const AdminRegistrationRequests: React.FC = () => {
     //   };
 
     const userTableColumns: ColumnConfig[] = [
-        { key: 'name', label: 'Name', sortable: true },           // simple sortable column
-        { key: 'email', label: 'Email', sortable: true },
+        {
+            key: 'name', label: 'Name', sortable: true, render: (user) => (
+                <ProfileLink userId={user.id} userName={user.name} className="text-amber-500 underline hover:text-amber-300 transition-colors">
+                    {user.name}
+                </ProfileLink>
+            ),
+        },           // simple sortable column
+        {
+            key: 'email',
+            label: 'Email',
+            sortable: true,
+            render: (user) => (
+                <div className="flex items-center gap-1">
+                    <span>{user.email}</span>
+
+                    {user.contactPerson === 'PARENT' && (
+                        <InfoWithTooltip tooltip="Parent Email" />
+                    )}
+                </div>
+            ),
+        },
         {
             key: 'mobileNumber',
             label: 'Mobile',
             sortable: true,
-            render: (user) => user.mobileNumber || <span className="text-gray-500 italic">—</span>,
+            render: (user) => (
+                <div className="flex items-center gap-1">
+                    <span>
+                        {user.mobileNumber || (
+                            <span className="text-gray-500 italic">—</span>
+                        )}
+                    </span>
+
+                    {user.contactPerson === 'PARENT' && (
+                        <InfoWithTooltip tooltip="Parent Mobile Number" />
+                    )}
+                </div>
+            ),
         },
+
+
         // {
         //     key: 'role',
         //     label: 'Role',
@@ -241,12 +280,13 @@ const AdminRegistrationRequests: React.FC = () => {
                     onSort={requestSort}
                     onEdit={() => { }}
                     onDelete={() => { }}
+                    onVerify={() => { }}
                     onApprove={handleApprove}
-                    onReject={handleReject}
+                    onReject={((user) => { setRejectUser(user); })}
                     columns={userTableColumns} // <-- this makes table configurable
                     rowActions={[
                         { key: 'approve', label: 'Approve', onClick: handleApprove },
-                        { key: 'reject', label: 'Reject', onClick: handleReject, variant: 'danger', visible: (user) => user.status !== 'approved' },
+                        { key: 'reject', label: 'Reject', onClick: (user) => setRejectUser(user), variant: 'danger', visible: (user) => user.status !== 'approved' },
                     ]}
                 />
 
@@ -266,6 +306,17 @@ const AdminRegistrationRequests: React.FC = () => {
         onClose={closeModal}
         onDeleteConfirm={handleDeleteConfirm}
       /> */}
+            {/* Reject Modal */}
+            {rejectUser && handleReject && (
+                <RejectConfirmModal
+                    user={rejectUser}
+                    onClose={() => setRejectUser(null)}
+                    onConfirm={() => {
+                        handleReject(rejectUser);
+                        setRejectUser(null);
+                    }}
+                />
+            )}
         </>
     );
 };

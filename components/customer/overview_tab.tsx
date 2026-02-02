@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Match, ButtonVariant, UserProfile } from '../../types';
+import { Match, ButtonVariant, UserProfile, UserRole } from '../../types';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
 import CompatibilityChecklist from './CompatibilityChecklist';
@@ -16,6 +16,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ user, showContact, onViewCont
     const { t } = useAppContext();
     const targetUserProfile = (user['profile'] ? user['profile'] : null) as UserProfile;
     const interestShown = user.interestShownList[0];
+    const logedInUser = useAppContext().user;
     return (
         <div className="space-y-8">
             <CompatibilityChecklist targetUser={user} />
@@ -25,7 +26,7 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ user, showContact, onViewCont
                     <Button onClick={onViewContact} className="w-full">
                         {t('profile.view_contact')}
                     </Button>
-                    {interestShown?.isMutual && showContact && (
+                    {((interestShown?.isMutual && showContact) || logedInUser.role === UserRole.ADMIN) && (
                         <div className="mt-4 p-4 bg-white/10 rounded-lg animate-fade-in">
                             <p className="text-white font-semibold">
                                 Phone: {targetUserProfile?.contactNumber ?? 'N/A'}
@@ -34,11 +35,14 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ user, showContact, onViewCont
                     )}
 
                 </Card>
-                <Card className="text-center">
-                    <Link to={`/kundli-match/${user.id}`}>
-                        <Button className="w-full" variant={ButtonVariant.SECONDARY}>{t('kundli.check_match')}</Button>
-                    </Link>
-                </Card>
+
+                {logedInUser.role !== UserRole.ADMIN && (
+                    <Card className="text-center">
+                        <Link to={`/kundli-match/${user.id}`}>
+                            <Button className="w-full" variant={ButtonVariant.SECONDARY}>{t('kundli.check_match')}</Button>
+                        </Link>
+                    </Card>
+                )}
             </div>
 
             <Card>

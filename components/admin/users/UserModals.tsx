@@ -15,6 +15,7 @@ interface UserModalsProps {
   onDeleteConfirm: (userIds: (string | number)[]) => void;
   onSuspendChatConfirm: (reporterId: string | number) => void;
   onSuspendUserConfirm?: (reporterId: string | number) => void;
+  onActivateConfirm?: (userIds: (string | number)[]) => void;
 }
 
 const UserModals: React.FC<UserModalsProps> = ({
@@ -26,6 +27,7 @@ const UserModals: React.FC<UserModalsProps> = ({
   onDeleteConfirm,
   onSuspendChatConfirm,
   onSuspendUserConfirm,
+  onActivateConfirm
 }) => {
   const { t } = useAppContext();
 
@@ -63,6 +65,23 @@ const UserModals: React.FC<UserModalsProps> = ({
           title={t('admin.users.delete_confirm_title')}
           message={message}
           confirmButtonText={t('admin.users.table.delete')}
+        />
+      );
+    }
+    case 'activate': {
+      const usersToActivate = modalData.users || [];
+      const message = usersToActivate.length > 1
+        ? t('admin.users.activate_confirm_bulk').replace('{count}', usersToActivate.length.toString())
+        : t('admin.users.activate_confirm').replace('{name}', usersToActivate[0]?.name || 'this user');
+
+      return (
+        <ConfirmationModal
+          isOpen={true}
+          onClose={onClose}
+          onConfirm={() => onActivateConfirm(usersToActivate.map(u => u.id))}
+          title={t('admin.users.activate_confirm_title')}
+          message={message}
+          confirmButtonText={t('admin.users.table.activate')}
         />
       );
     }

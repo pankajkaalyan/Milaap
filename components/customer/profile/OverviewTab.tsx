@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Match, ButtonVariant } from '../../../types';
+import { Match, ButtonVariant, UserRole } from '../../../types';
 import Card from '../../ui/Card';
 import Button from '../../ui/Button';
 import CompatibilityChecklist from '../CompatibilityChecklist';
@@ -14,11 +14,11 @@ interface OverviewTabProps {
 
 const OverviewTab: React.FC<OverviewTabProps> = ({ user, showContact, onViewContact }) => {
     const { t } = useAppContext();
-
+    const logedInUser = useAppContext().user;
     return (
         <div className="space-y-8">
             <CompatibilityChecklist targetUser={user} />
-            
+
             <div className="grid md:grid-cols-2 gap-8">
                 <Card className="text-center">
                     <Button onClick={onViewContact} className="w-full">
@@ -30,11 +30,19 @@ const OverviewTab: React.FC<OverviewTabProps> = ({ user, showContact, onViewCont
                         </div>
                     )}
                 </Card>
-                 <Card className="text-center">
-                    <Link to={`/kundli-match/${user.id}`}>
-                        <Button className="w-full" variant={ButtonVariant.SECONDARY}>{t('kundli.check_match')}</Button>
-                    </Link>
-                </Card>
+                {logedInUser.role !== UserRole.ADMIN && (
+                    <Card className="text-center">
+                        <Link to={`/kundli-match/${user.id}`}>
+                            <Button
+                                className="w-full"
+                                variant={ButtonVariant.SECONDARY}
+                            >
+                                {t('kundli.check_match')}
+                            </Button>
+                        </Link>
+                    </Card>
+                )}
+
             </div>
 
             <Card>

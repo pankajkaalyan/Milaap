@@ -186,9 +186,9 @@ export const getBlockedUsersAPI = async () => {
     }
 };
 
-export const deactivateProfileAPI = async () => {
+export const deactivateProfileAPI = async (status: string) => {
     try {
-        const response = await API.patch("/api/profile/deactivate");
+        const response = await API.patch("/api/profile/deactivate", { status });
         return response.data;
     } catch (error: any) {
         console.error("Error deactivating profile:", error.response?.data || error);
@@ -196,10 +196,31 @@ export const deactivateProfileAPI = async () => {
     }
 };
 
+/**
+ * Toggle user profile status
+ * PATCH /api/admin/users/toggle-profile-status/{status}
+ */
+export const toggleProfileStatusApi = async (
+  status: string
+) => {
+  try {
+    const timestamp = Date.now(); // ✅ timestamp in URL
+
+    const response = await API.patch(
+      `/api/profile/toggle-profile-status/${status.toUpperCase()}?ts=${timestamp}`
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error toggling profile status:', error);
+    throw error;
+  }
+};
+
+
 
 export const deleteProfileAPI = async () => {
     try {
-        const response = await API.delete("/api/profile");
+        const response = await API.put("/api/profile");
         return response.data;
     } catch (error: any) {
         console.error("Error deleting profile:", error.response?.data || error);

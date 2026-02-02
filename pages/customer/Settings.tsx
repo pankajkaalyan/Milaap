@@ -10,10 +10,11 @@ import AccountSettings from '../../components/customer/settings/AccountSettings'
 import ConfirmationModal from '../../components/ui/ConfirmationModal';
 import DeleteAccountModal from '../../components/customer/settings/DeleteAccountModal';
 import { useNavigate } from 'react-router';
+import { use } from 'framer-motion/client';
 
 
 const Settings: React.FC = () => {
-    const { t, user, updateUserProfile, addToast, deactivateAccount, deleteAccount } = useAppContext();
+    const { t, user, updateUserProfile, addToast, toggleProfileStatus, deleteAccount } = useAppContext();
 
     const [formState, setFormState] = useState<Partial<UserProfile>>({});
 
@@ -50,7 +51,8 @@ const Settings: React.FC = () => {
 
     const handleDeactivateConfirm = () => {
         setIsDeactivateModalOpen(false);
-        deactivateAccount();
+        const status = user?.profile?.status.toLowerCase() === 'approved' ? 'deactivated' : 'approved';
+        toggleProfileStatus(status);
     };
 
     const handleDeleteConfirm = () => {
@@ -99,6 +101,8 @@ const Settings: React.FC = () => {
                     <PrivacySettings
                         profileVisibility={formState.profileVisibility}
                         contactVisibility={formState.contactVisibility}
+                        familyVisibility={formState.familyVisibility}
+                        galleryVisibility={formState.galleryVisibility}
                         onDropdownChange={handleDropdownChange}
                     />
                 </Card> */}
@@ -139,7 +143,7 @@ const Settings: React.FC = () => {
                         <p className="mt-2">Are you sure you want to proceed?</p>
                     </>
                 }
-                confirmButtonText="Deactivate"
+                confirmButtonText={user.profile?.status.toLowerCase() === 'approved' ? 'Deactivate' : 'Activate'}
             />
             <DeleteAccountModal
                 isOpen={isDeleteModalOpen}

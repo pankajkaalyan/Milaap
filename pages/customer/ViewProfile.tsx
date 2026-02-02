@@ -10,6 +10,7 @@ import { useProfileModals } from '../../hooks/useProfileModals';
 import ProfileModals from '../../components/customer/profile/ProfileModals';
 import { getProfileByIdAPI } from '@/services/api/profile';
 import { eventBus } from '@/utils/eventBus';
+import { storageManager } from '@/utils/storageManager';
 
 const ViewProfile: React.FC = () => {
     const [targetUserProfile, setTargetUserProfile] = useState<User | null>(null);
@@ -25,7 +26,7 @@ const ViewProfile: React.FC = () => {
     } = useAppContext();
     const { userId } = useParams<{ userId: string }>();
     const navigate = useNavigate();
-    const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user') || '{}') as User : null;
+    const user = storageManager.getJSON<User>('user', 'local');
     // console.log('Current User:', user);
 
     const {
@@ -140,7 +141,7 @@ const ViewProfile: React.FC = () => {
                     isBlocked={!!targetUserProfile.profile.isBlocked}
                     sentInterestStatus={sentInterestStatus ? sentInterestStatus : undefined}
                     receivedInterestStatus={receivedInterestStatus ? receivedInterestStatus : undefined}
-                    onToggleFavourite={() => toggleFavourite({...targetUserProfile, isFavourite: targetUserProfile.profile.isFavourite})}
+                    onToggleFavourite={() => toggleFavourite({...targetUserProfile, isFavourite: targetUserProfile.profile.isFavourite} as any)}
                     onToggleBlock={() => toggleBlockUser(targetUserProfile.id, targetUserProfile.name, !!targetUserProfile.profile.isBlocked)}
                     onReport={openReportModal}
                     onExpressInterest={() => expressInterest(targetUserProfile.id, targetUserProfile.name)}
@@ -150,7 +151,7 @@ const ViewProfile: React.FC = () => {
                 />
 
                 <ProfileTabs
-                    user={targetUserProfile}
+                    user={targetUserProfile as any}
                     showContact={showContact}
                     onViewContact={handleViewContact}
                     onViewPhoto={openGalleryModal}
@@ -162,7 +163,7 @@ const ViewProfile: React.FC = () => {
                 activeModal={activeModal}
                 modalData={modalData}
                 onClose={closeModal}
-                targetUser={targetUserProfile}
+                targetUser={targetUserProfile as any}
             />
         </>
     );

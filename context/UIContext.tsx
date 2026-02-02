@@ -3,6 +3,7 @@ import { Language, ToastMessage, AppEventStatus } from '../types';
 import { en } from '../i18n/en';
 import { hi } from '../i18n/hi';
 import { useToasts } from '../hooks/useToasts';
+import { storageManager } from '../utils/storageManager';
 
 const translations = { en, hi };
 
@@ -22,9 +23,9 @@ export const UIContextProvider: React.FC<{ children: ReactNode }> = ({ children 
   const { toasts, addToast } = useToasts();
   
   useEffect(() => {
-    const storedLang = localStorage.getItem('language');
+    const storedLang = storageManager.getItem('language', 'local');
     if (storedLang && (storedLang === 'en' || storedLang === 'hi')) {
-      setLanguage(storedLang);
+      setLanguage(storedLang as Language);
     }
 
     // Listen to global show_toast events (used by non-React code paths)
@@ -49,11 +50,12 @@ export const UIContextProvider: React.FC<{ children: ReactNode }> = ({ children 
     };
     window.addEventListener(AppEventStatus.TRACK_EVENT, trackEventListener as EventListener);
 
+    // Cleanup: Remove event listeners on unmount to prevent memory leaks
     return () => {
       window.removeEventListener(AppEventStatus.SHOW_TOAST, showToastListener as EventListener);
       window.removeEventListener(AppEventStatus.TRACK_EVENT, trackEventListener as EventListener);
     };
-  }, []);
+  }, [addToast]);
 
   const t = useCallback((key: string, options?: Record<string, string | number>): string => {
     const keys = key.split('.');
@@ -82,7 +84,7 @@ export const UIContextProvider: React.FC<{ children: ReactNode }> = ({ children 
 
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang);
-    localStorage.setItem('language', lang);
+    storageManager.setItem('language', lang, 'local');
   };
 
   const trackEvent = (eventName: string, eventProperties?: Record<string, string | number | boolean | null>) => {

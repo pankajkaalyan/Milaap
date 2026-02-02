@@ -49,7 +49,7 @@ export interface AppDataContextType {
   upgradePlan: (plan: MembershipPlan) => Promise<void>;
   toggleBlockUser: (userId: string | number, userName: string, isBlocked: boolean) => Promise<void>;
   reportUser: (userId: string | number, reason: string, details: string, userName: string) => void;
-  deactivateAccount: () => Promise<void>;
+  toggleProfileStatus: (status: string) => Promise<void>;
   deleteAccount: () => Promise<void>;
   
   // from useAIFeatures
@@ -69,6 +69,7 @@ export interface AppDataContextType {
   getReports: () => void;
   adminUsers: AdminUser[];
   approveVerification: (userId: string | number) => void;
+  approveVerificationManually: (userId: string | number, note?: string) => void;
   rejectVerification: (userId: string | number) => void;
   // Refresh pending verification requests
   refreshVerificationRequests: () => Promise<void>;
@@ -80,7 +81,7 @@ export interface AppDataContextType {
   suspendUserChat: (userId: string | number) => void;
   retriggerVerification: (logId: string) => void;
   updateAdminRole: (userId: string | number, newRole: AdminRole) => void;
-  deleteUsers: (userIds: (string | number)[]) => void;
+  deleteUsers: (userIds: (string | number)[], status: string) => void;
   addBulkUsers: (users: ImportedUser[]) => void;
   bulkUpdateUserRole: (userIds: (string | number)[], role: UserRole) => void;
   addUser: (name: string, email: string, role: UserRole) => void;

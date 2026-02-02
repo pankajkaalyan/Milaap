@@ -8,14 +8,16 @@ import UserTableFilters from '../../components/admin/users/UserTableFilters';
 import BulkActionsMenu from '../../components/admin/users/BulkActionsMenu';
 import UserTable, { ColumnConfig } from '../../components/admin/users/UserTable';
 import Pagination from '../../components/ui/Pagination';
+import InfoWithTooltip from '../../components/ui/InfoWithTooltip';
 import { useUserManagementModals } from '../../hooks/useUserManagementModals';
 import UserModals from '../../components/admin/users/UserModals';
-import { getAdminUsersList, roleChangeApi, updateUserApi, userDeleteApi } from '@/services/api/admin';
+import { downloadUsersExcelAPI, getAdminUsersList, roleChangeApi, updateUserApi, userStatueApi } from '@/services/api/admin';
 import getVerificationBadge from '@/components/admin/users/GetVerificationBadge';
-import Badge from '@/components/ui/Badge';
+import BadgeWithTooltip from '@/components/ui/BadgeWithTooltip';
+import ProfileLink from '@/components/ui/ProfileLink';
 
 const AdminUsers: React.FC = () => {
-    const { allUsers, deleteUsers, addBulkUsers, bulkUpdateUserRole, addUser, updateUser, initializeUsers } = useAppContext();
+    const { allUsers, deleteUsers, addBulkUsers, bulkUpdateUserRole, addUser, updateUser, initializeUsers, approveVerificationManually } = useAppContext();
 
     const {
         searchTerm, setSearchTerm, roleFilter, setRoleFilter, currentPage, setCurrentPage,
@@ -24,7 +26,7 @@ const AdminUsers: React.FC = () => {
     } = useAdminTable(allUsers);
 
     const {
-        activeModal, modalData, openAddModal, openEditModal, openDeleteModal, closeModal,
+        activeModal, modalData, openAddModal, openEditModal, openDeleteModal, closeModal, openActivateModal
     } = useUserManagementModals();
 
     const importFileRef = useRef<HTMLInputElement>(null);
@@ -61,13 +63,19 @@ const AdminUsers: React.FC = () => {
             });
     };
 
+    // ✨ UPDATE USER
+    // -------------------------
+    const handleVerifyUser = (userId: string | number, userData: Partial<User>) => {
+        approveVerificationManually(userId);
+    };
+
     // -------------------------
     // ✨ DELETE USER
     // -------------------------
     const handleDeleteConfirm = async (userIds: (string | number)[]) => {
         try {
-            await userDeleteApi(userIds);
-            deleteUsers(userIds);
+            await userStatueApi(userIds, 'ADMIN_SOFT_DELETED');
+            deleteUsers(userIds, 'admin_soft_deleted');
             resetSelection();
             closeModal();
         } catch (error) {
@@ -79,6 +87,21 @@ const AdminUsers: React.FC = () => {
         const users = allUsers.filter(u => selectedUserIds.has(u.id));
         openDeleteModal(users);
     };
+
+    // -------------------------
+    // ✨ ACTIVATE USER
+    // -------------------------
+    const handleActivateConfirm = async (userIds: (string | number)[]) => {
+        try {
+            await userStatueApi(userIds, 'APPROVED');
+            deleteUsers(userIds, 'approved');
+            resetSelection();
+            closeModal();
+        } catch (error) {
+            // console.error('Failed to activate user(s):', error);
+        }
+    };
+
 
     // -------------------------
     // ✨ BULK ROLE UPDATE
@@ -102,29 +125,44 @@ const AdminUsers: React.FC = () => {
     // -------------------------
     // ✨ EXPORT USERS CSV
     // -------------------------
-    const handleExport = () => {
-        const headers = ["id", "name", "email", "role", "createdAt", "verificationStatus"];
-        const csvRows = [
-            headers.join(','),
-            ...allUsers.map(user =>
-                [
-                    user.id,
-                    `"${user.name.replace(/"/g, '""')}"`,
-                    user.email,
-                    user.role,
-                    user.createdAt,
-                    user.profile?.verificationStatus || 'Not Verified'
-                ].join(',')
-            )
-        ];
-        const csvString = csvRows.join('\n');
-        const blob = new Blob([csvString], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
+    const handleExport = async () => {
+        console.log('Exporting users to Excel...', selectedUserIds);
+        const data = await downloadUsersExcelAPI({
+            ids: Array.from(selectedUserIds)
+        });
+
+        const blob = new Blob([data], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        });
+
+        const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'anz-hindu-matrimony-users.csv';
+        a.download = `users_${Date.now()}.xlsx`;
         a.click();
-        URL.revokeObjectURL(url);
+        window.URL.revokeObjectURL(url);
+        // const headers = ["id", "name", "email", "role", "createdAt", "verificationStatus"];
+        // const csvRows = [
+        //     headers.join(','),
+        //     ...allUsers.map(user =>
+        //         [
+        //             user.id,
+        //             `"${user.name.replace(/"/g, '""')}"`,
+        //             user.email,
+        //             user.role,
+        //             user.createdAt,
+        //             user.profile?.verificationStatus || 'Not Verified'
+        //         ].join(',')
+        //     )
+        // ];
+        // const csvString = csvRows.join('\n');
+        // const blob = new Blob([csvString], { type: 'text/csv' });
+        // const url = URL.createObjectURL(blob);
+        // const a = document.createElement('a');
+        // a.href = url;
+        // a.download = 'anz-hindu-matrimony-users.csv';
+        // a.click();
+        // URL.revokeObjectURL(url);
     };
 
     // -------------------------
@@ -177,7 +215,9 @@ const AdminUsers: React.FC = () => {
                             role: item.role === UserRole.ROLE_ADMIN ? UserRole.ADMIN : UserRole.CUSTOMER,
                             createdAt: item.joinedOn,
                             status: item.status,
-                            profile: { verificationStatus: 'Not Verified' }
+                            profile: { verificationStatus: item.profile?.verificationStatus || 'Not Verified' },
+                            isVerified: item.isVerified || false,
+                            contactPerson: item.contactPerson || 'SELF',
                         }))
                     );
                 }
@@ -188,18 +228,61 @@ const AdminUsers: React.FC = () => {
     }, []);
 
     const userTableColumns: ColumnConfig[] = [
-        { key: 'name', label: 'Name', sortable: true },           // simple sortable column
-        { key: 'email', label: 'Email', sortable: true },
+        {
+            key: 'name',
+            label: 'Name',
+            sortable: true,
+            render: (user) => (
+                <div className="inline-flex items-center">
+                    <ProfileLink userId={user.id} userName={user.name} className="text-amber-500 underline hover:text-amber-300 transition-colors">
+                        {user.name}
+                    </ProfileLink>
+
+                    {user.isVerified && (
+                        <span
+                            title="Verified Profile"
+                            className="
+            ml-2
+            inline-flex items-center justify-center
+            w-5 h-5
+            rounded-full
+            bg-blue-500/25 text-blue-400
+            text-sm font-extrabold
+            cursor-pointer
+            hover:bg-blue-500/35
+            transition-colors
+          "
+                        >
+                            ✓
+                        </span>
+                    )}
+                </div>
+            ),
+        },
+        {
+            key: 'email',
+            label: 'Email',
+            sortable: true,
+            render: (user) => (
+                <div className="flex items-center gap-1">
+                    <span>{user.email}</span>
+
+                    {user.contactPerson === 'PARENT' && (
+                        <InfoWithTooltip tooltip="Parents Email" />
+                    )}
+                </div>
+            ),
+        },
+
         {
             key: 'role',
             label: 'Role',
             sortable: true,
             render: (user: User) => (
-                <Badge
+                <BadgeWithTooltip
                     variant={user.role === UserRole.ADMIN ? BadgeVariant.PRIMARY : BadgeVariant.INFO}
-                >
-                    {user.role}
-                </Badge>
+                    label={user.role}
+                />
             ),
         },
         // {
@@ -284,6 +367,10 @@ const AdminUsers: React.FC = () => {
                     onSort={requestSort}
                     onEdit={openEditModal}
                     onDelete={(user) => openDeleteModal([user])}
+                    onActivate={(user) => openActivateModal([user])}
+                    onVerify={(user) => {
+                        handleVerifyUser(user.id, { profile: { status: 'approved' } });
+                    }}
                     onApprove={(user) => {
                         handleUpdateUser(user.id, { profile: { status: 'approved' } });
                     }}
@@ -309,6 +396,7 @@ const AdminUsers: React.FC = () => {
                 onAddUser={handleAddNewUser}
                 onUpdateUser={handleUpdateUser}
                 onDeleteConfirm={handleDeleteConfirm}
+                onActivateConfirm={handleActivateConfirm}
                 onSuspendChatConfirm={() => { }}
                 onSuspendUserConfirm={() => { }}
             />

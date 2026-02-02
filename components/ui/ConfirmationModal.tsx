@@ -37,7 +37,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} footer={footer} size={ModalSize.MD}>
         <div className="p-6">
-          <p className="text-gray-300">{message}</p>
+          <div className="text-gray-300">{message}</div>
         </div>
     </Modal>
   );

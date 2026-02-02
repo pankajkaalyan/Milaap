@@ -3,11 +3,12 @@ import { User, UserRole, BadgeVariant } from '../../../types';
 import { useAppContext } from '../../../hooks/useAppContext';
 import ArrowUpIcon from '../../icons/ArrowUpIcon';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
-import Badge from '../../ui/Badge';
+import BadgeWithTooltip from '../../ui/BadgeWithTooltip';
 import SortUpDownIcon from '../../icons/SortUpDownIcon';
 import UserTableRowActions from './UserTableRowActions';
 import RejectConfirmModal from './RejectConfirmModal';
 import getVerificationBadge from './GetVerificationBadge';
+import ProfileLink from '../../ui/ProfileLink';
 
 type SortableKeys =
   | 'name'
@@ -35,8 +36,10 @@ interface UserTableProps {
   onSort: (key: SortableKeys) => void;
   onEdit?: (user: User) => void;
   onDelete?: (user: User) => void;
+  onVerify?: (user: User) => void;
   onApprove?: (user: User) => void;
   onReject?: (user: User) => void;
+  onActivate?: (user: User) => void;
   columns?: ColumnConfig[];
   rowActions?: {
     key: string;
@@ -58,8 +61,10 @@ const UserTable: React.FC<UserTableProps> = ({
   onDelete,
   onApprove,
   onReject,
+  onActivate,
   columns,
   rowActions,
+  onVerify
 }) => {
   const { t } = useAppContext();
   const [rejectUser, setRejectUser] = useState<User | null>(null);
@@ -118,7 +123,7 @@ const UserTable: React.FC<UserTableProps> = ({
 
   // Default columns configuration
   const defaultColumns: ColumnConfig[] = [
-    { key: 'name', label: t('admin.users.table.name'), sortable: true },
+    { key: 'name', label: t('admin.users.table.name'), sortable: true, render: (user) => <ProfileLink userId={user.id} userName={user.name} className="text-pink-400 hover:underline">Open</ProfileLink> },
     { key: 'email', label: t('admin.users.table.email'), sortable: true },
     {
       key: 'mobileNumber',
@@ -131,13 +136,10 @@ const UserTable: React.FC<UserTableProps> = ({
       label: t('admin.users.table.role'),
       sortable: true,
       render: (user) => (
-        <Badge
-          variant={
-            user.role === UserRole.ADMIN ? BadgeVariant.PRIMARY : BadgeVariant.INFO
-          }
-        >
-          {user.role}
-        </Badge>
+        <BadgeWithTooltip
+          variant={user.role === UserRole.ADMIN ? BadgeVariant.PRIMARY : BadgeVariant.INFO}
+          label={user.role}
+        />
       ),
     },
     {
@@ -217,9 +219,24 @@ const UserTable: React.FC<UserTableProps> = ({
                       { key: 'edit', label: 'Edit', onClick: onEdit! },
                       {
                         key: 'delete',
-                        label: 'Delete',
+                        label: 'Soft Delete',
                         onClick: onDelete!,
                         variant: 'danger',
+                        visible: (user: User) => user.status.toLowerCase() === 'approved', // hide if ACTIVE
+                      },
+                      {
+                        key: 'activate',
+                        label: 'Activate',
+                        onClick: onActivate!,
+                        variant: 'default',
+                        visible: (user: User) => user.status.toLowerCase() === 'admin_soft_deleted', // show if NOT ACTIVE
+                      },
+                      {
+                        key: 'verify',
+                        label: 'Verify',
+                        onClick: onVerify!,
+                        variant: 'default',
+                        visible: (user: User) => (!user.isVerified && user.status.toLowerCase() === 'approved'), // show if not verified and status is admin_soft_deleted
                       },
                     ]
                   }

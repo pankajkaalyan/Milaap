@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Match, InterestStatus, ButtonVariant, User, AppEventStatus } from '../../../types';
+import { Match, InterestStatus, ButtonVariant, User, AppEventStatus, UserRole } from '../../../types';
 import { useAppContext } from '../../../hooks/useAppContext';
 import Card from '../../../components/ui/Card';
 import Button from '../../../components/ui/Button';
@@ -48,7 +48,7 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
     const { t } = useAppContext();
     const [isOptionsOpen, setIsOptionsOpen] = useState(false);
     // const targetUserIsPremium = user.membership !== 'FREE';
-
+    const logedInUser = useAppContext().user;
     const userPhotos = user.profile.photos && user.profile.photos.length > 0 ? user.profile.photos : [];
 
     const optionsRef = useRef(null);
@@ -135,24 +135,59 @@ const ProfileHeader: React.FC<ProfileHeaderProps> = ({
                     </h1>
                     <p className="text-gray-300">{user.profile.profession} in {user.profile.location}</p>
 
-                    <div className="flex flex-wrap justify-center sm:justify-start gap-2 mt-4">
-                        {receivedInterestStatus === InterestStatus.PENDING ? (
-                            <>
-                                <Button onClick={onDeclineInterest} className="w-auto px-4 py-2 !text-sm !bg-gradient-to-r !from-red-600 !to-orange-600">{t('interests.decline')}</Button>
-                                <Button onClick={onAcceptInterest} className="w-auto px-4 py-2 !text-sm !bg-gradient-to-r !from-green-600 !to-teal-600">{t('interests.accept')}</Button>
-                            </>
-                        ) : sentInterestStatus ? (
-                            <Button disabled variant={ButtonVariant.SECONDARY} className="w-auto px-4 py-2 !text-sm cursor-not-allowed">{t(`interests.status.${sentInterestStatus.toLowerCase()}` as any)}</Button>
-                        ) : receivedInterestStatus ? (
-                            <Button disabled variant={ButtonVariant.SECONDARY} className="w-auto px-4 py-2 !text-sm cursor-not-allowed">{t(`interests.status.${receivedInterestStatus.toLowerCase()}` as any)}</Button>
-                        ) : (
-                            <Button onClick={onExpressInterest} className="w-auto px-4 py-2 !text-sm">{t('interests.express_interest')}</Button>
-                        )}
-                        {/* <Button onClick={onMessage} variant={ButtonVariant.SECONDARY} className="w-auto px-4 py-2 !text-sm">Message</Button> */}
-                        <Button onClick={onToggleFavourite} variant={ButtonVariant.SECONDARY} className="w-auto px-4 py-2 !text-sm">
-                            {user.profile.isFavourite ? 'Favourited' : 'Favourite'}
-                        </Button>
-                    </div>
+                    {logedInUser.role !== UserRole.ADMIN && (
+                        <div className="flex flex-wrap justify-center sm:justify-start gap-2 mt-4">
+                            {receivedInterestStatus === InterestStatus.PENDING ? (
+                                <>
+                                    <Button
+                                        onClick={onDeclineInterest}
+                                        className="w-auto px-4 py-2 !text-sm !bg-gradient-to-r !from-red-600 !to-orange-600"
+                                    >
+                                        {t('interests.decline')}
+                                    </Button>
+
+                                    <Button
+                                        onClick={onAcceptInterest}
+                                        className="w-auto px-4 py-2 !text-sm !bg-gradient-to-r !from-green-600 !to-teal-600"
+                                    >
+                                        {t('interests.accept')}
+                                    </Button>
+                                </>
+                            ) : sentInterestStatus ? (
+                                <Button
+                                    disabled
+                                    variant={ButtonVariant.SECONDARY}
+                                    className="w-auto px-4 py-2 !text-sm cursor-not-allowed"
+                                >
+                                    {t(`interests.status.${sentInterestStatus.toLowerCase()}` as any)}
+                                </Button>
+                            ) : receivedInterestStatus ? (
+                                <Button
+                                    disabled
+                                    variant={ButtonVariant.SECONDARY}
+                                    className="w-auto px-4 py-2 !text-sm cursor-not-allowed"
+                                >
+                                    {t(`interests.status.${receivedInterestStatus.toLowerCase()}` as any)}
+                                </Button>
+                            ) : (
+                                <Button
+                                    onClick={onExpressInterest}
+                                    className="w-auto px-4 py-2 !text-sm"
+                                >
+                                    {t('interests.express_interest')}
+                                </Button>
+                            )}
+
+                            <Button
+                                onClick={onToggleFavourite}
+                                variant={ButtonVariant.SECONDARY}
+                                className="w-auto px-4 py-2 !text-sm"
+                            >
+                                {user.profile.isFavourite ? 'Favourited' : 'Favourite'}
+                            </Button>
+                        </div>
+                    )}
+
                 </div>
 
                 <div className="absolute top-0 right-0" ref={optionsRef}>

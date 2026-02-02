@@ -46,7 +46,7 @@ export interface UserProfile {
   id?: string | number;
   fullName?: string;
   email?: string;
-  contactNumber?: number | null;
+  contactNumber?: string | number | null;
   password?: string;
   dob?: string; // Date of Birth in ISO format
   timeOfBirth?: string; // Time of Birth in HH:MM format
@@ -72,9 +72,11 @@ export interface UserProfile {
   membership?: MembershipPlan;
   chatSuspended?: boolean;
   partnerPreferences?: PartnerPreferences;
-  profileVisibility?: 'all' | 'premium';
-  contactVisibility?: 'accepted' | 'premium';
-  status?: 'active' | 'deactivated' | 'pending' | 'suspended' | 'deleted' | 'approved' | 'rejected';
+  profileVisibility?: 'all' | 'friends' | 'hide';
+  contactVisibility?: 'friends' | 'hide';
+  familyVisibility?: 'friends' | 'hide';
+  galleryVisibility?: 'friends' | 'hide';
+  status?: 'active' | 'deactivated' | 'pending' | 'suspended' | 'deleted' | 'approved' | 'rejected' | 'admin_soft_deleted' | 'user_soft_deleted';
   location?: string;
   interestShown?: InterestShown;
   isFavourite?: boolean;
@@ -85,6 +87,9 @@ export interface UserProfile {
   linkedin?: string;
   socialMedia?: string; // Facebook / Instagram / TikTok (any one)
   compatibilityScore?: number;
+  parentsEmail?: string;
+  parentsMobileNumber?: string | number | null;
+  contactPerson?: 'SELF' | 'PARENT';
 }
 
 export interface User {
@@ -99,8 +104,11 @@ export interface User {
   interestShownList?: InterestShown[];
   linkedin?: string;
   socialMedia?: string; // Facebook / Instagram / TikTok (any one)
-  status?: 'active' | 'deactivated' | 'pending' | 'suspended' | 'deleted' | 'approved' | 'rejected';
+  status?: 'active' | 'deactivated' | 'pending' | 'suspended' | 'deleted' | 'approved' | 'rejected' | 'admin_soft_deleted' | 'user_soft_deleted';
   mobileNumber?: string;
+  userId?: string | number;
+  isVerified?: boolean;
+  contactPerson?: 'SELF' | 'PARENT';
 }
 
 export interface ToastMessage {
@@ -109,14 +117,63 @@ export interface ToastMessage {
   type: 'success' | 'error' | 'info';
 }
 
-export interface Match extends UserProfile {
+export interface Match {
   id: string | number;
+  email?: string;
   name: string;
+  role?: UserRole;
+  createdAt?: string;
+  profile?: UserProfile;
+  adminRole?: AdminRole;
   age?: number;
-  location?: string;
-  compatibilityScore?: number;
-  photos?: string[];
   interestShownList?: InterestShown[];
+  linkedin?: string;
+  socialMedia?: string;
+  status?: 'active' | 'deactivated' | 'pending' | 'suspended' | 'deleted' | 'approved' | 'rejected' | 'admin_soft_deleted' | 'user_soft_deleted';
+  mobileNumber?: string;
+  userId?: string | number;
+  isVerified?: boolean;
+  // From UserProfile
+  fullName?: string;
+  contactNumber?: string | number | null;
+  password?: string;
+  dob?: string;
+  timeOfBirth?: string;
+  heightInCm?: number;
+  highestEducation?: string;
+  gender?: 'Male' | 'Female' | '';
+  caste?: string;
+  subCaste?: string;
+  profession?: string;
+  horoscope?: HoroscopeDetails;
+  photos?: string[];
+  removedPhotos?: string[];
+  video?: string;
+  audio?: string;
+  familyDetails?: FamilyDetails;
+  about?: string;
+  verificationStatus?: VerificationStatus;
+  blockedUsers?: string[];
+  phoneNumber?: string;
+  notificationSettings?: NotificationSettings;
+  latitude?: number;
+  longitude?: number;
+  membership?: MembershipPlan;
+  chatSuspended?: boolean;
+  partnerPreferences?: PartnerPreferences;
+  profileVisibility?: 'all' | 'friends' | 'hide';
+  contactVisibility?: 'friends' | 'hide';
+  familyVisibility?: 'friends' | 'hide';
+  galleryVisibility?: 'friends' | 'hide';
+  location?: string;
+  interestShown?: InterestShown;
+  isFavourite?: boolean;
+  isBlocked?: boolean;
+  joiningDate?: string;
+  compatibilityScore?: number;
+  parentsEmail?: string;
+  parentsMobileNumber?: string | number | null;
+  contactPerson?: 'SELF' | 'PARENT';
 }
 
 export interface Message {
@@ -186,6 +243,7 @@ export interface SuccessStory {
   imageUrl: string;
   story: string;
   status?: SuccessStoryStatus;
+  submitterId?: string | number;
 }
 
 export interface Report {

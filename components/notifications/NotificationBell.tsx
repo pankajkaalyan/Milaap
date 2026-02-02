@@ -4,6 +4,7 @@ import NotificationPanel from './NotificationPanel';
 import Spinner from '../ui/Spinner';
 import { AppEventStatus, SpinnerSize, UserRole } from '../../types';
 import { eventBus } from '../../utils/eventBus';
+import { storageManager } from '../../utils/storageManager';
 
 const BellIcon = () => (
     <svg
@@ -35,7 +36,7 @@ const NotificationBell: React.FC = () => {
      */
     const fetchNotificationsOnce = useCallback(
         async (role: UserRole) => {
-            if (!localStorage.getItem('token') || !role) return;
+            if (!storageManager.getItem('token', 'local') || !role) return;
             if (fetchedRef.current) return;
 
             fetchedRef.current = true; // lock immediately

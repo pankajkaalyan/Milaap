@@ -5,6 +5,7 @@ import Button from '../../components/ui/Button';
 import { ButtonVariant, Report } from '../../types';
 import { useUserManagementModals } from '@/hooks/useUserManagementModals';
 import UserModals from '@/components/admin/users/UserModals';
+import ProfileLink from '@/components/ui/ProfileLink';
 
 const Reports: React.FC = () => {
     const { t, reports, getReports, resolveReport, dismissReport, warnUser, suspendUserChat } = useAppContext();
@@ -52,10 +53,17 @@ const Reports: React.FC = () => {
                                 <div className="flex flex-col md:flex-row justify-between md:items-center">
                                     <div>
                                         <div className="text-xs text-gray-400">
-                                            {t('admin.reports.reporter')}: {report.reporterName || `User ID ${report.reporterId}`}
+                                            {t('admin.reports.reporter')}:{' '}
+                                            <ProfileLink userId={report.reporterId} userName={report.reporterName} className="text-amber-400 underline hover:text-amber-300 transition-colors">
+                                                {report.reporterName || `User ID ${report.reporterId}`}
+                                            </ProfileLink>
                                         </div>
+
                                         <h3 className="font-bold text-lg text-white">
-                                            {t('admin.reports.reported_user')}: {report.reportedUserName || `User ID ${report.reportedUserId}`}
+                                            {t('admin.reports.reported_user')}:{' '}
+                                            <ProfileLink userId={report.reportedUserId} userName={report.reportedUserName} className="text-amber-400 underline hover:text-amber-300 transition-colors">
+                                                {report.reportedUserName || `User ID ${report.reportedUserId}`}
+                                            </ProfileLink>
                                         </h3>
                                         <p className="text-sm text-amber-300 font-semibold">{report.reason}</p>
                                     </div>
@@ -98,9 +106,9 @@ const Reports: React.FC = () => {
                 activeModal={activeModal}
                 modalData={modalData}
                 onClose={closeModal}
-                onAddUser={() => {}}
-                onUpdateUser={() => {}}
-                onDeleteConfirm={() => {}}
+                onAddUser={() => { }}
+                onUpdateUser={() => { }}
+                onDeleteConfirm={() => { }}
                 onSuspendChatConfirm={handleSuspendChat}
                 onSuspendUserConfirm={handleSuspendUser}
             />

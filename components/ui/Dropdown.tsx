@@ -6,7 +6,7 @@ import FormLabel from './FormLabel';
 
 export interface DropdownOption {
   value: string;
-  label: string;
+  label: React.ReactNode; // ✅ UPDATED: allow JSX (flags, icons, etc.)
 }
 
 interface DropdownProps {
@@ -54,14 +54,12 @@ const Dropdown: React.FC<DropdownProps> = ({
       const menuHeight = Math.min(240, options.length * 36 + 8);
 
       if (spaceBelow < menuHeight && spaceAbove > spaceBelow) {
-        // Open upwards
         setPosition({
           top: rect.top + window.scrollY - menuHeight - 4,
           left: rect.left + window.scrollX,
           width: rect.width,
         });
       } else {
-        // Open downwards
         setPosition({
           top: rect.bottom + window.scrollY,
           left: rect.left + window.scrollX,
@@ -96,35 +94,26 @@ const Dropdown: React.FC<DropdownProps> = ({
         setIsOpen(false);
       }
     }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [isOpen]);
 
-  // Close on outside scroll, ignore inside dropdown scroll
+  // Close on outside scroll (ignore inner dropdown scroll)
   useEffect(() => {
     const handleScroll = (event: Event) => {
-      if (!isOpen) return;
-      if (!menuRef.current) return;
-
-      // If the scroll target is inside dropdown menu, ignore
+      if (!isOpen || !menuRef.current) return;
       if (menuRef.current.contains(event.target as Node)) return;
-
-      // Else, close dropdown
       setIsOpen(false);
     };
 
     if (isOpen) {
-      window.addEventListener('scroll', handleScroll, true); // capture phase
+      window.addEventListener('scroll', handleScroll, true);
     }
 
-    return () => {
-      window.removeEventListener('scroll', handleScroll, true);
-    };
+    return () => window.removeEventListener('scroll', handleScroll, true);
   }, [isOpen]);
 
-  // Recalculate position on window resize
+  // Recalculate position on resize
   useEffect(() => {
     const handleResize = () => {
       if (isOpen) calculatePosition();
@@ -144,21 +133,23 @@ const Dropdown: React.FC<DropdownProps> = ({
         top: `${position.top}px`,
         left: `${position.left}px`,
         width: `${position.width}px`,
-        maxHeight: '300px', overflowY: 'auto'
+        maxHeight: '300px',
+        overflowY: 'auto'
       } : { maxHeight: '300px', overflowY: 'auto' }}
-      className="z-[130] mt-1 bg-gray-800 border border-gray-700 rounded-md shadow-lg animate-fade-in-up-fast max-h-60 overflow-y-auto"
+      className="z-[130] mt-1 bg-gray-800 border border-gray-700 rounded-md shadow-lg animate-fade-in-up-fast"
       role="listbox"
-      onScroll={(e) => e.stopPropagation()} // stop inner scroll from bubbling to window
+      onScroll={(e) => e.stopPropagation()}
     >
       <ul className="py-1">
         {options.map(option => (
           <li
             key={option.value}
             onClick={() => handleSelect(option.value)}
-            className={`px-4 py-2 text-sm cursor-pointer ${value === option.value
-              ? 'bg-amber-600 text-white'
-              : 'text-gray-200 hover:bg-gray-700'
-              }`}
+            className={`px-4 py-2 text-sm cursor-pointer flex items-center ${
+              value === option.value
+                ? 'bg-amber-600 text-white'
+                : 'text-gray-200 hover:bg-gray-700'
+            }`}
             role="option"
             aria-selected={value === option.value}
           >
@@ -172,6 +163,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   return (
     <div ref={wrapperRef} className={className}>
       {label && <FormLabel id={id || ''} label={label} required={required} />}
+
       <div>
         <button
           ref={buttonRef}
@@ -179,10 +171,11 @@ const Dropdown: React.FC<DropdownProps> = ({
           type="button"
           onClick={handleToggle}
           disabled={disabled}
-          className={`w-full flex items-center justify-between text-left bg-white/10 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-300 ${sizeClasses} ${error
-            ? 'border-red-500 focus:ring-red-500'
-            : 'border-gray-600 hover:border-amber-400 focus:ring-amber-500'
-            } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+          className={`w-full flex items-center justify-between text-left bg-white/10 border rounded-lg focus:outline-none focus:ring-2 transition-all duration-300 ${sizeClasses} ${
+            error
+              ? 'border-red-500 focus:ring-red-500'
+              : 'border-gray-600 hover:border-amber-400 focus:ring-amber-500'
+          } ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
           aria-haspopup="listbox"
           aria-expanded={isOpen}
           aria-invalid={!!error}
@@ -192,12 +185,21 @@ const Dropdown: React.FC<DropdownProps> = ({
           <span className={selectedOption ? 'text-white' : 'text-gray-400'}>
             {selectedOption?.label || placeholder || 'Select...'}
           </span>
-          <ChevronDownIcon className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`} />
+          <ChevronDownIcon
+            className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${
+              isOpen ? 'rotate-180' : ''
+            }`}
+          />
         </button>
 
         {isOpen && position && createPortal(DropdownMenu, document.body)}
       </div>
-      {error && <p id={errorId} className="mt-1 text-xs text-red-400">{error}</p>}
+
+      {error && (
+        <p id={errorId} className="mt-1 text-xs text-red-400">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

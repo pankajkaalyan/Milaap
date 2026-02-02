@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Notification, NotificationType, User, Interest, InterestStatus, UserRole, Interests } from '../types';
 import { mockUsers } from '../data/mockUsers';
 import { getNotificationsAPI, markAllReadNotificationAPI, markAsReadNotificationAPI } from '@/services/api/notification';
+import { storageManager } from '@/utils/storageManager';
 
 type TFunction = (key: string, options?: Record<string, string | number>) => string;
 type AddToastFunction = (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -10,10 +11,10 @@ export const useNotifications = (user: User | null, t: TFunction, setInterests: 
     const [notifications, setNotifications] = useState<Notification[]>([]);
 
     useEffect(() => {
-        const storedNotifications = localStorage.getItem('notifications');
+        const storedNotifications = storageManager.getJSON('notifications', 'local');
         if (storedNotifications) {
-            // console.log("⏳ Loaded notifications from localStorage", JSON.parse(storedNotifications));
-            // setNotifications(JSON.parse(storedNotifications));
+            // console.log("⏳ Loaded notifications from localStorage", storedNotifications);
+            // setNotifications(storedNotifications);
         }
     }, []);
 
@@ -35,7 +36,7 @@ export const useNotifications = (user: User | null, t: TFunction, setInterests: 
     useEffect(() => {
         if (!user) return;
 
-        let intervalId: number;
+        let intervalId: number | null = null;
 
         // if (user.role === UserRole.CUSTOMER) {
         //     intervalId = window.setInterval(() => {
@@ -132,8 +133,12 @@ export const useNotifications = (user: User | null, t: TFunction, setInterests: 
         //     }, 60000); // Every 60 seconds for admins
         // }
 
-
-        // return () => clearInterval(intervalId);
+        // Cleanup: Clear interval on unmount or user change
+        return () => {
+            if (intervalId !== null) {
+                clearInterval(intervalId);
+            }
+        };
     }, [user, addNotification, t, setInterests]);
 
     const markNotificationAsRead = async (notificationId: string, role : UserRole) => {
@@ -178,7 +183,7 @@ export const useNotifications = (user: User | null, t: TFunction, setInterests: 
         setNotifications(prev => {
             previous = prev;
             const updated = prev.map(n => ({ ...n, isRead: true }));
-            localStorage.setItem('notifications', JSON.stringify(updated));
+            storageManager.setJSON('notifications', updated, 'local');
             return updated;
         });
 
@@ -189,7 +194,7 @@ export const useNotifications = (user: User | null, t: TFunction, setInterests: 
             addToast("Failed to mark all notifications as read.", "error");
             // rollback on failure
             setNotifications(previous);
-            localStorage.setItem('notifications', JSON.stringify(previous));
+            storageManager.setJSON('notifications', previous, 'local');
         }
     };
 
@@ -198,7 +203,7 @@ export const useNotifications = (user: User | null, t: TFunction, setInterests: 
         try {
             const notificationData = await getNotificationsAPI(role);
             setNotifications(notificationData);
-            localStorage.setItem('notifications', JSON.stringify(notificationData));
+            storageManager.setJSON('notifications', notificationData, 'local');
             return notificationData;
         } catch (err) {
             addToast("Failed to load Notifications Data.", "error");

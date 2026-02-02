@@ -2,9 +2,10 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useAppContext } from '../../hooks/useAppContext';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
-import { SuccessStory, SuccessStoryStatus, BadgeVariant } from '../../types';
-import Badge from '../../components/ui/Badge';
+import { SuccessStoryStatus, BadgeVariant } from '../../types';
+import BadgeWithTooltip from '../../components/ui/BadgeWithTooltip';
 import { approveSuccessStoryAPI, fetchSuccessStoriesAPI, rejectSuccessStoryAPI } from '@/services/api/profile';
+import ProfileLink from '@/components/ui/ProfileLink';
 
 interface TabButtonProps {
     status: SuccessStoryStatus;
@@ -21,8 +22,8 @@ const StorySubmissions: React.FC = () => {
 
     const getStatusBadge = (status?: SuccessStoryStatus) => {
         switch (status) {
-            case SuccessStoryStatus.APPROVED: return <Badge variant={BadgeVariant.SUCCESS}>Approved</Badge>;
-            case SuccessStoryStatus.REJECTED: return <Badge variant={BadgeVariant.DANGER}>Rejected</Badge>;
+            case SuccessStoryStatus.APPROVED: return <BadgeWithTooltip variant={BadgeVariant.SUCCESS} label={'Approved'} />;
+            case SuccessStoryStatus.REJECTED: return <BadgeWithTooltip variant={BadgeVariant.DANGER} label={'Rejected'} />;
             default: return null;
         }
     }
@@ -144,7 +145,11 @@ const StorySubmissions: React.FC = () => {
                             <div className="p-4 flex flex-col flex-grow">
                                 <div className="flex justify-between items-start">
                                     <div>
-                                        <h3 className="text-xl font-bold text-white">{story.coupleNames}</h3>
+                                        <ProfileLink userId={story.submitterId} userName={story.coupleNames} className="text-amber-400 underline hover:text-amber-300 transition-colors">
+                                            <h3 className="text-xl font-bold">
+                                                {story.coupleNames}
+                                            </h3>
+                                        </ProfileLink>
                                         <p className="text-xs text-gray-400 mb-2">Wedding Date: {new Date(story.weddingDate).toLocaleDateString()}</p>
                                     </div>
                                     {story.status !== SuccessStoryStatus.PENDING && getStatusBadge(story.status)}

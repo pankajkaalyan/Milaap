@@ -4,8 +4,8 @@ import { mockUsers } from '../data/mockUsers';
 import { useGeolocation } from './useGeolocation';
 import { haversineDistance } from '../utils/location';
 
-export const useMatchesFilter = (user: User | null) => {
-    const { data: locationData, getLocation } = useGeolocation();
+export const useMatchesFilter = (user: User | null, addToast?: (message: string, type: string) => void, t?: (key: string) => string) => {
+    const { data: locationData, getLocation } = useGeolocation(addToast, t);
 
     const [filters, setInternalFilters] = useState<Record<string, string>>({
         minAge: '', maxAge: '', minHeight: '', maxHeight: '',

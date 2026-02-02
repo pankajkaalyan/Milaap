@@ -11,6 +11,7 @@ import PremiumFeatureModal from '../../components/customer/PremiumFeatureModal';
 import SockJS from 'sockjs-client';
 import { over } from 'stompjs';
 import { getChatConversationsAPI, getConversationMessagesAPI } from '@/services/api/chatService';
+import { storageManager } from '@/utils/storageManager';
 
 const MESSAGING_LIMIT_FREE_TIER = 3;
 
@@ -48,7 +49,7 @@ const Messages: React.FC = () => {
 
     // ---------------- CONNECT ----------------
     const connectStomp = useCallback(() => {
-        const token = localStorage.getItem("token");
+        const token = storageManager.getItem("token", "local");
 
         if (!token || !userId) {
             console.warn("Token or user missing — skipping connection.");
@@ -304,7 +305,7 @@ const Messages: React.FC = () => {
 
     // 1️⃣ Load conversations ONLY once when token exists
     useEffect(() => {
-        const token = localStorage.getItem("token");
+        const token = storageManager.getItem("token", "local");
         if (!token || conversationsLoadedRef.current) return;
 
         conversationsLoadedRef.current = true;
@@ -320,13 +321,15 @@ const Messages: React.FC = () => {
 
     // 2️⃣ Connect STOMP when userId + token available
     useEffect(() => {
-        const token = localStorage.getItem("token");
+        const token = storageManager.getItem("token", "local");
         if (!token || !userId) return;
         connectStomp();
 
-
-        return () => disconnectStomp();
-    }, [userId]);  // ← only reconnect when userId changes
+        // Cleanup: Disconnect STOMP and clear subscriptions on unmount or userId change
+        return () => {
+            disconnectStomp();
+        };
+    }, [userId, connectStomp, disconnectStomp]);  // ← only reconnect when userId changes
 
     // 4️⃣ When userId changes, select the conversation
     useEffect(() => {

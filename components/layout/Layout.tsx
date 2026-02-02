@@ -21,13 +21,24 @@ const Layout: React.FC = () => {
     const isMobileOrMedium = window.innerWidth < 1024;
     if (isSupportChatOpen && isMobileOrMedium) setIsSupportChatOpen(false);
     // Emit an event so other components (profile menu, mobile menu, page modals) can close themselves on mobile/medium devices
-    try { eventBus.emit(AppEventStatus.ROUTE_CHANGE, { isMobileOrMedium }); } catch (e) { /* ignore */ }
+    try {
+      eventBus.emit(AppEventStatus.ROUTE_CHANGE, { isMobileOrMedium });
+    } catch (e) {
+      /* ignore */
+    }
   }, [location.pathname]);
 
   return (
     <div className="flex flex-col min-h-screen font-sans text-gray-200">
       <Header />
-      <main className="flex-grow container mx-auto px-4 py-8 md:py-16">
+
+      {/* 🔔 Testing Info Message (Mobile-first, non-intrusive) */}
+      <div className="bg-gray-800/70 text-gray-300 text-xs sm:text-sm px-4 py-2 text-center">
+        ⚠️ This website is currently in <span className="font-semibold text-amber-400">testing mode</span>. 
+        {/* Some features may not work as expected. */}
+      </div>
+
+      <main className="flex-grow container mx-auto px-4 py-4 md:py-8">
         <AnimatePresence mode="wait">
           <motion.div
             key={location.pathname}
@@ -40,12 +51,18 @@ const Layout: React.FC = () => {
           </motion.div>
         </AnimatePresence>
       </main>
+
       <Footer />
+
       {user && (
         <>
-          {!isSupportChatOpen && <SupportWidget onOpen={() => setIsSupportChatOpen(true)} />}
+          {!isSupportChatOpen && (
+            <SupportWidget onOpen={() => setIsSupportChatOpen(true)} />
+          )}
           <WhatsAppWidget />
-          {isSupportChatOpen && <SupportChatWindow onClose={() => setIsSupportChatOpen(false)} />}
+          {isSupportChatOpen && (
+            <SupportChatWindow onClose={() => setIsSupportChatOpen(false)} />
+          )}
         </>
       )}
     </div>

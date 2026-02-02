@@ -7,6 +7,7 @@ import FlagIcon from '../icons/FlagIcon';
 import DotsVerticalIcon from '../icons/DotsVerticalIcon';
 import { getChatReportByIdAPI, getPendingChatReportsAPI, putSuspendChatForChatReportAPI, putWarnUserForChatReportAPI } from '@/services/api/admin';
 import ChatAvatar from './ChatAvatar';
+import ProfileLink from '../ui/ProfileLink';
 
 const ChatMonitor: React.FC = () => {
     const { t, addToast } = useAppContext();
@@ -184,7 +185,15 @@ const ChatMonitor: React.FC = () => {
                 {selectedConvo ? (
                     <>
                         <div className="p-2 border-b border-white/10 flex justify-between items-center">
-                            <h3 className="text-lg font-bold text-white">{selectedConvo.reportedByUserName} & {selectedConvo.reportedUserName}</h3>
+                            <h3 className="text-lg font-bold text-white">
+                                <ProfileLink userId={selectedConvo.reportedByUserId} userName={selectedConvo.reportedByUserName} className="text-amber-400 underline hover:text-amber-300 transition-colors">
+                                    {selectedConvo.reportedByUserName}
+                                </ProfileLink>
+                                {' '} & {' '}
+                                <ProfileLink userId={selectedConvo.reportedUserId} userName={selectedConvo.reportedUserName} className="text-amber-400 underline hover:text-amber-300 transition-colors">
+                                    {selectedConvo.reportedUserName}
+                                </ProfileLink>
+                            </h3>
                             <div className="relative" ref={menuRef}>
                                 <button onClick={() => setIsActionMenuOpen(prev => !prev)} className="p-1 rounded-full hover:bg-white/10 text-gray-300">
                                     <DotsVerticalIcon />

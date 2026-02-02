@@ -3,6 +3,7 @@ import { mockUsers as initialMatchUsers } from '../../data/mockUsers';
 import { mockSuccessStories } from '../../data/mockSuccessStories';
 import { mockReports as initialReports, mockVerificationLogs as initialVerificationLogs, mockAdminUsers as initialAdminUsers, mockPendingStories } from '../../data/mockAdminData';
 import { mockInterests as initialInterests } from '../../data/mockInterests';
+import { storageManager } from '../../utils/storageManager';
 
 // --- LOCALSTORAGE DATABASE SIMULATION ---
 
@@ -32,14 +33,13 @@ export type Database = ReturnType<typeof getInitialData>;
 
 export const getDb = (): Database => {
   try {
-    const db = localStorage.getItem(DB_KEY);
+    const db = storageManager.getJSON<Database>(DB_KEY, 'local');
     if (db) {
-      const parsedDb = JSON.parse(db);
       // Ensure all keys from initial data are present
-      return { ...getInitialData(), ...parsedDb };
+      return { ...getInitialData(), ...db };
     }
     const initialData = getInitialData();
-    localStorage.setItem(DB_KEY, JSON.stringify(initialData));
+    storageManager.setJSON(DB_KEY, initialData, 'local');
     return initialData;
   } catch (error) {
     console.error("Failed to read from localStorage, using initial data.", error);
@@ -48,7 +48,7 @@ export const getDb = (): Database => {
 };
 
 export const saveDb = (db: Database) => {
-  localStorage.setItem(DB_KEY, JSON.stringify(db));
+  storageManager.setJSON(DB_KEY, db, 'local');
 };
 
 // --- API SIMULATION HELPERS ---

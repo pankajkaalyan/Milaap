@@ -7,6 +7,7 @@ import { useForm } from '../../hooks/useForm';
 import { required, alphaOnly, dateNotInFuture, fileRequired } from '../../utils/validators';
 import Modal from '../ui/Modal';
 import { SubmitStoryFormData, ButtonVariant, ModalSize } from '../../types';
+import FormLabel from '../ui/FormLabel';
 
 interface SubmitStoryModalProps {
   isOpen: boolean;
@@ -69,6 +70,7 @@ const SubmitStoryModal: React.FC<SubmitStoryModalProps> = ({ isOpen, onClose }) 
                 value={formData.partnerName}
                 onChange={handleInputChange}
                 error={errors.partnerName}
+                required
               />
           </div>
           <Input
@@ -80,6 +82,7 @@ const SubmitStoryModal: React.FC<SubmitStoryModalProps> = ({ isOpen, onClose }) 
             onChange={handleInputChange}
             error={errors.weddingDate}
             max={new Date().toISOString().split('T')[0]}
+            required
           />
           <div>
             <FileUpload
@@ -88,12 +91,14 @@ const SubmitStoryModal: React.FC<SubmitStoryModalProps> = ({ isOpen, onClose }) 
               description={t('successStories.submit.photo_desc')}
               onFilesChange={(files) => setFieldValue('couplePhoto', files)}
               accept="image/*"
+              required
             />
             {errors.couplePhoto && <p className="mt-1 text-xs text-red-400">{errors.couplePhoto}</p>}
           </div>
           <div>
-            <label htmlFor="story" className="block text-sm font-medium text-gray-300 mb-1">
+            <label htmlFor="story" className="flex items-center gap-1 text-sm font-medium text-gray-300 mb-1">
                 {t('successStories.submit.story_label')}
+                <FormLabel id="" label="" required />
             </label>
             <textarea
                 id="story"

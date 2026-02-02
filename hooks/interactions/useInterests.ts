@@ -1,8 +1,9 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { User, InterestStatus, Interests, AppEventStatus } from '../../types';
 import { acceptInterestAPI, declineInterestAPI, fetchInterestsAPI, sendInterestAPI } from '@/services/api/interests';
 import { eventBus } from '@/utils/eventBus';
+import { storageManager } from '@/utils/storageManager';
 
 type TFunction = (key: string, options?: Record<string, string | number>) => string;
 type AddToastFunction = (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -10,14 +11,7 @@ type AddToastFunction = (message: string, type?: 'success' | 'error' | 'info') =
 export const useInterests = (user: User | null, t: TFunction, addToast: AddToastFunction) => {
     const [interests, setInterests] = useState<Interests | null>(null);
     
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (user && token) {
-            fetchInterests();
-        }
-    }, [user, addToast]);
-
-    const fetchInterests = async () => {
+    const fetchInterests = useCallback(async () => {
         try {
             const data = await fetchInterestsAPI();
             setInterests(data);
@@ -27,10 +21,17 @@ export const useInterests = (user: User | null, t: TFunction, addToast: AddToast
             // console.error("Failed to fetch interests:", error);
             addToast("Could not load your interests data.", 'error');
         }
-    }
+    }, [addToast]);
+
+    useEffect(() => {
+        const token = storageManager.getItem("token", "local");
+        if (user && token) {
+            fetchInterests();
+        }
+    }, [user, fetchInterests]);
 
 
-    const expressInterest = async (targetUserId: number, targetName: string, message?: string) => {
+    const expressInterest = useCallback(async (targetUserId: number, targetName: string, message?: string) => {
         if (!user) return;
         // const newInterest = await interactionService.expressInterest(user.id as number, targetUserId);
         // setInterests(prev => [newInterest, ...prev]);
@@ -43,10 +44,10 @@ export const useInterests = (user: User | null, t: TFunction, addToast: AddToast
         });
         // const targetUser = mockUsers.find(u => u.id === targetUserId);
         addToast(t('toasts.interest.sent', { name: targetName || '' }), 'success');
-    };
+    }, [user, fetchInterests, addToast, t]);
 
 
-    const updateInterestStatus = async (interestId: number, targetUserId: string | number, targetName: string, status: InterestStatus) => {
+    const updateInterestStatus = useCallback(async (interestId: number, targetUserId: string | number, targetName: string, status: InterestStatus) => {
         if (!user) return;
 
         // const interestToUpdate = interests.find(i => i.senderId === senderId && i.recipientId === user.id);
@@ -69,14 +70,14 @@ export const useInterests = (user: User | null, t: TFunction, addToast: AddToast
                 eventBus.emit(AppEventStatus.DECLINED, { targetUserId, newStatus: InterestStatus.DECLINED });
             });
         }
-    };
+    }, [user, fetchInterests, addToast, t]);
 
 
     return {
         interests,
         setInterests,
         expressInterest,
-        acceptInterest: (interestId: number, targetUserId: string | number, senderName: string) => updateInterestStatus(interestId, targetUserId, senderName, InterestStatus.ACCEPTED),
-        declineInterest: (interestId: number, targetUserId: string | number, senderName: string) => updateInterestStatus(interestId, targetUserId, senderName, InterestStatus.DECLINED),
+        acceptInterest: useCallback((interestId: number, targetUserId: string | number, senderName: string) => updateInterestStatus(interestId, targetUserId, senderName, InterestStatus.ACCEPTED), [updateInterestStatus]),
+        declineInterest: useCallback((interestId: number, targetUserId: string | number, senderName: string) => updateInterestStatus(interestId, targetUserId, senderName, InterestStatus.DECLINED), [updateInterestStatus]),
     };
 };

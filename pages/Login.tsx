@@ -13,6 +13,7 @@ import SEO from '../components/ui/SEO';
 import Spinner from '../components/ui/Spinner';
 import { loginAPI } from '@/services/api/auth';
 import { eventBus } from '@/utils/eventBus';
+import { storageManager } from '@/utils/storageManager';
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -27,11 +28,11 @@ const Login: React.FC = () => {
       password: required(t, t('login.password')),
     },
     (data) => {
-      localStorage.removeItem("token");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("loginTime");
-      localStorage.removeItem("user");
-      localStorage.removeItem("expiresIn");
+      storageManager.removeItem("token", "local");
+      storageManager.removeItem("refreshToken", "local");
+      storageManager.removeItem("loginTime", "local");
+      storageManager.removeItem("user", "local");
+      storageManager.removeItem("expiresIn", "local");
       const isAdminLogin = data.email === 'admin@example.com' || data.email === 'moderator@example.com';
       const role = isAdminLogin ? UserRole.ADMIN : UserRole.CUSTOMER;
       const credentials = { username: data.email, password: data.password };
@@ -39,10 +40,10 @@ const Login: React.FC = () => {
       setLoginError(null);
       loginAPI(credentials)
         .then(async (res) => {
-          localStorage.setItem("token", res.accessToken);
-          localStorage.setItem("refreshToken", res.refreshToken);
-          localStorage.setItem("expiresIn", JSON.stringify(res.expiresIn));
-          localStorage.setItem("loginTime", Date.now().toString());
+          storageManager.setItem("token", res.accessToken, "local");
+          storageManager.setItem("refreshToken", res.refreshToken, "local");
+          storageManager.setItem("expiresIn", JSON.stringify(res.expiresIn), "local");
+          storageManager.setItem("loginTime", Date.now().toString(), "local");
           login(credentials.username, role, undefined, res.accessToken);
           trackEvent('login_success', { email: data.email, role });
           addToast(t('login.success') || 'Login successful!', 'success');

@@ -17,7 +17,7 @@ export const getVerificationReviewAPI = async () => {
     const response = await API.get(`/api/admin/verification/review?ts=${Date.now()}`);
     return response.data;
   } catch (error) {
-    console.error("Error fetching pending verifications:", error);
+    // console.error("Error fetching pending verifications:", error);
     throw error;
   }
 }
@@ -36,6 +36,27 @@ export const approveVerificationAPI = async (userId: string | number, note?: str
     throw error;
   }
 }
+
+/**
+ * Manually set VERIFIED tag by admin
+ * POST /api/admin/verification/admin-verify/{userId}
+ */
+export const setVerifiedTagManually = async (
+  userId: string | number,
+  note?: string
+) => {
+  try {
+    const response = await API.post(
+      `/api/admin/verification/admin-verify/${userId}?ts=${Date.now()}`,
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error('Error setting verified tag manually:', error);
+    throw error;
+  }
+};
+
 
 /**
  * Reject a user's verification submission
@@ -83,19 +104,29 @@ export const roleChangeApi = async (ids: (number | string)[], role: UserRole) =>
   }
 };
 
-export const userDeleteApi = async (ids: (number | string)[]) => {
+export const userStatueApi = async (
+  ids: (number | string)[],
+  statue: string
+) => {
   try {
-    const response = await API.delete("/api/admin/users", {
-      data: { ids }   // ✅ DELETE body must be inside `data`
-    });
+    const timestamp = Date.now(); // ✅ timestamp in URL
+
+    const response = await API.put(
+      `/api/admin/users/toggle/status?ts=${timestamp}`,
+      {
+        ids,
+        status: statue,
+      }
+    );
 
     return response.data;
-
   } catch (error) {
-    console.error("Error deleting users:", error);
+    console.error("Error updating user status:", error);
     throw error;
   }
 };
+
+
 
 
 export const getServiceRequestsAPI = async (pageNumber: number = 0, pageSize: number = 10000) => {
@@ -269,9 +300,29 @@ export const putSuspendChatForChatReportAPI = async (payload: {
  */
 export const getAdminDashboardAPI = async () => {
   try {
-    const response = await API.get(
-      `/api/admin/dashboard?ts=${Date.now()}`
-    );
+    // Ensure we have a valid access token before making the request.
+    // This avoids hitting the interceptor refresh flow when there is no token
+    // available and helps produce clearer errors in the admin dashboard.
+    const { storageManager } = await import('@/utils/storageManager');
+    const token = storageManager.getItem('token', 'local');
+    if (!token) {
+      try {
+        const { refreshTokenAPI } = await import('../api/auth');
+        const refreshed = await refreshTokenAPI();
+        if (refreshed?.accessToken) {
+          storageManager.setItem('token', refreshed.accessToken, 'local');
+          storageManager.setItem('refreshToken', refreshed.refreshToken, 'local');
+          storageManager.setItem('expiresIn', String(refreshed.expiresIn), 'local');
+        } else {
+          throw new Error('No access token available');
+        }
+      } catch (err) {
+        console.error('Failed to refresh token before admin dashboard request:', err);
+        throw err;
+      }
+    }
+
+    const response = await API.get(`/api/admin/dashboard?ts=${Date.now()}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching admin dashboard data:', error);
@@ -344,6 +395,34 @@ export const rejectRegistrationApi = async (
     return response.data;
   } catch (error) {
     console.error('Error rejecting registration request:', error);
+    throw error;
+  }
+};
+
+
+/**
+ * Download user data Excel
+ * POST /api/admin/excel/user-list
+ */
+export const downloadUsersExcelAPI = async (payload: {
+  ids?: (number | string)[];
+}) => {
+  try {
+    const body = {
+      ids: payload.ids || [],
+      all: payload.ids && payload.ids.length > 0 ? false : true,
+    };
+    const response = await API.post(
+      `/api/admin/excel/user-list?ts=${Date.now()}`,
+      body,
+      {
+        responseType: "arraybuffer", // 🔥 REQUIRED for Excel download
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("Error downloading users Excel:", error);
     throw error;
   }
 };

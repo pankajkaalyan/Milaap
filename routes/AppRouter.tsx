@@ -8,11 +8,12 @@ import About from '../pages/About';
 import Contact from '../pages/Contact';
 import Privacy from '../pages/Privacy';
 import Terms from '../pages/Terms';
+import { useAuthContext } from '../hooks/useAuthContext';
+import { UserRole, AdminRole } from '../types';
+import { storageManager } from '@/utils/storageManager';
 import CustomerDashboard from '../pages/customer/Dashboard';
 import AdminUsers from '../pages/admin/Users';
 import NotFound from '../pages/NotFound';
-import { useAuthContext } from '../hooks/useAuthContext';
-import { UserRole, AdminRole } from '../types';
 import Profile from '../pages/customer/Profile';
 import Matches from '../pages/customer/Matches';
 import Favourites from '../pages/customer/Favourites';
@@ -54,7 +55,7 @@ interface PrivateRouteProps {
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children, roles }) => {
   let { user } = useAuthContext();
   if(!user) { 
-    user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null;
+    user = storageManager.getJSON('user', 'local');
   }
   if (!user || !roles.includes(user.role)) {
     return <Navigate to="/login" replace />;
@@ -162,7 +163,7 @@ const AppRouter: React.FC = () => {
           <Route 
             path="profile/:userId" 
             element={
-              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER]}>
+              <PrivateRoute roles={[UserRole.CUSTOMER, UserRole.ROLE_USER, UserRole.ADMIN]}>
                 <ViewProfile />
               </PrivateRoute>
             } 

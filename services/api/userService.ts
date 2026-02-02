@@ -37,7 +37,7 @@ export const userService = {
       return simulateRequest(newUser);
   },
 
-  deleteUsers: async(userIds: (string | number)[]): Promise<{success: true}> => {
+  deleteUsers: async(userIds: (string | number)[], status?: string): Promise<{success: true}> => {
       const db = getDb();
       db.users = db.users.filter(u => !userIds.includes(u.id));
       saveDb(db);

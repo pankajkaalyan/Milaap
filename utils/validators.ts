@@ -46,6 +46,35 @@ export const dateNotInFuture = <T,>(t: TFunction, fieldName: string): ValidatorF
     return null;
 };
 
+export const ageBetween16And100 = <T,>(
+    t: TFunction,
+    fieldName: string
+): ValidatorFunction<T> => (value) => {
+    if (!value) return null;
+
+    const dob = new Date(value as string);
+    const today = new Date();
+
+    let age = today.getFullYear() - dob.getFullYear();
+    const monthDiff = today.getMonth() - dob.getMonth();
+    const dayDiff = today.getDate() - dob.getDate();
+
+    // Adjust age if birthday hasn’t occurred yet this year
+    if (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)) {
+        age--;
+    }
+
+    if (age < 16) {
+        return t('validation.age_less_than_16', { fieldName });
+    }
+
+    if (age > 100) {
+        return t('validation.age_more_than_100', { fieldName });
+    }
+
+    return null;
+};
+
 
 export const alphaOnly = <T,>(t: TFunction, fieldName: string): ValidatorFunction<T> => (value) => {
     if (value && !/^[a-zA-Z\s]*$/.test(value as string)) {
@@ -69,62 +98,62 @@ export const fileRequired = <T,>(t: TFunction): ValidatorFunction<T> => (value) 
 };
 
 export const linkedinProfile = <T,>(
-  t: TFunction,
-  fieldName: string
+    t: TFunction,
+    fieldName: string
 ): ValidatorFunction<T> => (value) => {
-  if (!value) return null;
+    if (!value) return null;
 
-  try {
-    const url = new URL(value as string);
+    try {
+        const url = new URL(value as string);
 
-    const isLinkedIn =
-      url.hostname === 'linkedin.com' ||
-      url.hostname.endsWith('.linkedin.com');
+        const isLinkedIn =
+            url.hostname === 'linkedin.com' ||
+            url.hostname.endsWith('.linkedin.com');
 
-    if (!isLinkedIn) {
-      return t('validation.linkedin_invalid', { fieldName });
+        if (!isLinkedIn) {
+            return t('validation.linkedin_invalid', { fieldName });
+        }
+
+        return null;
+    } catch {
+        return t('validation.linkedin_invalid', { fieldName });
     }
-
-    return null;
-  } catch {
-    return t('validation.linkedin_invalid', { fieldName });
-  }
 };
 
 
 export const socialMediaProfile = <T,>(
-  t: TFunction,
-  fieldName: string
+    t: TFunction,
+    fieldName: string
 ): ValidatorFunction<T> => (value) => {
-  if (!value) return null;
+    if (!value) return null;
 
-  try {
-    const url = new URL(value as string);
+    try {
+        const url = new URL(value as string);
 
-    const allowedDomains = [
-      'facebook.com',
-      'instagram.com',
-      'tiktok.com',
-      'linkedin.com',
-      'x.com',
-      'twitter.com',
-      'youtube.com',
-      'snapchat.com',
-      'threads.net'
-    ];
+        const allowedDomains = [
+            'facebook.com',
+            'instagram.com',
+            'tiktok.com',
+            'linkedin.com',
+            'x.com',
+            'twitter.com',
+            'youtube.com',
+            'snapchat.com',
+            'threads.net'
+        ];
 
-    const isAllowed = allowedDomains.some(
-      domain =>
-        url.hostname === domain || url.hostname.endsWith(`.${domain}`)
-    );
+        const isAllowed = allowedDomains.some(
+            domain =>
+                url.hostname === domain || url.hostname.endsWith(`.${domain}`)
+        );
 
-    if (!isAllowed) {
-      return t('validation.social_media_profile', { fieldName });
+        if (!isAllowed) {
+            return t('validation.social_media_profile', { fieldName });
+        }
+
+        return null;
+    } catch {
+        return t('validation.social_media_profile', { fieldName });
     }
-
-    return null;
-  } catch {
-    return t('validation.social_media_profile', { fieldName });
-  }
 };
 

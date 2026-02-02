@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppContext } from '../hooks/useAppContext';
 import Card from '../components/ui/Card';
@@ -13,7 +13,6 @@ const ActivateProfile = () => {
     const [loading, setLoading] = useState(true);
     const [activated, setActivated] = useState(false);
 
-
     useEffect(() => {
         if (!token) {
             setLoading(false);
@@ -24,8 +23,8 @@ const ActivateProfile = () => {
 
         // 🔁 API already called
         if (sessionStorage.getItem(callKey)) {
-            setActivated(true);      // ✅ update UI
-            setLoading(false);       // ✅ stop loader
+            setActivated(true);
+            setLoading(false);
             return;
         }
 
@@ -55,12 +54,10 @@ const ActivateProfile = () => {
         activateProfile();
     }, [token, navigate, t, addToast]);
 
-
-
     return (
-        <div className="max-w-md mx-auto">
+        <div className="max-w-md mx-auto px-4 sm:px-0">
             <Card>
-                <h2 className="text-3xl font-bold text-center text-white mb-6">
+                <h2 className="text-3xl font-bold text-center text-white mb-4">
                     {activated
                         ? t('activateProfile.activatedTitle')
                         : t('activateProfile.title')}
@@ -71,9 +68,27 @@ const ActivateProfile = () => {
                         {t('activateProfile.processing')}
                     </p>
                 ) : (
-                    <Button onClick={() => navigate('/login')}>
-                        {t('activateProfile.login_cta')}
-                    </Button>
+                    <>
+                        {activated && (
+                            <div className="mb-6 text-center">
+                                <p className="text-gray-300 text-sm leading-relaxed">
+                                    Your profile has been activated successfully.
+                                </p>
+                                <p className="text-gray-400 text-sm mt-2 leading-relaxed">
+                                    Admin will verify your profile and approve it.
+                                    <br />
+                                    You will be notified once approved.
+                                </p>
+                            </div>
+                        )}
+
+                        <Button
+                            onClick={() => navigate('/login')}
+                            className="w-full"
+                        >
+                            {t('activateProfile.login_cta')}
+                        </Button>
+                    </>
                 )}
             </Card>
         </div>

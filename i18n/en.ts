@@ -1,6 +1,3 @@
-import { email } from "@/utils/validators";
-import { fail } from "assert";
-import { stat } from "fs";
 
 export const en = {
   nav: {
@@ -95,13 +92,14 @@ export const en = {
     dob: 'Date of Birth',
     tob: 'Time of Birth',
     mobile: "Mobile Number",
+    countryCode: "Country Code",
     height: 'Height (in cm)',
     caste: 'Caste',
     subcaste: 'Sub-caste',
     profession: 'Profession',
     education: 'Highest Education',
-    linkedin: 'LinkedIn Profile',
-    socialMedia: 'Social Media Profile (Facebook / Instagram / TikTok)',
+    linkedin: `LinkedIn Profile\n(profile link like https://www.linkedin.com/in/username)`,
+    socialMedia: 'Social Media Profile (Facebook / Instagram / TikTok) \n(Facebook / Instagram / TikTok profile link)',
     steps: {
       account: 'Account Details',
       personal: 'Personal Info',
@@ -149,6 +147,10 @@ export const en = {
       rashi: 'Rashi (Moon Sign)',
       gotra: 'Gotra',
       mangal_dosha: 'Mangal Dosha',
+      contact_person: 'Contact Person',
+      parents_email: "Parent's Email",
+      parents_mobile: "Parent's Mobile Number",  
+      parents_country_code: "Country Code"
     },
   },
   preferences: {
@@ -180,7 +182,7 @@ export const en = {
       pending: 'Pending Review',
       verified: 'Verified',
     },
-    upload_prompt: 'Upload a clear photo of your Government ID (e.g., Aadhaar, Passport).',
+    upload_prompt: 'Upload a clear and valid photo ID',
     submit: 'Submit for Verification',
     verify_with_ai: 'Verify with AI ✨',
     ai: {
@@ -329,10 +331,14 @@ export const en = {
         edit: 'Edit',
         delete: 'Delete',
         status: 'Status',
+        activate: 'Activate',
       },
-      delete_confirm_title: 'Confirm Deletion',
-      delete_confirm: 'Are you sure you want to permanently delete {name}? This action cannot be undone.',
-      delete_confirm_bulk: 'Are you sure you want to permanently delete {count} selected users? This action cannot be undone.',
+      delete_confirm_title: 'Confirm Soft Deletion',
+      delete_confirm: 'Are you sure you want to Soft delete {name}?',
+      delete_confirm_bulk: 'Are you sure you want to Soft delete {count} selected users?',
+      activate_confirm_bulk: 'Are you sure you want to activate {count} selected users?',
+      activate_confirm: 'Are you sure you want to activate {name}?',
+      activate_confirm_title: 'Confirm Activation',
       import: 'Import CSV',
       export: 'Export CSV',
       add_user: 'Add User',
@@ -503,14 +509,18 @@ export const en = {
       blocked: '{name} has been blocked.',
       unblocked: '{name} has been unblocked.',
       reported: '{name} has been reported. Our team will review this.',
-      deleted: 'User {name} has been successfully deleted.',
+      deleted: 'User {name} has been successfully soft deleted.',
       added: 'User {name} has been added successfully.',
       updated: 'User {name} has been updated successfully.',
+      approved: 'User {name} has been verified.',
+      rejected: 'User {name} has been rejected.',
+      activated: 'User {name} has been activated.',
+      deactivated: 'User {name} has been deactivated.',
     },
     users: {
       imported: '{count} users imported successfully!',
       exported: 'User data exported successfully!',
-      deleted_bulk: '{count} users have been successfully deleted.',
+      deleted_bulk: '{count} users have been successfully soft deleted.',
       updated_bulk: '{count} users have been successfully updated.',
     },
     settings: {
@@ -732,6 +742,8 @@ export const en = {
       range: 'Height must be between {min} and {max} cm.',
     },
     date_in_future: '{fieldName} cannot be in the future.',
+    age_less_than_16: 'You must be at least 16 years old.',
+    age_more_than_100: 'Age cannot be more than 100 years.',
     alpha_only: '{fieldName} can only contain letters and spaces.',
     alpha_comma_only: '{fieldName} can only contain letters, spaces, and commas.',
     linkedin_invalid: '{fieldName} is not a valid LinkedIn profile URL.',

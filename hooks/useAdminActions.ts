@@ -5,8 +5,9 @@ import { userService } from '../services/api/userService';
 import { moderationService } from '../services/api/moderationService';
 import { storyService } from '../services/api/storyService';
 import { adminService } from '../services/api/adminService';
-import { getVerificationReviewAPI, approveVerificationAPI, rejectVerificationAPI, getServiceRequestsAPI, getUserReportsAPI, putWarnUserAPI, putDismissReportAPI, putSuspendChatAPI, putSuspendCustomerAPI } from '../services/api/admin';
+import { getVerificationReviewAPI, approveVerificationAPI, rejectVerificationAPI, getServiceRequestsAPI, getUserReportsAPI, putWarnUserAPI, putDismissReportAPI, putSuspendChatAPI, putSuspendCustomerAPI, setVerifiedTagManually } from '../services/api/admin';
 import { normalizeVerificationUser } from '@/utils/utils';
+import { storageManager } from '@/utils/storageManager';
 
 type TFunction = (key: string, options?: Record<string, string | number>) => string;
 type AddToastFunction = (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -82,7 +83,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
             // Retry every 2s up to 5 times (10s total)
             retryHandle = window.setInterval(() => {
                 attempts += 1;
-                const token = localStorage.getItem('token');
+                const token = storageManager.getItem('token', 'local');
                 if (token) {
                     // token appeared — fetch and stop retrying
                     if (retryHandle) {
@@ -111,7 +112,7 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
             }
         };
 
-        const initialToken = localStorage.getItem('token');
+        const initialToken = storageManager.getItem('token', 'local');
         if (initialToken) {
             loadPending();
         } else {
@@ -147,6 +148,25 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
 
             // Update allUsers locally (best-effort): set verificationStatus to 'Verified'
             setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, verificationStatus: 'Verified' } : u));
+
+            addToast(t('toasts.verification.approved'), 'success');
+            addNotification({ type: NotificationType.VERIFICATION_APPROVED, message: t('notifications.verification_approved'), link: '/verification', userId: userId as number });
+
+            return resp;
+        } catch (error) {
+            console.error('Failed to approve verification', error);
+            addToast(t('toasts.verification.approve_failed'), 'error');
+            throw error;
+        }
+    };
+
+    const approveVerificationManually = async (userId: string | number, note?: string) => {
+        try {
+            // Call the admin API to approve the verification
+            const resp = await setVerifiedTagManually(userId, note);
+
+            // Update allUsers locally (best-effort): set verificationStatus to 'Verified'
+            setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, verificationStatus: 'Verified', isVerified: true } : u));
 
             addToast(t('toasts.verification.approved'), 'success');
             addNotification({ type: NotificationType.VERIFICATION_APPROVED, message: t('notifications.verification_approved'), link: '/verification', userId: userId as number });
@@ -284,14 +304,15 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
         addToast(t('toasts.role.updated'), 'success');
     };
 
-    const deleteUsers = async (userIds: (string | number)[]) => {
+    const deleteUsers = async (userIds: (string | number)[], status: 'active' | 'deactivated' | 'pending' | 'suspended' | 'deleted' | 'approved' | 'rejected' | 'admin_soft_deleted' | 'user_soft_deleted' = 'admin_soft_deleted') => {
         // await userService.deleteUsers(userIds);
-        setAllUsers(prev => prev.filter(u => !userIds.includes(u.id)));
+        // setAllUsers(prev => prev.filter(u => !userIds.includes(u.id)));
+        setAllUsers(prev => prev.map(u => userIds.includes(u.id) ? { ...u, status } : u));
         if (userIds.length > 1) {
-            addToast(t('toasts.users.deleted_bulk', { count: userIds.length.toString() }), 'success');
+            addToast(t('toasts.users.deleted_bulk', { count: userIds.length.toString() }), 'info');
         } else {
             const deletedUser = allUsers.find(u => u.id === userIds[0]);
-            addToast(t('toasts.user.deleted', { name: deletedUser?.name || '' }), 'success');
+            addToast(t('toasts.user.deleted', { name: deletedUser?.name || '' }), 'info');
         }
     };
 
@@ -329,7 +350,24 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
         // console.log('Data ', userData);
         setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, ...userData } : u));
         // console.log(" All Users ", allUsers)
-        addToast(t('toasts.user.updated', { name: userData.name }), 'success');
+        switch (userData.status) {
+            case 'active':
+                addToast(t('toasts.user.activated', { name: userData.name || '' }), 'success'); 
+                break;
+            case 'deactivated':
+                addToast(t('toasts.user.deleted', { name: userData.name || '' }), 'info');       
+                break;
+            case 'approved':
+                addToast(t('toasts.user.approved', { name: userData.name || '' }), 'success');       
+                break;
+            case 'rejected':
+                addToast(t('toasts.user.rejected', { name: userData.name || '' }), 'error');       
+                break;
+            default:
+                addToast(t('toasts.user.updated', { name: userData.name }), 'success');
+                break;
+        }
+        
     };
 
 
@@ -401,5 +439,6 @@ export const useAdminActions = (t: TFunction, addToast: AddToastFunction, addNot
         addUser,
         updateUser,
         initializeUsers: (users: User[]) => setAllUsers(users),
+        approveVerificationManually,
     };
 };

@@ -50,6 +50,11 @@ export interface RegisterFormData {
   video: File;
   linkedin: string;
   socialMedia: string; // Facebook / Instagram / TikTok (any one)
+  countryCode: string;
+  parentsCountryCode: string;
+  parentsEmail: string;
+  parentsMobileNumber: string;
+  contactPerson: 'self' | 'parent';
 }
 
 export interface ContactFormData {

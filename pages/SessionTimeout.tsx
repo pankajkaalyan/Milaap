@@ -1,11 +1,12 @@
 import { useEffect } from "react";
+import { storageManager } from "@/utils/storageManager";
 
 const SESSION_TIMEOUT = 30 * 60 * 1000; // 30 minutes
 
 const useSessionTimeout = () => {
     useEffect(() => {
         const checkSession = async () => {
-            const loginTime = localStorage.getItem("loginTime");
+            const loginTime = storageManager.getItem("loginTime", "local");
             if (!loginTime) return;
 
             const expired = Date.now() - Number(loginTime) > SESSION_TIMEOUT;
@@ -14,8 +15,8 @@ const useSessionTimeout = () => {
             // console.warn("⏳ Session expired — clearing PWA cache and redirecting...");
 
             // 1️⃣ Clear storage
-            localStorage.clear();
-            sessionStorage.clear();
+            storageManager.clear('local');
+            storageManager.clear('session');
 
             // 2️⃣ Clear PWA cache
             if ("caches" in window) {

@@ -10,7 +10,8 @@ interface AccountSettingsProps {
 }
 
 const AccountSettings: React.FC<AccountSettingsProps> = ({ onDeactivateClick, onDeleteClick, onChangePasswordClick }) => {
-    const { t } = useAppContext();
+    const {user, t } = useAppContext();
+
     return (
         <div>
             <h2 className="text-2xl font-bold text-white mb-2">{t('settings.account.title')}</h2>
@@ -25,7 +26,7 @@ const AccountSettings: React.FC<AccountSettingsProps> = ({ onDeactivateClick, on
                         <p>{t('settings.account.deactivate')}</p>
                         <p className="text-xs text-gray-500">{t('settings.account.deactivate_desc')}</p>
                     </div>
-                    <Button onClick={onDeactivateClick} variant={ButtonVariant.SECONDARY} className="w-auto !py-2 !px-4 !text-sm">Deactivate</Button>
+                    <Button onClick={onDeactivateClick} variant={ButtonVariant.SECONDARY} className="w-auto !py-2 !px-4 !text-sm">{user?.profile?.status?.toLowerCase() === 'approved' ? 'Deactivate' : 'Activate'}</Button>
                 </div>
                 <div className="flex items-center justify-between p-3 bg-red-900/20 border border-red-500/30 rounded-lg">
                     <div>

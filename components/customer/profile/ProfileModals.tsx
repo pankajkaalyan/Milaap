@@ -11,11 +11,15 @@ interface ProfileModalsProps {
   activeModal: ActiveModal;
   modalData: { imageUrl?: string };
   onClose: () => void;
-  targetUser: Match;
+  targetUser: Match | null;
 }
 
 const ProfileModals: React.FC<ProfileModalsProps> = ({ activeModal, modalData, onClose, targetUser }) => {
   const { t, reportUser } = useAppContext();
+
+  if (!targetUser) {
+    return null;
+  }
 
   const handleReportSubmit = (reason: string, details: string) => {
     reportUser(targetUser.id, reason, details, targetUser.name);

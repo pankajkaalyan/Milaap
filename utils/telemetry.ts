@@ -1,4 +1,5 @@
 import { API } from '@/services/api';
+import { storageManager } from './storageManager';
 
 // Feature flag: set VITE_TELEMETRY_ENABLED=true in your environment to enable telemetry calls.
 // When disabled (default), telemetry helpers will no-op and avoid noisy console errors when
@@ -51,7 +52,7 @@ export const logAutoLogout = async (details: Record<string, any>) => {
   }
 
   // 1. Retrieve the token from localStorage
-  const token = localStorage.getItem('token'); // or 'jwt', 'authToken' depending on your key name
+  const token = storageManager.getItem('token', 'local'); // or 'jwt', 'authToken' depending on your key name
 
   // 2. Only proceed if the token exists
   if (!token) {

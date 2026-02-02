@@ -1,4 +1,5 @@
 import { API } from "../api";
+import { storageManager } from "../../utils/storageManager";
 
 export const loginAPI = async (credentials) => {
     try {
@@ -11,7 +12,7 @@ export const loginAPI = async (credentials) => {
 };
 
 export const logoutAPI = async () => {
-    const token = localStorage.getItem("token");
+    const token = storageManager.getItem("token", "local");
     console.log("Logging out with token:", token);
     try {
         const response = await API.post("/api/auth/logout")
@@ -57,7 +58,7 @@ export const refreshTokenAPI = async () => {
         // Use a direct axios call (bypass main API instance) to avoid interceptor recursion
         const baseURL = import.meta.env.MODE === 'development' ? '' : import.meta.env.VITE_API_URL;
         const response = await axios.post(`${baseURL}/api/auth/refresh-token`, {
-            refreshToken: localStorage.getItem('refreshToken'),
+            refreshToken: storageManager.getItem('refreshToken', 'local'),
         }, { headers: { 'Content-Type': 'application/json' } });
         return response.data;
     } catch (error) {

@@ -14,6 +14,7 @@ import IdleWarningModal from './components/ui/IdleWarningModal';
 import { refreshTokenAPI } from './services/api/auth';
 import { AppEventStatus } from './types';
 import { initTelemetryHealthCheck } from './utils/telemetry';
+import { storageManager } from './utils/storageManager';
 
 const LoaderBridge = () => {
   const { showLoader, hideLoader } = useLoader();
@@ -57,9 +58,9 @@ function App() {
                   try {
                     const result = await refreshTokenAPI();
                     if (result?.accessToken) {
-                      localStorage.setItem('token', result.accessToken);
-                      localStorage.setItem('refreshToken', result.refreshToken);
-                      localStorage.setItem('expiresIn', String(result.expiresIn));
+                      storageManager.setItem('token', result.accessToken, 'local');
+                      storageManager.setItem('refreshToken', result.refreshToken, 'local');
+                      storageManager.setItem('expiresIn', String(result.expiresIn), 'local');
                       try { window.dispatchEvent(new CustomEvent(AppEventStatus.TOKEN_REFRESHED, { detail: result })); } catch (e) { /* ignore */ }
                       try { window.dispatchEvent(new Event(AppEventStatus.IDLE_RESET)); } catch (e) { /* ignore */ }
                       // Best-effort UX: show toast via UIContext - use event so we don't need to call hooks here

@@ -3,7 +3,7 @@ import { InterestStatus, InterestTab, BadgeVariant, UserInterest, AppEventStatus
 import { useAppContext } from '../../hooks/useAppContext';
 import { Link } from 'react-router-dom';
 import Button from '../ui/Button';
-import Badge from '../ui/Badge';
+import BadgeWithTooltip from '../ui/BadgeWithTooltip';
 import { eventBus } from '@/utils/eventBus';
 
 interface InterestCardProps {
@@ -42,12 +42,12 @@ const InterestCard: React.FC<InterestCardProps> = ({ interest, type, onAccept, o
     const getStatusBadge = () => {
         switch (status) {
             case InterestStatus.ACCEPTED:
-                return <Badge variant={BadgeVariant.SUCCESS}>{t('interests.status.accepted')}</Badge>;
+                return <BadgeWithTooltip variant={BadgeVariant.SUCCESS} label={t('interests.status.accepted')} />;
             case InterestStatus.DECLINED:
-                return <Badge variant={BadgeVariant.DANGER}>{t('interests.status.declined')}</Badge>;
+                return <BadgeWithTooltip variant={BadgeVariant.DANGER} label={t('interests.status.declined')} />;
             case InterestStatus.PENDING:
             default:
-                return <Badge variant={BadgeVariant.WARNING}>{t('interests.status.pending')}</Badge>;
+                return <BadgeWithTooltip variant={BadgeVariant.WARNING} label={t('interests.status.pending')} />;
         }
     };
 

@@ -20,8 +20,8 @@ const AdPlayer: React.FC<AdPlayerProps> = ({ onAdComplete, duration = 5 }) => {
   return (
     <div className="absolute inset-0 bg-black flex flex-col items-center justify-center text-white z-10">
       <div className="p-4 bg-gray-800 rounded-lg text-center">
-          <p className="text-lg font-bold">Advertisement</p>
-          <p className="text-sm text-gray-400">Your content will play in {countdown} seconds...</p>
+          <div className="text-lg font-bold">Advertisement</div>
+          <div className="text-sm text-gray-400">Your content will play in {countdown} seconds...</div>
       </div>
       <button 
         onClick={onAdComplete} 
